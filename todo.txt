@@ -1,0 +1,8 @@
+full name
+email 
+password
+profile picture
+
+//admin tùy quyền hạn được cấp
+//user quyền hạn cố định
+

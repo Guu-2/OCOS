@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>HOME PAGE</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <%- include('../partials/css-library') %>
+
+    <link rel="stylesheet" href="../css/style.css">
+
+</head>
+
+
+<body class="login_page">
+    <header>
+    </header>
+
+    <div class="background-container">
+
+    </div>
+    <div id="index">
+        <h1>WELLCOM TO PHONE STORE</h1>
+        <div class="button-container" id="btn_started" name="request_add">
+            <button class="button" id="form_open">Get started</button>
+        </div>
+    </div>
+
+    <section class="home">
+        <div class="form_container">
+            <i class="uil uil-times-circle close_form"></i>
+            <!-- LOGIN FORM -->
+            <div class="form login_form">
+                <form method="POST">
+                    <h2>Login</h2>
+                    <div class="input_box">
+                        <input type="text" placeholder="Enter your username" name="username" id="username">
+                        <i class="uil uil-user-circle username"></i>
+                    </div>
+                    <div class="input_box">
+                        <input type="password" placeholder="Enter your password" name="password" id="password">
+                        <i class="uil uil-keyhole-circle password"></i>
+                        <i class="uil uil-eye-slash password_hidden"></i>
+                    </div>
+
+                    <button class="login" id="login">Login Now</button>
+
+                </form>
+            </div>
+
+        </div>
+    </section>
+    <footer>
+        <!-- place footer here -->
+    </footer>
+    <!-- Bootstrap JavaScript Libraries -->
+    <%- include('../partials/js-library') %>
+
+    <%- include('../partials/flash-message') %>
+    
+    <script src="../javascripts/login.js"></script>
+
+</body>
+
+</html>

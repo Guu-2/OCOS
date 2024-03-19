@@ -1,0 +1,59 @@
+<% var listcustomer= data.listcustomer %>
+<!-- //TODO: tối ưu và chỉnh lại -->
+
+<table class="table" id="table_customer">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Phone Number</th>
+        <th scope="col">Address</th>
+        <th scope="col">Time Create</th>
+        <th scope="col">History Purchase</th>
+      </tr>
+    </thead>
+    <tbody id="customer_row">
+        <% if (listcustomer.length> 0) { %>
+            <% listcustomer.forEach((customer)=> { %>
+                <tr >
+                    <td>
+                        <div >
+                            <%=customer.fullName%> 
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <%=customer.phone%> 
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <%=customer.address%>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <%=customer.createdAt%>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <button type="button"  class="btn btn-info" onclick="viewhistorypurchase('<%=customer._id.toString()%> ')">HISTORY PURCHASE</button>
+                        </div>
+                    </td>
+
+                </tr>
+                
+            <% }); %>
+
+        <% } %>
+        <% if(listcustomer.length==0) { %>
+            <tr>
+                <td colspan="5" style="text-align:center;font-weight: bold;font-size: 20px;">
+                    No customer exist
+                </td>
+            </tr>
+        <% }; %>
+    
+
+    </tbody>
+</table>

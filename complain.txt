@@ -1,0 +1,2 @@
+-admin có thể phân role cho từng admin nhỏ hơn khác và cả cho staff
+-quyền và endpoint của admin tách biệt với staff (không cần thiết phải kiểm tra từng endpoint)

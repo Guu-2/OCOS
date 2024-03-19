@@ -1,0 +1,311 @@
+<% var listproduct=data.listproduct %>
+    <% if (account.role==='admin' ) { %>
+        <button type="button" id="btn_add_product" class="btn btn-primary" data-bs-toggle="modal"
+            data-bs-target="#addproductModal">
+            ADD NEW PRODUCT
+        </button>
+        <% }else{ %>
+            <div class="seach_bar">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="search" id="searchInput" placeholder="Search">
+                    <div class="input-group-append">
+                        <span id="seach_icon" class="input-group-text"
+                            style="width: 100%; height: 100%; border-radius:0px 5px 5px 0px">
+                            <i class="fa fa-search" style="border-radius: 0px;"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+
+                <!-- //TODO: tối ưu và chỉnh lại -->
+
+                <table class="table" id="table_product">
+                    <thead>
+                        <tr>
+                            <th scope="col">Image</th>
+                            <th scope="col">Name</th>
+                            <% if (account.role==='admin' ) { %>
+                                <th scope="col">Import Price</th>
+                                <% } %>
+
+                                    <th scope="col">Retail Price</th>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Inventory</th>
+                                    <% if (account.role==='admin' ) { %>
+                                        <th scope="col">Time Create</th>
+                                        <% } %>
+                                            <% if (account.role==='staff' ) { %>
+                                                <th scope="col">Action</th>
+                                                <% } %>
+                        </tr>
+                    </thead>
+                    <tbody id="product_row">
+                        <% if (listproduct.length> 0) { %>
+                            <% listproduct.forEach((product)=> { %>
+                                <tr <% if (account.role==='admin' ){ %> 
+                                        onclick="getproductbyId('<%=product._id.toString() %>')" 
+                                    <%}%>>
+                                            <td>
+                                                <div class="product_picture">
+                                                    <img src="../<%=product.productPicture%>" alt="err">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <%=product.productName%>
+                                                </div>
+                                            </td>
+                                            <% if (account.role==='admin' ) { %>
+                                                <td>
+                                                    <div>
+                                                        <%=product.importPrice%>
+                                                    </div>
+                                                </td>
+                                                <% } %>
+                                                    <td>
+                                                        <div>
+                                                            <%=product.retailPrice%>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div>
+                                                            <%=product.category%>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div>
+                                                            <%=product.inventory%>
+                                                        </div>
+                                                    </td>
+                                                    <% if (account.role==='admin' ) { %>
+                                                        <td>
+                                                            <div>
+                                                                <%=product.createdAt%>
+                                                            </div>
+                                                        </td>
+                                                        <% } %>
+
+                                                            <% if (account.role==='staff' ) { %>
+                                                                <td>
+                                                                    <button type="button" class="btn btn-success"
+                                                                        data-product-id="<%=product._id.toString()%>"
+                                                                        onclick="add_to_ordercard(this, '<%=product._id.toString()%>')">Add</button>
+                                                                </td>
+                                                                <% } %>
+
+                                </tr>
+
+                                <% }); %>
+
+                                    <% } %>
+                                        <% if(listproduct.length==0) { %>
+                                            <tr>
+                                                <td colspan="7"
+                                                    style="text-align:center;font-weight: bold;font-size: 20px;">
+                                                    No product exist
+                                                </td>
+                                            </tr>
+                                            <% }; %>
+
+
+                    </tbody>
+                </table>
+                <script>
+                    function calculateTotal() {
+                        const orderContent = document.querySelectorAll('.addOrder .list-group-item');
+                        let total = 0;
+
+                        orderContent.forEach(product => {
+                            const priceElement = product.querySelector('.price');
+                            const price = parseFloat(priceElement.textContent);
+                            total += price;
+                        });
+
+                        const totalElement = document.querySelector('.total .tol');
+                        if (totalElement) {
+                            totalElement.textContent = total.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                        }
+                    }
+
+                    function showflashmessage(type, message) {
+
+                        toastr[type](message)
+
+                        toastr.options = {
+                            "closeButton": true,
+                            "debug": false,
+                            "newestOnTop": false,
+                            "progressBar": false,
+                            "positionClass": "toast-top-right",
+                            "preventDuplicates": false,
+                            "onclick": null,
+                            "showDuration": "300",
+                            "hideDuration": "1000",
+                            "timeOut": "5000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        }
+                    }
+
+                    window.addEventListener('load', calculateTotal);
+
+                    function remove_ordercard(productId) {
+                        const orderContent = document.querySelector('.addOrder');
+                        const productToRemove = orderContent.querySelector(`li[data-product-id="${productId}"]`);
+
+                        if (productToRemove) {
+                            orderContent.removeChild(productToRemove);
+                            calculateTotal();
+                            enableAddButton(productId); // Kích hoạt lại nút "Add"
+                        }
+                    }
+
+                    function add_to_ordercard(button, productId) {
+                        fetch(`order/${productId}`, {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(product => {
+                                const inventory = parseFloat(product.inventory);
+                                const productName = product.productName;
+                                const productQuantity = parseFloat(product.inventory);
+                                const productPrice = parseFloat(product.retailPrice);
+
+                                const orderContent = document.querySelector('.addOrder');
+                                const existingProduct = orderContent.querySelector(`li[data-product-id="${productId}"]`);
+
+                                if (existingProduct) {
+                                    const quantityInput = existingProduct.querySelector('input[type="number"]');
+                                    const currentQuantity = isNaN(parseFloat(quantityInput.value)) ? 0 : parseFloat(quantityInput.value);
+                                    const updatedQuantity = isNaN(currentQuantity) ? 1 : currentQuantity + 1;
+                                    quantityInput.value = updatedQuantity;
+
+
+                                    const priceElement = existingProduct.querySelector('.price');
+                                    const updatedPrice = updatedQuantity * productPrice;
+                                    priceElement.textContent = updatedPrice.toFixed(2);
+
+                                    calculateTotal();
+                                } else {
+                                    const productItem = document.createElement('li');
+                                    productItem.setAttribute('data-product-id', productId);
+                                    productItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+                                    productItem.innerHTML = `
+                                        <span class="productName">${productName}</span>
+                                        <span><input type="number" data-product-action="sll" min="0" max="${productQuantity}" value="" data-product-id="${productId}"></span>
+                                        <span class="price">0.00</span>
+                                        <button type="button" class="btn btn-danger" onclick="remove_ordercard('${productId}')">X</button>
+                                    `;
+
+                                    orderContent.appendChild(productItem);
+
+                                    const inputElement = productItem.querySelector(`input[type="number"][data-product-action="sll"]`);
+
+                                    if (inputElement) {
+                                        inputElement.addEventListener('input', function () {
+                                            const quantity = parseFloat(this.value);
+                                            const priceElement = productItem.querySelector('.price');
+                                            const updatedPrice = quantity * productPrice;
+                                            const maxQuantity = parseFloat(this.getAttribute('max'));
+
+                                            if (quantity > maxQuantity) {
+                                                showflashmessage("warning", `Please enter a quantity less than or equal to ${maxQuantity}`)
+                                                this.value = maxQuantity; // Đặt giá trị nhập liệu là giá trị tối đa
+                                            }
+
+                                            priceElement.textContent = updatedPrice.toFixed(2);
+                                            calculateTotal();
+                                            checkAndUpdateButton(productId);
+                                        });
+                                    }
+
+                                }
+
+                                checkAndUpdateButton(productId);
+                            })
+                            .catch(error => {
+                                console.error('There was a problem with the fetch operation:', error);
+                            });
+                    }
+
+                    function checkAndUpdateButton(productId) {
+                        const input = document.querySelector(`input[data-product-id="${productId}"]`);
+                        const button = document.querySelector(`button[data-product-id="${productId}"]`);
+                        if (input) {
+                            const maxQuantity = parseFloat(input.getAttribute('max'));
+                            const currentQuantity = parseFloat(input.value);
+
+                            if (currentQuantity >= maxQuantity) {
+                                button.disabled = true; // Vô hiệu hóa nút "Add" khi số lượng đạt tới giá trị max
+                            } else {
+                                button.disabled = false;
+                            }
+                        }
+
+                    }
+
+                    function enableAddButton(productId) {
+                        const addButton = document.querySelector(`button[data-product-id="${productId}"]`);
+                        if (addButton) {
+                            addButton.disabled = false;
+                        }
+                    }
+
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const productList = document.querySelectorAll('#product_row tr');
+
+                        productList.forEach(product => {
+                            const inventoryCell = product.querySelector('td:nth-child(5) div');
+                            const addButton = product.querySelector('button');
+
+                            if (inventoryCell && addButton) {
+                                const inventory = parseFloat(inventoryCell.textContent);
+                                if (inventory === 0) {
+                                    addButton.disabled = true;
+                                }
+                            }
+                        });
+
+
+                        const totalPriceElement = document.querySelector('.total .tol');
+                        const amountPaidInput = document.querySelector('#amount-paid');
+                        const changeElement = document.querySelector('.change strong');
+                        if (amountPaidInput) {
+                            amountPaidInput.addEventListener('input', function () {
+                                const totalPrice = parseFloat(totalPriceElement.textContent.replace(/[^0-9.-]+/g, ""));
+                                totalPriceElement.min = totalPrice;
+                                const amountPaid = parseFloat(amountPaidInput.value);
+                                const change = amountPaid - totalPrice;
+
+                                if (!isNaN(change) && change >= 0) {
+                                    changeElement.textContent = change.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                                } else {
+                                    changeElement.textContent = 'Invalid amount';
+                                }
+                            });
+
+                            amountPaidInput.setAttribute('min', totalPriceElement.textContent.replace(/[^0-9.-]+/g, ""));
+                        }
+
+                        const quantityInputs = document.querySelectorAll('input[type="number"]');
+                        quantityInputs.forEach(input => {
+                            const productId = input.getAttribute('data-product-id');
+                            input.addEventListener('input', function () {
+                                checkAndUpdateButton(productId);
+                            });
+                        });
+                    });
+
+                </script>

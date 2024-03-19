@@ -1,0 +1,7 @@
+<script>
+    <% if (flashMessage) { %>
+        Command: toastr["<%= flashMessage.type %>"]("<%= flashMessage.message %>")
+
+
+    <% } %>
+</script>

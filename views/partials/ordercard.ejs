@@ -1,0 +1,68 @@
+<div class="order_card">
+    <div class="card_product">
+        <div class="row">
+            <div class="col">
+                <div class="title">
+                    <div class="order_bar">
+                        <div class="input-group mb-2">
+                            <input type="number" class="form-control" name="order_name" id="order_name" placeholder="NEW ORDER" disabled>
+                            <div class="input-group-append" >
+                                <span id="pencil_icon" class="input-group-text" style="width: 100%; height: 100%; border-radius:0px 5px 5px 0px" onclick="toggle_create_order()">
+                                    <i class="fa-solid fa-pen"></i>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" name="customer_name" id="customer_name" placeholder="Customer Name" disabled>
+
+                        </div>
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" name="customer_address" id="customer_address" placeholder="Customer Address" disabled>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="order_content">
+                <ul class="list-group list-group-flush addOrder">
+                </ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="total">
+                <div class="col">
+                    <h5>Total : </h5>
+                    <h5>Paid : </h5>
+                    <h5>Change : </h5>
+                </div>
+                <div class="col">
+                    <h5 class="tol"><strong></strong></h5>
+                    <h5 class="paid"><input style="width: 200px" type="number" id="amount-paid" placeholder="$0.00">
+                    </h5>
+                    <h5 class="change"><strong>$0.00</strong></h5>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="order_action">
+                <div class="createOrder">
+                    <button style="margin-top: 36px;" class="btn btn-primary">Create Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ICON CỦA ORDER CARD -->
+    <div class="btn_order">
+        <i class="fa-solid fa-circle-plus show_card"></i>
+
+    </div>
+</div>
+

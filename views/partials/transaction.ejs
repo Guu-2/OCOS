@@ -1,0 +1,67 @@
+<%
+// Định nghĩa hàm groupOrdersByCustomer
+function groupOrdersByCustomer(orders) {
+    const groupedOrders = {};
+
+    orders.forEach(order => {
+        const customerName = order.customerID.fullName;
+        
+        if (!groupedOrders[customerName]) {
+            groupedOrders[customerName] = {
+                customer: customerName,
+                totalOrders: 0,
+                totalProducts: 0,
+                totalPrice: 0,
+            };
+        }
+
+        groupedOrders[customerName].totalOrders++;
+
+        const products = order.products;
+        const totalPrice = order.totalPrice;
+
+        groupedOrders[customerName].totalProducts += products.length;
+        groupedOrders[customerName].totalPrice += totalPrice;
+    });
+
+    const result = Object.values(groupedOrders);
+    return result;
+}
+
+// Sử dụng hàm groupOrdersByCustomer để nhóm dữ liệu
+const orders = data.listOrder; // Thay data.listOrder bằng danh sách đơn hàng thực tế
+const groupedOrders = groupOrdersByCustomer(orders);
+%>
+
+<h2>Transaction Page</h2>
+
+<div class="container-transaction">
+    <div style="justify-content: flex-end;">
+        <table class="table " id="table_order">
+            <thead>
+                <tr>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Total Products</th>
+                    <th scope="col">Total Orders</th>
+                    <th scope="col">Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if(groupedOrders && groupedOrders.length > 0) { %>
+                    <% groupedOrders.forEach(order => { %>
+                        <tr>
+                            <td><%= order.customer %></td>
+                            <td><%= order.totalProducts %></td>
+                            <td><%= order.totalOrders %></td>
+                            <td><%= order.totalPrice %></td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="4">No orders available</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>

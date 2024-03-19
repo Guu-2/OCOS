@@ -1,0 +1,45 @@
+<button type="button" id="btn_add_staff" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addstaffModal">
+    ADD NEW STAFF
+</button>
+<% var liststaff=data.liststaff %>
+
+<ul class="list-group list-group-flush" id="list_staff">
+    <% if (liststaff.length> 0) { %>
+        <% liststaff.forEach((staff)=> { %>
+            <li class="list-group-item d-flex justify-content-between align-items-center"
+                onclick="getprofilebyId('<%=staff._id.toString() %>')">
+                <div class="account_avatar">
+                    <img src="<%=staff.profilePicture%>" alt="err">
+                </div>
+                <div class="account_name">
+                    <%=staff.fullName%> <strong>( <%=staff.role%> )</strong>
+                </div>
+                <div class="account_status">
+                    <span class="badge bg-primary rounded-pill">
+                        <%=staff.status%>
+                    </span>
+                </div>
+
+                <div class="history_login">
+                    <span class="badge bg-primary rounded-pill">
+                        <%=staff.lastLogin%>
+                    </span>
+                </div>
+
+
+                <!-- <div class="control">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <i class="fa-solid fa-trash"></i>
+                </div> -->
+            </li>
+            <% }); %>
+    <% } %>
+
+    <h2 id="list_staff_empty">
+        <% if(liststaff.length==0) { %>
+            No users exist
+            <% }; %>
+    </h2>
+
+
+</ul>

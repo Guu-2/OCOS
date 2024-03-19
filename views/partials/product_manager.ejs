@@ -1,0 +1,101 @@
+<% var product=data.product_details %>
+<button type="button" class="btn btn-secondary" onclick="callback('/admin/product')">
+    BACK
+</button>
+
+    <% if (product) { %>
+        <div class="container-fluid light-style flex-grow-1 container-p-y product_page">
+            <div class="card">
+                <div class="row no-gutters row-bordered row-border-light">
+                    <div class="col col-lg-4 col-12 pt-0">
+                        <div class="card-body">
+                            <div class="list-group list-group-flush product-settings-links">
+                                <div class="product_pic media align-items-center">
+                                    <img src='../../<%= product.productPicture%>' alt class="d-block ui-w-80">
+                                    <div class="product_name">
+                                        <%= product.productName%>
+                                    </div>
+                                </div>
+                                <div class="alert alert-success d-flex align-items-center" role="alert">
+                                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                        aria-label="Success:">
+                                        <use xlink:href="#check-circle-fill" />
+                                    </svg>
+                                    <div>
+                                        Inorder status: <strong>
+                                            <%= product.inOrders %>
+                                        </strong>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>  
+                    </div>
+                    <!-- //TODO: sửa lại thành form -->
+                    <div class="col col-lg-8 col-12">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary mb-3" id="editRequest"
+                                onclick="toggleEdit('<%=product._id.toString() %>')">Edit</button>&nbsp;
+                            <button type="button" class="btn btn-danger mb-3" id="deleteRequest"
+                                onclick="deleteproduct('<%=product._id.toString() %>')">Delete</button>&nbsp;
+
+                            <form enctype="multipart/form-data" class="row g-3">
+                                <label for="customFile" class="form-label">Change picture</label>
+                                <div class="col-auto mb-3">
+
+                                    <input class="form-control" type="file" class="custom-file-input" id="customFile">
+                                </div>
+                                <div class="col-auto mb-3">
+                                    <button id="upload" class="btn btn-success px-5 mb-3"
+                                        onclick="uploadFiles(event , '/upload/product')">Upload</button>
+                                </div>
+                                <div>
+                                    <div class="progress mb-3" style="display: none;">
+                                        <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
+                                            aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                            <form method="POST">
+                                <div class="mb-3">
+                                    <label for="productname" class="col-form-label">Product name:</label>
+                                    <input type="text" class="form-control" id="productname" name="productname" value="<%=product.productName %>" disabled >
+                                </div>
+                                <div class="mb-3">
+                                    <label for="importprice" class="col-form-label">Import Price:</label>
+                                    <input type="text" class="form-control" id="importprice" name="importprice"  value="<%=product.importPrice %>" disabled>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="retailprice" class="col-form-label">Retail Price:</label>
+                                    <input type="text" class="form-control" id="retailprice" name="retailprice" value="<%=product.retailPrice %>" disabled>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="inventory" class="col-form-label">Inventory:</label>
+                                    <input type="number" class="form-control" id="inventory" name="inventory" value="<%=product.inventory%>" disabled>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="category" id="phone"
+                                            value="phone" <% if (product.category==="phone") { %>checked<%}%> disabled>
+                                        <label class="form-check-label" for="option1"  >Phone</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="category" id="accessories"
+                                            value="accessories" <% if (product.category==="accessories") { %>checked<%}%> disabled>
+                                        <label class="form-check-label" for="option2" >Accessories</label>
+                                    </div>
+                                </div>
+                            </form>
+                            <hr class="border-light m-0">
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    <% } %>
