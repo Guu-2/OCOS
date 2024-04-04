@@ -1,17 +1,41 @@
 @import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Poppins:ital,wght@0,300;0,700;1,400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
 
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inconsolata', monospace;
-    font-family: 'Poppins', sans-serif;
-
-}
-
-
+/* Fonts */
+:root {
+    --default-font: "Open Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --heading-font: "Raleway", sans-serif;
+    --nav-font: "Poppins", sans-serif;
+  }
+  
+  /* Global Colors */
+  :root {
+    --background-color: #ffffff;
+    --background-color-rgb: 255, 255, 255;
+    --default-color: #444444;
+    --default-color-rgb: 68, 68, 68;
+    --heading-color: #37423b;
+    --heading-color-rgb: 55, 66, 59;
+    --accent-color: #5fcf80;
+    --accent-color-rgb: 95, 207, 128;
+    --contrast-color: #ffffff;
+    --contrast-color-rgb: 255, 255, 255;
+  }
+  
+  /* Nav Menu Colors */
+  :root {
+    --nav-color: #272828;
+    --nav-hover-color: #5fcf80;
+    --nav-dropdown-color: #272828;
+    --nav-dropdown-hover-color: #5fcf80;
+    --nav-dropdown-background-color: #ffffff;
+  }
+  
+  /* Smooth scroll */
+  :root {
+    scroll-behavior: smooth;
+  }
+  
 
 :root {
     /* color */
@@ -48,287 +72,21 @@ body .background-container {
 }
 
 
-/*TODO: login page */
 
-.login_page .home::before {
-    content: "";
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    z-index: 100;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.5s ease-out;
 
-}
 
-.login_page .home.show::before {
-    opacity: 1;
-    pointer-events: auto;
 
-}
+/*TODO:  SIDEBARS  */
 
 
 
-.login_page #index {
-    position: absolute;
-    margin: 0;
-    padding: 0;
-    right: 50%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
 
-}
-
-
-.login_page #index .button-container {
-    text-align: center;
-    margin-top: 20px;
-}
-
-.login_page #index .button {
-    background-color: #ffffff;
-    border: none;
-    padding: 10px 20px;
-    font-size: 20px;
-    cursor: pointer;
-    color: lightcoral;
-    font-weight: bold;
-    border-radius: 8px;
-
-}
-
-.login_page #index h1 {
-    text-align: center;
-    color: #ffffff;
-    font-style: oblique;
-    font-weight: 700;
-}
-
-
-.login_page .form_container {
-
-    position: absolute;
-    top: 50%;
-    left: 70%;
-    transform: translate(-50%, -50%) scale(1.2);
-    z-index: 101;
-    background: #fff;
-    max-width: 320px;
-    width: 100%;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.4s ease-out;
-}
-
-.login_page .home.show .form_container {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translate(-50%, -50%) scale(1);
-}
-
-.login_page .form_container .close_form {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    color: black;
-    font-size: 22px;
-    opacity: 0.7;
-    cursor: pointer;
-}
-
-.login_page .form_container h2 {
-
-    color: lightcoral;
-    font-weight: bold;
-    font-size: 20px;
-    text-align: center;
-
-}
-
-.login_page .form_container .input_box {
-
-    position: relative;
-    width: 100%;
-    height: 40px;
-    margin-top: 30px;
-
-
-}
-
-.login_page .form_container .input_box input {
-
-    width: 100%;
-    height: 100%;
-    border: none;
-    outline: none;
-    padding: 0px 30px;
-    border-bottom: 2px solid #aaaaaa;
-
-}
-
-.login_page .form_container .input_box input:focus {
-    border-color: #b93dad;
-}
-
-.login_page .form_container .input_box i {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 20px;
-
-
-
-}
-
-
-
-.login_page .form_container .input_box i.username,
-.login_page .form_container .input_box i.password {
-
-    left: 0px;
-    color: rgba(89, 21, 194, 255);
-
-}
-
-.login_page .form_container .input_box input:focus~i.username,
-.login_page .form_container .input_box input:focus~i.password {
-    color: #b93dad;
-
-}
-
-.login_page .form_container .input_box i.password_hidden {
-    right: 0px;
-}
-
-.login_page .form_container button.login {
-    background: #b93dad;
-    margin-top: 30px;
-    width: 100%;
-    padding: 10px 0px;
-    border-radius: 10px;
-    border: none;
-
-    color: #ffffff;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-/*TODO:  SIDEBARS & ORDERBARS */
-
-
-/*Tạo nút oder khi click vào hiện trang tính bên phải*/
-/* Tạo một vùng bên phải
-  thực hiện tương tự sidebar khi click thêm class open và hiển thị nó reponsive */
-
-
-.order_card {
-    position: fixed;
-    right: 5px;
-    top: 5px;
-    bottom: 5px;
-    border-radius: 5px;
-
-    width: 30px;
-    background-color: transparent;
-
-    z-index: 99;
-    transition: all 0.5s ease;
-    color: var(--text-dark-color);
-
-}
-
-.order_card .btn_order {
-    position: absolute;
-    color: var(--icon-dark-color);
-    top: 33px;
-    right: 9px;
-    margin: 0;
-    padding: 0;
-    transform: translateY(-50%);
-
-    /* border: 2px solid black; */
-    /* font-size: 25px; */
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.5s ease;
-
-
-}
-
-.order_card .btn_order i {
-    transform: scale(1.6);
-    /* border: 2px solid red; */
-}
-
-/* .order_card.open  .btn_order{
-    text-align: right;
-  } */
-
-.order_card .card_product {
-    width: 100%;
-    height: 100%;
-    border-radius: 5px;
-
-    opacity: 0;
-    transition: all 0.5s ease;
-
-    background-color: transparent;
-
-}
-
-.order_card.open .card_product {
-    opacity: 1;
-}
-
-
-
-.order_card .card_product .title {
-    /* border-radius: 25px; */
-    /* background-color: lightgoldenrodyellow;
-    border: 2px solid black;
-    padding: 10px; */
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    /* border: 2px solid black; */
-    border-radius: 8px 8px 0px 0px;
-    background-color: var(--sidebar-light-color);
-}
-
-.order_card .card_product .title h3 {
-
-    font-style: oblique;
-    font-weight: bold;
-
-}
-
-.order_card .card_product .title .edit_title i {
-
-    transform: scale(1.6);
-    margin-left: 15px;
-    color: var(--icon-dark-color);
-
-
-}
-
-
-
-
-
-.order_card .card_product .order_content ul,
-.home-section .fill_content ul {
+/* //TODO sửa lại ul li tùy page */
+/* .home-section .fill_content ul {
 
     width: 100%;
     height: calc(100vh - 270px);
-    /* border: 2px solid rgb(1, 255, 22); */
+    border: 2px solid rgb(1, 255, 22);
     overflow: auto;
     padding: 10px;
     border-radius: 0px 0px 8px 8px;
@@ -337,8 +95,6 @@ body .background-container {
 
 }
 
-
-.order_card .card_product .order_content li,
 .home-section .fill_content li {
 
     width: 100%;
@@ -355,7 +111,6 @@ body .background-container {
 }
 
 
-.order_card .card_product .order_content li:hover,
 .home-section .fill_content li:hover {
 
     background-color: bisque;
@@ -363,72 +118,16 @@ body .background-container {
 
 }
 
-.order_card .card_product .order_content li:hover i,
 .home-section .fill_content li:hover i {
 
     color: var(--icon-dark-color);
 
-}
-
-
-
-
-.order_card.open .card_product .total {
-
-    position: absolute;
-    height: 100px;
-    width: 350px;
-    right: 0;
-    bottom: 80px;
-    /* border: 2px solid red; */
-    display: flex;
-    align-items: center;
-    border-radius: 8px;
-    padding: 10px;
-    margin: 5px 0px;
-    background-color: var(--sidebar-light-color);
-
-}
-
-.order_card.open .card_product .total h3 {
-    font-style: oblique;
-    font-weight: bold;
-}
-
-
-
-.order_card.open .card_product .order_action {
-    position: absolute;
-    height: 100px;
-    width: 350px;
-    right: 0;
-    bottom: 0px;
-    border-radius: 8px;
-    padding: 0px;
-    background-color: transparent;
-}
-
-
-.order_card.open .card_product .order_action button {
-
-    width: 100%;
-    margin: 2.5px 0px;
-    padding: 12px 15px;
-
-
-    font-style: oblique;
-    font-weight: bold;
-    font-size: 20px;
-}
-
-
-.order_card.open {
-    border-radius: 8px;
-    width: 350px;
-}
+} */
 
 
 /* //////////////////////////////////////////////////////////////// */
+/* TODO: sidebar */
+
 .sidebar {
     position: fixed;
     left: 5px;
@@ -796,7 +495,7 @@ body .background-container {
     left: 88px;
     right: 40px;
     bottom: 5px;
-    width: calc(100% - 88px - 40px);
+    width: calc(100% - 92px);
 
     z-index: 2;
     margin: 0;
@@ -817,13 +516,37 @@ body .background-container {
     margin: 0;
     /* padding: 10px; */
 
-
+    border: 2px solid blue;
     border-radius: 8px;
 
     background-color: transparent;
     /* transition: 0s; */
 }
 
+/* TODO search bar */
+
+
+.home-section .fill_content .seach_bar {
+    justify-content: center;
+    align-items: center;
+}
+
+.home-section .fill_content .seach_content {
+    border: 2px solid red;
+    max-width: 500px;
+}
+
+
+/* TODO cart shopping */
+.home-section .fill_content .cart_shopping {
+
+    margin-left: 30px;
+    text-align: center;
+    transform: scale(1.5);
+    border: 2px solid blue;
+
+
+}
 
 .home-section .fill_content .text {
 
@@ -849,7 +572,7 @@ body .background-container {
 
 .home-section.sidebar-open {
     left: 260px;
-    width: calc(100% - 260px - 40px);
+    width: calc(100% - 264px);
 }
 
 .home-section.order-open {
@@ -1089,7 +812,7 @@ ul#list_staff {
 #table_statistical tr:hover,
 #table_customer tr:hover,
 #table_history_purchase tr:hover,
-#table_details_order  tr:hover{
+#table_details_order tr:hover {
     color: var(--navlink-sidebar-light);
     background-color: var(--toggler-color-dark);
 }
@@ -1217,9 +940,346 @@ section#product_page {
     text-align: center;
 }
 
+/* TODO USER ( student , trainer) */
+/* #TODO COURSE PAGE*/
+#table_product {
+    border: 2px solid red;
+
+}
+
+#table_product .course-type {
+    border: 2px solid red;
+    margin-top: 25px;
+    padding: 8px;
+    padding-left: 0px;
+    font-style: normal;
+    font-weight: bold;
+    /* background-color: #CCD3CA;
+    border-radius: 0px 0px 7px 7px; */
+
+}
 
 
 
+.course-item .course-content {
+    border: 2px solid red;
+    padding: 8px;
+
+    background-color: #CCD3CA;
+    border-radius: 0px 0px 7px 7px;
+
+}
+
+
+
+.course-item .course-content .category {
+    border: 2px solid rgb(204, 255, 0);
+    font-style: normal;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 8px 5px;
+    background-color: #60cc84;
+
+}
+
+.course-item .course-content .price {
+    font-style: normal;
+    font-weight: bold;
+    font-size: x-large;
+
+}
+
+.course-item .course-content .course-name {
+    border: 2px solid rgb(47, 0, 255);
+    cursor: pointer;
+    font-style: normal;
+    font-weight: bold;
+
+}
+
+
+.course-item .course-content .description {
+    border: 2px solid rgb(47, 0, 255);
+    /* overflow: hidden; */
+
+}
+
+.course-item .course-content .trainer {
+    border: 2px solid rgb(47, 0, 255);
+
+}
+
+.course-item .course-content .trainer .trainer-profile img {
+    border: 2px solid red;
+    width: 100%;
+    max-width: 50px;
+    height: 100%;
+    max-height: 50px;
+    border-radius: 50%;
+
+
+}
+
+.course-item .course-content .trainer .trainer-name {
+    padding-left: 5px;
+    font-style: normal;
+    font-weight: bold;
+    border: 2px solid red;
+    margin-bottom: 0px;
+
+
+}
+
+
+#callback_btn{
+    border: 2px solid red;
+    margin: 10px
+
+}
+
+
+/* TODO COURSE DETAIL PAGE */
+
+div.course_detail_page {
+    border: 2px solid red;
+    /* margin-top: 15px; */
+}
+
+div.course_detail_page .video_trailer #trailer_link {
+    border: 2px solid rgb(0, 0, 2);
+    min-width: 500px;
+    min-height: 375px;
+
+}
+
+div.course_detail_page .course_info {
+    border: 2px solid blue;
+    padding: 10px;
+}
+
+div.course_detail_page .course_info p {
+    font-weight: bold;
+}
+
+div.course_detail_page .tab_section {
+    border: 2px solid blue;
+    padding: 10px;
+}
+
+/*--------------------------------------------------------------
+# Tabs Section
+--------------------------------------------------------------*/
+.tabs {
+    padding-top: 30;
+}
+
+.tabs .nav-tabs {
+    border: 0;
+}
+
+.tabs .nav-link {
+    border: 0;
+    padding: 12px 15px 12px 0;
+    transition: 0.3s;
+    color: var(--default-color);
+    border-radius: 0;
+    border-right: 2px solid rgba(var(--default-color-rgb), 0.1);
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.tabs .nav-link:hover {
+    color: var(--accent-color);
+}
+
+.tabs .nav-link.active {
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.tabs .tab-pane.active {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.tabs .details h3 {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.tabs .details p {
+    color: rgba(var(--default-color-rgb), 0.8);
+}
+
+.tabs .details p:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 992px) {
+    .tabs .nav-link {
+        border: 0;
+        padding: 15px;
+    }
+
+    .tabs .nav-link.active {
+        color: var(--accent-color);
+        background: var(--accent-color);
+    }
+}
+
+/* TODO LECTURE COURSE PAGE */
+
+div.lecture_page {
+    border: 2px solid black;
+    
+}
+
+div.lecture_page .lecture_card{
+    border: 2px solid red;
+}
+
+div.lecture_page .lecture_video{
+    border: 2px solid blue;
+    width: 1500px;
+    max-width: 100%;
+    height: 750px;
+    max-height: 100%;
+}
+
+div.lecture_page .lecture_des{
+    border: 2px solid blue;
+}
+div.lecture_page .panel_content{
+    border: 2px solid blue;
+}
+
+div.nav_lecture .note_content,
+div.lecture_page .take_note {
+    border: 2px solid red;
+    margin: 10px;
+}
+
+
+
+div.nav_lecture .curr_note ,
+div.lecture_page .take_note .new_note,
+div.lecture_page .menu_bar{
+    transform: scale(1.3);
+    margin: 5px;
+}
+
+/* //TODO menu lecture */
+div.lecture_page .menu_icon{
+    
+    position: fixed;
+    bottom: 20px; /* Khoảng cách từ dưới lên */
+    right: 20px; /* Khoảng cách từ phải sang */
+    padding: 12px;
+    background-color: #4CAF50; /* Màu nền nút */
+    color: white; /* Màu chữ nút */
+    /* border: none; */
+    /* border-radius: 4px; */
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid #4CAF50;
+    transition: all 0.5s ease;
+}
+
+/* //LƯU Ý VỊ TRÍ */
+.home-section.offcanvas-open .menu_icon {
+    transform: translateX(-350px); /* Điều chỉnh giá trị này để phù hợp với kích thước của Offcanvas */
+}
+
+.home-section.offcanvas-open {
+    width: calc(100% - 447px);
+    transition: all 0.5s ease;
+}
+
+.home-section .panel_content #section_bar{
+    margin: 5px;
+    border-radius: 8px; 
+    width: 100%;
+    min-width: 20px;
+    max-width: 350px;
+}
+
+/* TODO COURSE SLIDE */
+/* html, */
+div#course_slide {
+    position: relative;
+    height: 100%;
+}
+
+div#course_slide {
+    background-color: transparent;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    color: #000;
+    margin: 0;
+    padding: 0;
+}
+
+
+div#course_slide .swiper {
+    width: 100%;
+    height: 100%;
+    border: 2px solid red;
+    padding: 15px;
+
+
+}
+
+
+
+
+div#course_slide .swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* tùy chỉnh sau */
+    height: 350px;
+    border-radius: 11px;
+}
+
+
+div#course_slide .swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+div#course_slide .swiper .swiper-button-next,
+div#course_slide .swiper .swiper-button-prev {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    transform: scale(0.7);
+    font-weight: bold;
+    padding: 30px;
+    color: lightcoral;
+    border: 5px solid rgb(218, 206, 206);
+}
+
+div#course_slide .swiper .swiper-button-next:hover,
+div#course_slide .swiper .swiper-button-prev:hover {
+
+    color: rgb(255, 255, 255);
+    background-color: lightcoral;
+    border: 5px solid lightcoral;
+}
+
+div#course_slide .swiper .swiper-pagination {
+    /* color: lightcoral; */
+    margin: 15px;
+
+}
+
+
+/* //////////////////////////////////////////// */
 /* FOR DARK MODE */
 body.dark .switch::before {
     left: 24px;
@@ -1238,19 +1298,19 @@ body.dark .background-container {
 }
 
 body.dark {
-    .order_card {
+    /* .order_card {
 
         color: var(--text-light-color);
 
-    }
+    } */
 
-    .order_card .btn_order {
+    /* .order_card .btn_order {
 
         color: var(--icon-light-color);
 
 
-    }
-
+    } */
+    /* 
     .order_card .card_product {
 
         background-color: transparent;
@@ -1269,11 +1329,11 @@ body.dark {
         color: var(--icon-light-color);
 
 
-    }
+    } */
 
 
 
-    .order_card .card_product .order_content ul,
+    /* .order_card .card_product .order_content ul, */
     .home-section .fill_content ul {
 
 
@@ -1284,7 +1344,7 @@ body.dark {
     }
 
 
-    .order_card .card_product .order_content li,
+    /* .order_card .card_product .order_content li, */
     .home-section .fill_content li {
 
         background-color: var(--navlink-sidebar-dark);
@@ -1292,7 +1352,7 @@ body.dark {
 
     }
 
-    .order_card .card_product .order_content li:hover,
+    /* .order_card .card_product .order_content li:hover, */
     .home-section .fill_content li:hover {
 
         background-color: bisque;
@@ -1301,8 +1361,14 @@ body.dark {
 
     }
 
-    .order_card .card_product .order_content li i,
+    /* .order_card .card_product .order_content li i, */
     .home-section .fill_content li i {
+
+        color: var(--icon-light-color);
+
+    }
+
+    .home-section .fill_content i {
 
         color: var(--icon-light-color);
 
@@ -1310,12 +1376,12 @@ body.dark {
 
 
 
-
+    /* 
     .order_card.open .card_product .total {
 
         background-color: var(--sidebar-dark-color);
 
-    }
+    } */
 
 
 
@@ -1474,8 +1540,7 @@ body.dark {
 
     .profile_page,
     .product_page,
-    .statistic_page
-    {
+    .statistic_page {
         color: var(--text-light-color);
 
     }
@@ -1561,30 +1626,18 @@ body.dark {
         color: var(--text-light-color)
     }
 
+    .course-item .course-content {
+
+        background-color: #9DBC98;
+
+
+    }
+
 
 
 }
 
 
-
-
-/* 
-.admin .home-section.sidebar-open {
-    left: 250px;
-    width: calc(100% - 250px);
-}
-
-
-
-.admin .home-section {
-
-    top: 5px;
-    left: 78px;
-    right: 0px;
-    bottom: 5px;
-    width: calc(100% - 78px);
-
-} */
 
 
 

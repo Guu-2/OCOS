@@ -4,16 +4,19 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Phone Store</title>
+
 
     <%- include('../partials/css-library') %>
 
     <link rel="stylesheet" href="../../css/style.css" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title>EduSphere</title>
+    <link rel="icon" type="image/svg+xml" href="../../images/logo.svg">
 </head>
 
-<body class="staff">
+<body class="main_body">
     <header></header>
     <div class="background-container"></div>
     <main>
@@ -23,9 +26,10 @@
 
             <%- include('../partials/sidebar') %>
 
-            <% if(account.status != 'intial'){ %>
-                <%- include('../partials/ordercard') %>
-            <% } %>
+            <%# if(account.status != 'intial'){ %>
+                <%#- include('../partials/ordercard') %>
+            <%# } %>
+
             <section class="home-section">
                 <div class="fill_content">
             
@@ -51,7 +55,9 @@
 
     <script src="../../javascripts/main.js"></script>
 
-    
+    <script src="../../javascripts/slide.js"></script>
+
+    <script src="../../javascripts/lecture.js"></script> 
 </body>
 
 </html>

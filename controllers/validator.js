@@ -8,6 +8,16 @@ let validateLogin = () => {
     ];
 }
 
+let validateSignup = () => {
+  return [
+      check('username', 'username does not Empty' ).not().isEmpty(),
+      check('email', 'email does not Empty' ).not().isEmpty(),
+      check('email', 'Email must be valid' ).isEmail(),
+      check('password','password does not Empty').not().isEmpty(),
+      check('account_type', 'Invalid Account type').not().isIn(['student', 'instructor']),
+  ];
+}
+
 
 let validateInfoStaff = () => {
     return [
@@ -74,6 +84,7 @@ let validateChangePassword = () => {
 
 var validate = {
     validateLogin: validateLogin,
+    validateSignup: validateSignup,
     validateInfoStaff:validateInfoStaff,
     validateInfoProduct:validateInfoProduct,
     validateChangeFullname: validateChangeFullname,

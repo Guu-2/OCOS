@@ -1,5 +1,5 @@
 link video demo:
-https://drive.google.com/drive/folders/1JICUnSaSuPL-Dv6oS6Ko3eGiUjoG8bhS?usp=sharing
+
 
 Account admmin default:
 Username: admin

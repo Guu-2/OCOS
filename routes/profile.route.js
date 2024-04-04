@@ -18,22 +18,12 @@ router.get('/', (req, res) => {
   //TODO: fix lỗi delay
   .get('/profile', authentication, async function (req, res, next) {
     const partial = 'partials/profile';
-    if (req.session.status == 'intial') {
-      var endpoint = '/home/intial';
-    } else {
-      var endpoint = '/home/profile';
-    }
-
-    if (req.session.role === "admin") {
-      var layout = 'layouts/admin';
-    }
-    else {
-      var layout = 'layouts/main';
-    }
-
+    // var endpoint = '/home/profile';
+    var layout = 'layouts/main';
+    
     req.partial_path = partial
     req.layout_path = layout
-    req.endpoint = endpoint
+    // req.endpoint = endpoint
     await userController.getpage(req, res, next);
 
   })
@@ -42,7 +32,7 @@ router.get('/', (req, res) => {
   .get('/profile/:id', authentication, async function (req, res, next) {
     console.log(req.params.id)
     const partial = 'partials/profile_manager';
-    const layout = 'layouts/admin';
+    const layout = 'layouts/main';
     req.partial_path = partial
     req.layout_path = layout
     req.page_data = {

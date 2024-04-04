@@ -17,7 +17,6 @@ router.get('/' , (req, res) => {
 
 //TODO: Chia authRoute và check đăng nhập trong dtb
 router.get('/login', function (req, res) {
-
     // Lấy flash message từ session
     var flashMessage = req.session.flash;
     if(flashMessage)
@@ -31,11 +30,9 @@ router.get('/login', function (req, res) {
     res.render('pages/login', { layout: false, flashMessage });
 
 })
-
-//TODO: THIẾT KẾ LẠI FORM LOGIN
-router.post('/login' , validate.validateLogin() ,userController.login)
-
-router.post('/logout', authentication,  userController.logout)
+  .post('/login' , validate.validateLogin() ,userController.login)
+  .post('/signup' , validate.validateSignup() ,userController.signup)
+  .post('/logout', authentication,  userController.logout)
 
 module.exports = router;
 

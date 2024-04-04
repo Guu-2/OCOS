@@ -13,16 +13,22 @@ const { validationResult } = require('express-validator');
 const { stat } = require('fs');
 
 const admin_feature_list = [
-  { access: "Staff Manager", icon: "<i class='bx bx-grid-alt'></i>" },
-  { access: "Product Manager", icon: "<i class='bx bx-grid-alt'></i>" },
-  { access: "Customer Manager", icon: "<i class='bx bx-grid-alt'></i>" },
+  { access: "Student", icon: "<i class='bx bx-grid-alt'></i>" },
+  { access: "Instructor", icon: "<i class='fa-solid fa-bars-progress'></i>" },
+  { access: "Course Manager", icon: "<i class='fa-solid fa-list'></i>" },
   { access: "Transaction", icon: "<i class='fa-solid fa-cart-plus'></i>" },
   { access: "Statistical", icon: "<i class='fa-solid fa-signal'></i>" }
 ]
 
-const staff_feature_list = [
-  { access: "New Order", icon: "<i class='fa-solid fa-cart-plus'></i>" },
-  { access: "Statistical", icon: "<i class='fa-solid fa-signal'></i>" }
+const student_feature_list = [
+  { access: "Course", icon: "<i class='fa-solid fa-graduation-cap'></i>" },
+  { access: "Subscribed", icon: "<i class='fa-solid fa-square-check'></i>" }
+]
+
+
+const instructor_feature_list = [
+  { access: "Course", icon: "<i class='fa-solid fa-graduation-cap'></i>" },
+  { access: "Exercise", icon: "<i class='fa-solid fa-pen-to-square'></i>" }
 ]
 
 
@@ -48,7 +54,6 @@ class UserController {
             role: 'admin',
             access: admin_feature_list,
             profilePicture: '../images/dejault_avatar.png',
-            status: 'active',
             lastLogin: currentTime,
           });
           await defaultAdmin.save();
@@ -69,11 +74,12 @@ class UserController {
 
 
   async login(req, res, next) {
+    // TODO: thêm xử lý đăng nhập khi đăng ký bên ngoài 
+    // trường hợp không phải admin tạo
     console.log("LOGIN : ")
     try {
-      req.session.admin_feature = admin_feature_list;
-      req.session.staff_feature = staff_feature_list;
-
+      // req.session.admin_feature = admin_feature_list;
+      // req.session.staff_feature = student_feature_list;
 
       // Kiểm tra thông tin đăng nhập và xác thực
       // console.log("HERE");
@@ -105,22 +111,15 @@ class UserController {
             req.session.account = find._id.toString();
             req.session.role = find.role
             req.session.access = find.access
-            req.session.status = find.status
-            if (find.status === 'inactive') {
-              var state = { status: 'warning', message: 'Please login by clicking on the link in your email' }
-            }
-            else if (find.status === 'intial') {
-              var state = { status: 'success', message: 'Firsttime please change password' }
 
-            } else {
 
-              console.log(req.session.status)
+            console.log(req.session.status)
 
-              const token = jwt.sign({ accountId: find._id.toString() }, process.env.JWT_SECRET, { expiresIn: '30d' });
-              res.cookie("remember", token, { maxAge: 30 * 24 * 60 * 60 * 1000 }); // Lưu cookie trong 30 ngày
+            const token = jwt.sign({ accountId: find._id.toString() }, process.env.JWT_SECRET, { expiresIn: '30d' });
+            res.cookie("remember", token, { maxAge: 30 * 24 * 60 * 60 * 1000 }); // Lưu cookie trong 30 ngày
 
-              var state = { status: 'success', message: 'Login successful' }
-            }
+            var state = { status: 'success', message: 'Login successful' }
+
 
 
           } else {
@@ -131,17 +130,12 @@ class UserController {
 
         if (state.status == "success") {
           req.session.loggedIn = true;
-          if (req.session.role == "admin" || req.session.role == "manager") {
+          if (req.session.role == "admin") {
             req.session.isAdmin = true;
-            var goto = '/admin/staff'
+            var goto = '/admin/student'
           }
           else {
-            if (find.status === 'intial') {
-              var goto = '/home/intial'
-            }
-            else {
-              var goto = '/home/order'
-            }
+            var goto = '/home'
           }
         }
         else {
@@ -155,6 +149,7 @@ class UserController {
           message: state.message,
         };
         res.json({ status: state.status, message: state.message, redirect: goto });
+        // res.redirect(goto)
 
       }
 
@@ -166,10 +161,95 @@ class UserController {
   }
 
 
-  async getliststaff() {
+  async signup(req, res, next) {
+    // TODO: thêm xử lý đăng nhập khi đăng ký bên ngoài 
+    // trường hợp không phải admin tạo
+    console.log("SIGN UP : ")
+    try {
+      const errors = validationResult(req);
+      // console.log(errors);
+
+      if (!errors.isEmpty()) {
+        var err_msg = "";
+        var list_err = errors.array();
+        list_err.forEach(err => {
+          err_msg += err.msg + " , ";
+        });
+
+        console.log(err_msg);
+
+        //CƠ CHẾ CỦA VALIDATOR KHÔNG CHO ĐI TIẾP
+        var state = { status: 'warning', message: err_msg };
+        res.json({ status: state.status, message: state.message , redirect: ""});
+      } else {
+        const { username , email, password , accountType } = req.body;
+        const currentTime = moment().format("HH:mm | DD/MM/YYYY");
+
+        if(accountType == "student"){
+          var access = student_feature_list;
+        }
+        if(accountType == "instructor"){
+          var access = instructor_feature_list;
+        }
+
+  
+
+        console.log(username , email, password , accountType);
+        const find = await User.findOne({ email: email });
+        if (!find) {
+          const password_hash = await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT_ROUND));
+          // console.log(defaultpassword);
+          const newAccount = new User({
+            username: username,
+            // Trong thực tế, hãy sử dụng mã hóa mật khẩu bằng bcrypt hoặc một thư viện tương tự
+            password: password_hash,
+            email: email,
+            fullName: email.split("@")[0],
+            role: accountType,
+            access: access,
+            profilePicture: '../images/dejault_avatar.png',
+            lastLogin: currentTime,
+          });
+
+          // res.json({ added: true, status: "success", message: "Add staff successfully" });
+          await newAccount.save()
+            .then((savedAccount) => {
+              var goto = '/home'
+              // Lưu thành công
+              console.log('Account saved successfully:');
+              // Thực hiện các hành động tiếp theo ở đây
+
+              req.session.flash = {
+                type: "success",
+                intro: 'signup feature',
+                message: "Create account successfully, Login now !!!",
+              };
+              res.json({ status: "success", message: "Create account successfully, Login now !!!", redirect: goto});
+            }).catch((error) => {
+              // Xử lý lỗi nếu quá trình lưu không thành công
+              console.error('Error saving account:', error);
+              res.json({ status: "error", message: "Failed to add student", redirect: "" });
+            })
+        }
+        else {
+          // res.json({ added: true, status: "success", message: "Add staff successfully" });
+          res.json({ status: "warning", message: "Account already exists", redirect: "" });
+        }
+      }
+
+
+
+    } catch (error) {
+
+      next(error);
+    }
+  }
+
+
+  async getliststudent() {
     try {
 
-      const find = await User.find({ $or: [{ role: 'staff' }, { role: 'manager' }] });
+      const find = await User.find({ $or: [{ role: 'student' }] });
       // console.log(find);
 
       return find
@@ -178,6 +258,17 @@ class UserController {
     }
   }
 
+  async getlistinstructor() {
+    try {
+
+      const find = await User.find({ $or: [{ role: 'instructor' }] });
+      // console.log(find);
+
+      return find
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
 
   async addnewstaff(req, res, next) {
@@ -280,9 +371,9 @@ class UserController {
 
       // console.log(partial, layout);
       // console.log(req.session.account)
-      const verifyaccess = await this.verifyAccess(req.session.account);
+      // const verifyaccess = await this.verifyAccess(req.session.account);
       const account = await this.getAccount(req.session.account)
-      if(account.lock){
+      if (account.lock) {
         var state = { status: 'warning', message: 'Account has been locked' };
         req.session.flash = {
           type: state.status,
@@ -291,7 +382,7 @@ class UserController {
         };
         res.redirect("/login")
       }
-      else if (verifyaccess) {
+      else{
         const sidebar = req.session.access;
 
         //TODO: chỗ này tùy chỉnh tùy theo page
@@ -307,22 +398,6 @@ class UserController {
 
         console.log("data: ", data_render)
         res.render(partial, { layout: layout, access: sidebar, account: account, flashMessage, data: data_render });
-      } else {
-
-        var state = { status: 'warning', message: 'Chưa có quyền truy cập vào tính năng này' };
-        var endpoint = req.endpoint
-        
-        //SAU KHI ĐÃ GỬI THÌ KHÔNG ĐƯỢC SET
-        req.session.flash = {
-          type: state.status,
-          intro: 'intial login feature',
-          message: state.message,
-        };
-        //TODO: chỉnh lại tùy biến cho truy cập vào access không được cấp quyền
-        if (endpoint) {
-          res.redirect(endpoint);
-        }
-
       }
     } catch (error) {
       next(error);
@@ -374,22 +449,22 @@ class UserController {
     }
   }
 
-  async verifyAccess(accountID) {
-    console.log("Verify access of account: ")
-    try {
-      const find = await User.findById(accountID);
-      // console.log(find)
-      if (find) {
-        if (find.status === "intial") {
-          return false;
-        } else {
-          return true;
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  // async verifyAccess(accountID) {
+  //   console.log("Verify access of account: ")
+  //   try {
+  //     const find = await User.findById(accountID);
+  //     // console.log(find)
+  //     if (find) {
+  //       if (find.status === "intial") {
+  //         return false;
+  //       } else {
+  //         return true;
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
   async togglelockAccount(req, res, next) {
     console.log("Lock and Unlock account: ")
@@ -407,7 +482,7 @@ class UserController {
           var tmp = 'CLOSE';
         }
         await find.save(); // Lưu thay đổi
-        var state = { locked: true, status: "success", message: "Account lock status: " + tmp};
+        var state = { locked: true, status: "success", message: "Account lock status: " + tmp };
 
       }
       else {
@@ -481,68 +556,68 @@ class UserController {
     }
   }
 
-  async changeDefaultPassword(req, res, next) {
-    try {
-      const errors = validationResult(req);
+  // async changeDefaultPassword(req, res, next) {
+  //   try {
+  //     const errors = validationResult(req);
 
-      if (!errors.isEmpty()) {
-        var err_msg = "";
-        var list_err = errors.array();
-        list_err.forEach(err => {
-          err_msg += err.msg + " , ";
-        });
+  //     if (!errors.isEmpty()) {
+  //       var err_msg = "";
+  //       var list_err = errors.array();
+  //       list_err.forEach(err => {
+  //         err_msg += err.msg + " , ";
+  //       });
 
-        console.log(err_msg);
+  //       console.log(err_msg);
 
-        //CƠ CHẾ CỦA VALIDATOR KHÔNG CHO ĐI TIẾP
-        var state = { status: 'warning', message: err_msg };
-        res.json({ changed: false, status: state.status, message: state.message });
-      }
-      else {
-        const { newpass, renewpass } = req.body;
-        console.log(newpass, renewpass);
+  //       //CƠ CHẾ CỦA VALIDATOR KHÔNG CHO ĐI TIẾP
+  //       var state = { status: 'warning', message: err_msg };
+  //       res.json({ changed: false, status: state.status, message: state.message });
+  //     }
+  //     else {
+  //       const { newpass, renewpass } = req.body;
+  //       console.log(newpass, renewpass);
 
-        const find = await User.findById(req.session.account);
-        if (!find) {
-          var state = { status: 'warning', message: 'Account not found' }
-        }
-        else {
-          const newpassword = await bcrypt.hash(newpass, parseInt(process.env.BCRYPT_SALT_ROUND));
-          find.password = newpassword;
-          find.status = 'active'
-          await find.save(); // Lưu thay đổi
-          var state = { status: 'success', message: 'Change password successful' }
-        }
-        if (state.status == "success") {
-          // req.session.loggedIn = true;
-          if (req.session.role == "admin" || req.session.role == "manager") {
-            // req.session.isAdmin = true;
-            //TODO: xử lý cả cho manager không có staff acceess , hint tạo page mặc định cho từng layout
-            var goto = '/admin/staff'
-          }
-          else {
+  //       const find = await User.findById(req.session.account);
+  //       if (!find) {
+  //         var state = { status: 'warning', message: 'Account not found' }
+  //       }
+  //       else {
+  //         const newpassword = await bcrypt.hash(newpass, parseInt(process.env.BCRYPT_SALT_ROUND));
+  //         find.password = newpassword;
+  //         find.status = 'active'
+  //         await find.save(); // Lưu thay đổi
+  //         var state = { status: 'success', message: 'Change password successful' }
+  //       }
+  //       if (state.status == "success") {
+  //         // req.session.loggedIn = true;
+  //         if (req.session.role == "admin" || req.session.role == "manager") {
+  //           // req.session.isAdmin = true;
+  //           //TODO: xử lý cả cho manager không có staff acceess , hint tạo page mặc định cho từng layout
+  //           var goto = '/admin/staff'
+  //         }
+  //         else {
 
-            var goto = '/home/order'
+  //           var goto = '/home/order'
 
-          }
-        }
-        var state = { status: state.status, message: state.message, redirect: goto }
+  //         }
+  //       }
+  //       var state = { status: state.status, message: state.message, redirect: goto }
 
-        // Các xử lý khác sau khi đăng nhập thành công
-        // Đăng nhập thành công, tạo flash message
-        req.session.flash = {
-          type: state.status,
-          intro: 'login feature',
-          message: state.message,
-        };
-        res.json(state)
-        //TODO: sửa lại thay vì redirect dùng fetch api hiển thị flash
-      }
-    } catch (error) {
+  //       // Các xử lý khác sau khi đăng nhập thành công
+  //       // Đăng nhập thành công, tạo flash message
+  //       req.session.flash = {
+  //         type: state.status,
+  //         intro: 'login feature',
+  //         message: state.message,
+  //       };
+  //       res.json(state)
+  //       //TODO: sửa lại thay vì redirect dùng fetch api hiển thị flash
+  //     }
+  //   } catch (error) {
 
-      next(error);
-    }
-  }
+  //     next(error);
+  //   }
+  // }
   async changePassword(req, res, next) {
     try {
       const errors = validationResult(req);

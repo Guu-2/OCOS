@@ -1,6 +1,6 @@
 
 const adminRoute = require("./admin.route"),
-  staffRoute = require("./staff.route"),
+  userRoute = require("./user.route"),
   authRoute = require("./auth.route"),
   profileRoute = require("./profile.route"),
   fileRoute = require("./file.route");
@@ -19,10 +19,11 @@ const router = (app) => {
   //connect MongoDB
   app.use("/", authRoute)
   connect.connect();
+
   //TODO: sửa lại để check khi user click verify (gợi ý : check từng middleware) 
   app.use("/admin", authentication, isAdmin, adminRoute);
-  app.use('/home', authentication, staffRoute);
-  app.get('/verify', userControllers.verifyAccount);
+  app.use('/home', authentication, userRoute);
+  // app.get('/verify', userControllers.verifyAccount);
   app.use('/' , authentication , profileRoute);
   app.use('/' , authentication , fileRoute);
 
