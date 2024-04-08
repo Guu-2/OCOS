@@ -77,3 +77,39 @@ exports.sendMail = async (to, subject , url) => {
           }
     });
 }
+
+exports.sendMailResetPassword = async (option) => {
+    // const transporter = nodeMailer.createTransport({
+    //     host: process.env.EMAIL_HOST,
+    //     port: process.env.EMAIL_PORT,
+    //     auth: {
+    //         user: process.env.EMAIL_USER,
+    //         pass: process.env.EMAIL_PASS
+    //     }
+    // })
+
+    var smtpConfig = {
+        // host: process.env.EMAIL_HOST,
+        // port: 587,
+        // secure: false, // use SSL
+        // auth: {
+        //     user: process.env.EMAIL_USER,
+        //     pass: process.env.EMAIL_PASS
+        // }
+        service: 'Gmail',
+            auth: {
+                user: process.env.MAIL_USERNAME,
+                pass: process.env.MAIL_PASSWORD
+            },
+    };
+    var transporter = nodeMailer.createTransport(smtpConfig);
+
+    const emailOptions = {
+        from: 'EduSphere support<support@courxe.com>',
+        to: option.email,
+        subject: option.subject,
+        text: option.message
+    }
+
+    await transporter.sendMail(emailOptions)
+}

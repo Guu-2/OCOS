@@ -82,6 +82,11 @@ let validateChangePassword = () => {
   ];
 }
 
+const validateEmail = (email) => {
+  const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
+}
+
 var validate = {
     validateLogin: validateLogin,
     validateSignup: validateSignup,
@@ -90,7 +95,7 @@ var validate = {
     validateChangeFullname: validateChangeFullname,
     validateChangePassword: validateChangePassword,
     validateChangeDefaultPassword: validateChangeDefaultPassword,
-
+    validateEmail: validateEmail,
 
 };
 

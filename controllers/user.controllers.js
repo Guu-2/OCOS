@@ -1,7 +1,7 @@
 const User = require('../models/users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
+const crypto = require('crypto');
 const mailer = require('../utils/mailer')
 const moment = require('moment');
 
@@ -745,6 +745,115 @@ class UserController {
     }
   }
 
+  forgotPassword = async(req, res, next) => {
+    if (!validate.validateEmail(req.body.email)) {
+      req.session.flash = {
+        type: 'warning',
+        intro: 'Invalid email format',
+        message: 'Please enter a valid email address.',
+      };
+      return res.redirect("/forgot-password");
+    }
+
+    const user = await User.findOne({ email: req.body.email })
+    if (!user || user.role === 'admin') {
+      var state = { status: 'warning', message: 'User not found with this email!' };
+      req.session.flash = {
+        type: state.status,
+        intro: 'forgotpass feature',
+        message: state.message,
+      }
+      return res.redirect("/forgot-password")
+      // return res.status(404).json({
+      //   status: 'warning',
+      //   message: 'User not found with this email'
+      // });
+    }
+    const resetToken = user.createResetPasswordToken()
+
+    await user.save({ validateBeforeSave: false})
+
+    const resetUrl = `${req.protocol}://${req.get('host')}/reset-password/${resetToken}`
+    const message = `Forgot your password ? Paste this link to your browser\n\n`+
+                    `${resetUrl}\n\n` +
+                    `If you didn't forget your password, please ignore this email!\n`
+    
+    try {
+      await mailer.sendMailResetPassword({
+        email: user.email,
+        subject: 'Your password reset token (valid for 10 min)',
+        message: message
+      })
+
+      req.session.flash = {
+        type: 'success',
+        message: 'Token has been sent to your email! Please check your email to reset password.'
+      }
+      return res.redirect("/forgot-password");
+    } catch (err) {
+      user.password_reset_token = undefined
+      user.password_reset_expires = undefined
+      user.save({ validateBeforeSave: false })
+
+      console.error('Error during password reset process:', err);
+        // res.status(500).json({
+        //     status: 'error',
+        //     message: 'There was an error sending the email. Try again later!'
+        // });
+      var state = {
+        status: 'error',
+        message: 'There was an error while sending the email. Try again later!'
+      }
+      req.session.flash = {
+        type: state.status,
+        message: state.message
+      }
+      return res.redirect('redirect: "/forgot-password"');
+    }
+  }
+
+  async resetPassword(req, res, next) {
+    const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+    console.log(hashedToken)
+
+    const user = await User.findOne({
+      password_reset_token: hashedToken,
+      password_reset_expires: { $gt: Date.now() }
+    });
+  
+    if (!user) {
+      req.session.flash = {
+        type: 'warning',
+        message: 'Token is invalid or has expired. You can get a new one here!'
+      };
+      return res.redirect('/forgot-password');
+    }
+    // set new password
+    if (req.body.password !== req.body.confirmPassword) {
+      req.session.flash = {
+        type: 'warning',
+        message: 'Passwords do not match. Please try again!'
+      };
+      return res.redirect(`/reset-password/${req.params.token}`);
+    }
+
+    user.password = await bcrypt.hash(req.body.password, parseInt(process.env.BCRYPT_SALT_ROUND));
+    user.password_reset_token = undefined
+    user.password_reset_expires = undefined
+    user.passwordChangedAt = Date.now()
+    await user.save()
+
+    // log the user in, send JWT
+    const loginToken = jwt.sign({ accountId: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: '30d' });
+    res.cookie("remember", loginToken, { maxAge: 30 * 24 * 60 * 60 * 1000 })
+
+    req.session.flash = {
+      type: 'success',
+      message: 'Your password has been reset successfully. Please login with your new password.'
+    };
+  
+    return res.redirect('/login');
+  }
 }
 
 module.exports = new UserController();

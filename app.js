@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const session = require('express-session');
-
+const passport = require('passport');
 const expressLayouts = require('express-ejs-layouts');
 const app = express();
 
@@ -50,9 +50,8 @@ app.use(session({
   //session chỉ được lưu lại khi nó đã được khởi tạo
   saveUninitialized: false,
 }))
-
-
-
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/', function (req, res) {
   res.redirect('/login');

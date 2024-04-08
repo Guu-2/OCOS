@@ -42,7 +42,8 @@
         <% if (account) { %>
             <li class="profile" >
                 <div class="profile-details">
-                    <img src='../<%= account.profilePicture%>' alt="profileImg" />
+                    <!-- <img src='../<%= account.profilePicture%>' alt="profileImg" /> -->
+                    <img src='<%= account.profilePicture%>' alt="profileImg" />
                     <div class="name_job">
                         <div class="name"><%= account.fullName%></div>
                         <div class="job"><%= account.role%></div>

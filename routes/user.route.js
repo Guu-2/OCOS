@@ -9,7 +9,7 @@ const statisticControllers = require('../controllers/statistic.controllers')
 const { validate } = require('../controllers/validator');
 const { check } = require('express-validator');
 
-//TODO: Tạo page mặc định cho role staff
+//TODO: Tạo page mặc định cho role student
 router.get('/', function (req, res) {
   res.redirect('/home/course');
 })
