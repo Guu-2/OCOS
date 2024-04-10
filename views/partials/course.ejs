@@ -1,10 +1,5 @@
 <% var listproduct=data.listproduct %>
-    <% if (account.role==='admin' ) { %>
-        <button type="button" id="btn_add_product" class="btn btn-primary" data-bs-toggle="modal"
-            data-bs-target="#addproductModal">
-            ADD NEW PRODUCT
-        </button>
-    <% }else{ %>
+
         
         <div class="seach_bar d-flex">
             <div class="seach_content  input-group mb-3">
@@ -22,7 +17,7 @@
         </div>
 
 
-    <% } %>
+
 
         <!-- //TODO: tối ưu và chỉnh lại -->
         <%- include('../partials/course_slide') %>

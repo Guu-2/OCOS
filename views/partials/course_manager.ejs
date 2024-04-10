@@ -1,1 +1,40 @@
-<h1>tương tự student_manager nhưng là danh sách khóa học và có thể xóa khóa học + xem bình luận học viên </h1>
+<!-- <h1>tương tự student_manager nhưng là danh sách khóa học và có thể xóa khóa học + xem bình luận học viên </h1> -->
+
+<h2 class="title_admin_page">LIST COURSE</h2>
+<% var listcourse=data.listcourse %>
+
+<ul class="list-group list-group-flush" id="list_course">
+    <% if (listcourse.length> 0) { %>
+        <% listcourse.forEach((course)=> { %>
+            <li class="list-group-item d-flex justify-content-between align-items-center"
+                onclick="getprofilebyId('<%=course._id.toString() %>')">
+                <div class="account_avatar">
+                    <img src="<%=course.profilePicture%>" alt="err">
+                </div>
+                <div class="account_name">
+                    <%=course.fullName%> <strong>( <%=course.role%> )</strong>
+                </div>
+
+                <div class="history_login">
+                    <span class="badge bg-primary rounded-pill">
+                        <%=course.lastLogin%>
+                    </span>
+                </div>
+
+
+                <!-- <div class="control">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <i class="fa-solid fa-trash"></i>
+                </div> -->
+            </li>
+            <% }); %>
+    <% } %>
+
+    <h2 id="list_course_empty">
+        <% if(listcourse.length==0) { %>
+            No course exist
+        <% }; %>
+    </h2>
+
+
+</ul>

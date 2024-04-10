@@ -272,7 +272,6 @@ class UserController {
 
 
   async addnewstaff(req, res, next) {
-    console.log("ADD new staff : ")
     try {
 
 

@@ -14,7 +14,7 @@ router.get('/', function (req, res) {
   res.redirect('/home/course');
 })
   .get('/course', async function (req, res, next) {
-    const partial = 'partials/course';
+    const partial = 'partials/course_create';
     const layout = 'layouts/main';
 
     delete req.session.customer;
@@ -210,6 +210,51 @@ router.get('/', function (req, res) {
 
   // })
   // .post('/intial', validate.validateChangeDefaultPassword(),  userController.changeDefaultPassword);
+  .get('/about_us', async function (req, res, next) {
+    const partial = 'partials/about_us';
+    const layout = 'layouts/main';
+
+    delete req.session.customer;
+
+    req.partial_path = partial
+    req.layout_path = layout
+
+    await userController.getpage(req, res, next);
+  })
+  .get('/contact', async function (req, res, next) {
+    const partial = 'partials/contact';
+    const layout = 'layouts/main';
+
+    delete req.session.customer;
+
+    req.partial_path = partial
+    req.layout_path = layout
+
+    await userController.getpage(req, res, next);
+  })
+  .get('/terms_of_service', async function (req, res, next) {
+    const partial = 'partials/terms_of_service';
+    const layout = 'layouts/main';
+
+    delete req.session.customer;
+
+    req.partial_path = partial
+    req.layout_path = layout
+
+    await userController.getpage(req, res, next);
+  })
+  .get('/privacy', async function (req, res, next) {
+    const partial = 'partials/privacy';
+    const layout = 'layouts/main';
+
+    delete req.session.customer;
+
+    req.partial_path = partial
+    req.layout_path = layout
+
+    await userController.getpage(req, res, next);
+  })
+
 
 
 

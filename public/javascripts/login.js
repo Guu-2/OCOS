@@ -61,34 +61,40 @@ if (signup_form) {
     const usname = document.getElementById('sign_username').value;
     const email = document.getElementById('sign_email').value;
     const pass = document.getElementById('sign_password').value;
-    const accountTypeElement = document.querySelector('input[name="account_type"]:checked');
-    const accountType = accountTypeElement ? accountTypeElement.value : '';
-    const data = {
-      username: usname,
-      email: email,
-      password: pass,
-      accountType: accountType
-    };
-    console.log(data);
-
-    fetch("/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        if (data.status === "success") {
-          window.location.href = data.redirect;
-        } 
-        showflashmessage(data.status, data.message);
+    const confirm_pass = document.getElementById('sign_confirmpassword').value;
+    if(confirm_pass != pass){
+      showflashmessage("warning", "Password and Confirm password do not match");
+    }else{
+      const accountTypeElement = document.querySelector('input[name="account_type"]:checked');
+      const accountType = accountTypeElement ? accountTypeElement.value : '';
+      const data = {
+        username: usname,
+        email: email,
+        password: pass,
+        accountType: accountType
+      };
+      console.log(data);
+  
+      fetch("/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
       })
-      .catch(function (error) {
-        console.error("Error:", error);
-      });
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          if (data.status === "success") {
+            window.location.href = data.redirect;
+          } 
+          showflashmessage(data.status, data.message);
+        })
+        .catch(function (error) {
+          console.error("Error:", error);
+        });
+    }
+    
   });
 } else {
   console.error("err");
