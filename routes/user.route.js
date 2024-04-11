@@ -256,28 +256,6 @@ router.get('/', function (req, res) {
 
     await userController.getpage(req, res, next);
   })
-  .get('/terms_of_service', async function (req, res, next) {
-    const partial = 'partials/terms_of_service';
-    const layout = 'layouts/main';
-
-    delete req.session.customer;
-
-    req.partial_path = partial
-    req.layout_path = layout
-
-    await userController.getpage(req, res, next);
-  })
-  .get('/privacy', async function (req, res, next) {
-    const partial = 'partials/privacy';
-    const layout = 'layouts/main';
-
-    delete req.session.customer;
-
-    req.partial_path = partial
-    req.layout_path = layout
-
-    await userController.getpage(req, res, next);
-  })
 
 
 

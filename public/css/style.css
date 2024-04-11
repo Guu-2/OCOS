@@ -82,7 +82,7 @@ body .background-container {
 
 
 /* //TODO sửa lại ul li tùy page */
-#list_student  ul,
+#list_student ul,
 #list_instructor ul {
 
     width: 100%;
@@ -96,7 +96,7 @@ body .background-container {
 
 }
 
-#list_student  li,
+#list_student li,
 #list_instructor li {
 
     width: 100%;
@@ -113,7 +113,7 @@ body .background-container {
 }
 
 
-#list_student  li:hover,
+#list_student li:hover,
 #list_instructor li:hover {
 
     background-color: bisque;
@@ -121,7 +121,7 @@ body .background-container {
 
 }
 
-#list_student  li:hover i,
+#list_student li:hover i,
 #list_instructor li:hover i {
 
     color: var(--icon-dark-color);
@@ -732,7 +732,8 @@ body .background-container {
     margin: 10px;
 }
 
-ul#list_student , ul#list_instructor {
+ul#list_student,
+ul#list_instructor {
     transition: all 0.5s ease;
     /* border: 2px solid yellow;  */
     height: 100%;
@@ -743,7 +744,8 @@ ul#list_student , ul#list_instructor {
 
 
 
-#list_student .account_avatar img , #list_instructor .account_avatar img{
+#list_student .account_avatar img,
+#list_instructor .account_avatar img {
     /* border: 2px solid red; */
     width: 100%;
     height: 100%;
@@ -1041,7 +1043,7 @@ section#product_page {
 }
 
 /* TODO COURSE CREATE PAGE */
-div.my_create_course{
+div.my_create_course {
     border: 2px solid yellow;
 }
 
@@ -1293,6 +1295,258 @@ div#course_slide .swiper .swiper-pagination {
 }
 
 
+
+/*--------------------------------------------------------------
+# TODO:Contact Section
+--------------------------------------------------------------*/
+#contact_page {
+    padding-top: 8px;
+    padding-bottom: 40px;
+}
+
+#contact_page .info-item+.info-item {
+    margin-top: 40px;
+}
+
+#contact_page .info-item i {
+    color: var(--contrast-color);
+    background: var(--accent-color);
+    font-size: 20px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50px;
+    transition: all 0.3s ease-in-out;
+    margin-right: 15px;
+}
+
+#contact_page .info-item h3 {
+    padding: 0;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+#contact_page .info-item p {
+    padding: 0;
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+#contact_page .php-email-form {
+    height: 100%;
+}
+
+#contact_page .php-email-form .error-message {
+    display: none;
+    background: #df1529;
+    color: #ffffff;
+    text-align: left;
+    padding: 15px;
+    margin-bottom: 24px;
+    font-weight: 600;
+}
+
+#contact_page .php-email-form .sent-message {
+    display: none;
+    color: #ffffff;
+    background: #059652;
+    text-align: center;
+    padding: 15px;
+    margin-bottom: 24px;
+    font-weight: 600;
+}
+
+#contact_page .php-email-form .loading {
+    display: none;
+    background: var(--background-color);
+    text-align: center;
+    padding: 15px;
+    margin-bottom: 24px;
+}
+
+#contact_page .php-email-form .loading:before {
+    content: "";
+    display: inline-block;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    margin: 0 10px -6px 0;
+    border: 3px solid var(--accent-color);
+    border-top-color: var(--background-color);
+    animation: animate-loading 1s linear infinite;
+}
+
+#contact_page .php-email-form input[type=text],
+#contact_page .php-email-form input[type=email],
+#contact_page .php-email-form textarea {
+    font-size: 14px;
+    padding: 10px 15px;
+    box-shadow: none;
+    border-radius: 0;
+    color: var(--default-color);
+    background-color: rgba(var(--background-color-rgb), 0.5);
+    border-color: rgba(var(--default-color-rgb), 0.2);
+}
+
+#contact_page .php-email-form input[type=text]:focus,
+#contact_page .php-email-form input[type=email]:focus,
+#contact_page .php-email-form textarea:focus {
+    border-color: var(--accent-color);
+}
+
+#contact_page .php-email-form input[type=text]::placeholder,
+#contact_page .php-email-form input[type=email]::placeholder,
+#contact_page .php-email-form textarea::placeholder {
+    color: rgba(var(--default-color-rgb), 0.3);
+}
+
+#contact_page .php-email-form button[type=submit] {
+    color: var(--contrast-color);
+    background: var(--accent-color);
+    border: 0;
+    padding: 10px 30px 12px 30px;
+    transition: 0.4s;
+    border-radius: 50px;
+}
+
+#contact_page .php-email-form button[type=submit]:hover {
+    background: rgba(var(--accent-color-rgb), 0.8);
+}
+
+
+/*--------------------------------------------------------------
+# About Us Section
+--------------------------------------------------------------*/
+.about-us .content h3 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.about-us .content ul {
+    list-style: none;
+    padding: 0;
+}
+
+.about-us .content ul li {
+    padding-bottom: 10px;
+}
+
+.about-us .content ul i {
+    font-size: 1.25rem;
+    margin-right: 4px;
+    color: var(--accent-color);
+}
+
+.about-us .content p:last-child {
+    margin-bottom: 0;
+}
+
+/*--------------------------------------------------------------
+  # Stats About Section
+  --------------------------------------------------------------*/
+.stats-about {
+    --background-color: #f6f7f6;
+    padding: 25px 0;
+}
+
+.stats-about .stats-item {
+    padding: 30px;
+    width: 100%;
+}
+
+.stats-about .stats-item span {
+    font-size: 48px;
+    display: block;
+    color: var(--accent-color);
+    font-weight: 700;
+}
+
+.stats-about .stats-item p {
+    color: rgba(var(--default-color-rgb), 0.6);
+    padding: 0;
+    margin: 0;
+    font-family: var(--heading-font);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/*--------------------------------------------------------------
+# About Us Section
+--------------------------------------------------------------*/
+
+.about-us img{
+    border-radius: 15px;
+}
+
+.about-us .content {
+    border: 2px solid rgb(51, 255, 0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.about-us .content .about_content{
+    border: 2px solid rgb(51, 255, 0);
+    justify-content: center;
+    align-items: center;
+}
+.about-us .content h3 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.about-us .content ul {
+    list-style: none;
+    padding: 0;
+}
+
+.about-us .content ul li {
+    padding-bottom: 10px;
+}
+
+.about-us .content ul i {
+    font-size: 1.25rem;
+    margin-right: 4px;
+    color: var(--accent-color);
+}
+
+.about-us .content p:last-child {
+    margin-bottom: 0;
+}
+
+/*--------------------------------------------------------------
+  # Stats About Section
+  --------------------------------------------------------------*/
+.stats-about {
+    --background-color: #f6f7f6;
+    padding: 25px 0;
+    border: 2px solid red;
+}
+
+.stats-about .stats-item {
+    padding: 30px;
+    width: 100%;
+}
+
+.stats-about .stats-item span {
+    font-size: 48px;
+    display: block;
+    color: var(--accent-color);
+    font-weight: 700;
+}
+
+.stats-about .stats-item p {
+    color: rgba(var(--default-color-rgb), 0.6);
+    padding: 0;
+    margin: 0;
+    font-family: var(--heading-font);
+    font-size: 15px;
+    font-weight: 600;
+}
+
 /* //////////////////////////////////////////// */
 /* FOR DARK MODE */
 body.dark .switch::before {
@@ -1322,7 +1576,8 @@ body.dark .background-container {
     padding-bottom: 50px;
     position: relative;
 }
-.footer a{
+
+.footer a {
     text-decoration: none;
 }
 
@@ -1566,10 +1821,10 @@ body.dark .background-container {
 
 /* TODO FOR ADMIN */
 
-.title_admin_page{
+.title_admin_page {
     text-align: center;
     font-weight: bold;
-    
+
 }
 
 body.dark {
@@ -1609,7 +1864,7 @@ body.dark {
 
 
     /* .order_card .card_product .order_content ul, */
-    #list_student  ul,
+    #list_student ul,
     #list_instructor ul {
 
 
@@ -1621,8 +1876,8 @@ body.dark {
 
 
     /* .order_card .card_product .order_content li, */
-    #list_student  li,
-    #list_instructor li{
+    #list_student li,
+    #list_instructor li {
 
         background-color: var(--navlink-sidebar-dark);
         color: var(--text-light-color);
@@ -1630,7 +1885,7 @@ body.dark {
     }
 
     /* .order_card .card_product .order_content li:hover, */
-    #list_student  li:hover,
+    #list_student li:hover,
     #list_instructor li:hover {
 
         background-color: bisque;
@@ -1640,7 +1895,7 @@ body.dark {
     }
 
     /* .order_card .card_product .order_content li i, */
-    #list_student  li i,
+    #list_student li i,
     #list_instructor li i {
 
         color: var(--icon-light-color);
@@ -1845,7 +2100,7 @@ body.dark {
 
 
 
-    #list_student .account_avatar img ,  
+    #list_student .account_avatar img,
     #list_instructor .account_avatar img {
         background-color: var(--sidebar-light-color);
     }
