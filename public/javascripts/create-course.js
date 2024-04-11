@@ -1,32 +1,59 @@
 // Thêm kết quả đạt được
-document.getElementById('themMota').addEventListener('click', function() {
-    var motaInput = document.getElementById('mota').value.trim();
+document.getElementById('addResult').addEventListener('click', function () {
+    var motaInput = document.getElementById('inputCourseResult').value.trim();
     if (motaInput !== '') {
         var li = document.createElement('li');
         li.className = 'list-group-item';
-        li.innerHTML = motaInput + '<button type="button" class="btn btn-danger btn-sm float-end delete-btn" style="display:none;">Xóa</button>';
-        document.getElementById('listMota').appendChild(li);
-        document.getElementById('mota').value = '';
-    
+        li.innerHTML = motaInput + '<button type="button" class="btn btn-danger btn-sm float-end delete-btn" style="display:none;">Remove</button>';
+        document.getElementById('inputCourseResultList').appendChild(li);
+        document.getElementById('inputCourseResult').value = '';
+
         // Hiển thị nút Xóa khi hover
-        li.addEventListener('mouseenter', function() {
+        li.addEventListener('mouseenter', function () {
             li.querySelector('.delete-btn').style.display = 'inline-block';
         });
-    
+
         // Ẩn nút Xóa khi rời khỏi
-        li.addEventListener('mouseleave', function() {
+        li.addEventListener('mouseleave', function () {
             li.querySelector('.delete-btn').style.display = 'none';
         });
-    
+
         // Xóa mô tả khi nhấn vào nút Xóa
-        li.querySelector('.delete-btn').addEventListener('click', function() {
+        li.querySelector('.delete-btn').addEventListener('click', function () {
+            li.remove();
+        });
+    }
+});
+
+// Thêm yêu cầu khóa học
+document.getElementById('addReq').addEventListener('click', function () {
+    var motaInput = document.getElementById('inputCourseReq').value.trim();
+    if (motaInput !== '') {
+        var li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.innerHTML = motaInput + '<button type="button" class="btn btn-danger btn-sm float-end delete-btn" style="display:none;">Remove</button>';
+        document.getElementById('inputCourseReqList').appendChild(li);
+        document.getElementById('inputCourseReq').value = '';
+
+        // Hiển thị nút Xóa khi hover
+        li.addEventListener('mouseenter', function () {
+            li.querySelector('.delete-btn').style.display = 'inline-block';
+        });
+
+        // Ẩn nút Xóa khi rời khỏi
+        li.addEventListener('mouseleave', function () {
+            li.querySelector('.delete-btn').style.display = 'none';
+        });
+
+        // Xóa mô tả khi nhấn vào nút Xóa
+        li.querySelector('.delete-btn').addEventListener('click', function () {
             li.remove();
         });
     }
 });
 
 function convertToSlug(text) {
-    return text.toLowerCase().replace(/ /g,'');
+    return text.toLowerCase().replace(/ /g, '');
 }
 
 // Thêm chương học + video bài giảng
@@ -60,8 +87,8 @@ function addChapter(name, title) {
         <h5 class="chapter-name card-title" contenteditable="true">${name}</h5>
         <h6 class="chapter-title card-subtitle mb-2 text-muted" contenteditable="true">${title}</h6>
         <div class="w-100 mb-3">
-            <button class="btn btn-primary" onclick="showVideoForm('${name}')">Thêm video bài giảng</button>
-            <button class="btn btn-danger ms-2 float-end" onclick="deleteChapter(this)">Xóa chương học</button>
+            <button class="btn btn-primary" onclick="showVideoForm('${name}')">New Lecture</button>
+            <button class="btn btn-danger ms-2 float-end" onclick="deleteChapter(this)">Remove</button>
         </div>
         <div class="mt-3" id="videos-${convertToSlug(name).replace(/\s+/g, '-')}"></div>
     </div>
@@ -102,7 +129,7 @@ function addVideo(chapterName, title, link, desc) {
                         <h6 class="video-title card-title" contenteditable="true">${title}</h6>
                         <p class="video-desc card-text">${desc}</p>
                         <div class="w-100 mb-3">
-                            <button class="btn btn-danger ms-2 float-end" onclick="deleteVideo(this)"">Xóa video</button>
+                            <button class="btn btn-danger ms-2 float-end" onclick="deleteVideo(this)"">Remove</button>
                         </div>
                     </div>
                 </div>
@@ -117,57 +144,118 @@ function deleteVideo(button) {
 }
 
 // Thêm khóa học
-document.getElementById('addCourseBtn').addEventListener('click', function() {
+document.getElementById('addCourseBtn').addEventListener('click', function () {
     var courseName = document.getElementById('inputCourseTitle').value.trim();
     var coursePrice = document.getElementById('inputCoursePrice').value.trim();
     var courseCategory = document.getElementById('inputCategory').value;
-    
-    var courseDescriptionList = document.querySelectorAll('#listMota li');
-    var courseDescription = [];
-    courseDescriptionList.forEach(function(item) {
+    var coursePreview = document.getElementById('inputCoursePreview').value.trim();
+    var courseDescription = document.getElementById('inputCourseDescription').value.trim();
+    var courseAudience = document.getElementById('inputCourseAudience').value.trim();
+
+    var courseResultList = document.querySelectorAll('#inputCourseResultList li');
+    var courseResult = [];
+    courseResultList.forEach(function (item) {
         var textNodes = Array.from(item.childNodes).filter(node => node.nodeType === Node.TEXT_NODE);
-        var description = textNodes.map(node => node.textContent.trim()).join('');
-        courseDescription.push(description);
+        var result = textNodes.map(node => node.textContent.trim()).join('');
+        courseResult.push(result);
     });
-    
+
+    var courseReqList = document.querySelectorAll('#inputCourseReqList li');
+    var courseReq = [];
+    courseReqList.forEach(function (item) {
+        var textNodes = Array.from(item.childNodes).filter(node => node.nodeType === Node.TEXT_NODE);
+        var req = textNodes.map(node => node.textContent.trim()).join('');
+        courseReq.push(req);
+    });
+
     var course = {
-        "Tên khóa học": courseName,
-        "Giá khóa học": coursePrice,
-        "Kết quả đạt được sau khi học": courseDescription,
-        "Danh mục": courseCategory,
-        "Danh sách chương học": []
+        "courseName": courseName,
+        "coursePrice": parseInt(coursePrice),
+        "courseCategory": courseCategory,
+        "coursePreview": coursePreview,
+        "courseDescription": courseDescription,
+        "courseAudience": courseAudience,
+        "courseResult": courseResult,
+        "courseRequirement": courseReq,
+        "sections": []
     };
+
     var chapters = document.querySelectorAll('#chapters .chapter-card');
-    
-    chapters.forEach(function(chapter) {
+
+    chapters.forEach(function (chapter) {
         var chapterName = chapter.querySelector('.chapter-name').textContent;
         var chapterTitle = chapter.querySelector('.chapter-title').textContent;
 
         var videos = chapter.querySelectorAll('.video-card');
 
         var chapterObj = {
-            "Tên chương học": chapterName,
-            "Tiêu đề chương học": chapterTitle,
-            "Danh sách video bài giảng": []
+            "sectionNumber": chapterName,
+            "sectionTitle": chapterTitle,
+            "lectures": []
         };
 
-        videos.forEach(function(video) {
+        videos.forEach(function (video) {
             var videoTitle = video.querySelector('.video-title').textContent;
             var videoLink = video.querySelector('iframe').src;
             var videoDesc = video.querySelector('.video-desc').textContent;
 
             var videoObj = {
-                "Tên bài giảng": videoTitle,
-                "Link embed của video": videoLink,
-                "Mô tả": videoDesc
+                "lectureTitle": videoTitle,
+                "lectureLink": videoLink,
+                "lectureDescription": videoDesc
             };
 
-            chapterObj["Danh sách video bài giảng"].push(videoObj);
+            chapterObj["lectures"].push(videoObj);
         });
 
-        course["Danh sách chương học"].push(chapterObj);
+        course["sections"].push(chapterObj);
     });
 
     // Tạm thời in ra tab console
     console.log(JSON.stringify(course));
+
+    // Gửi dữ liệu lên server bằng phương thức POST
+    fetch('/home/course/create', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(course)
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Network response was not ok.');
+        })
+        .then(data => {
+            console.log('Course added successfully:', data);
+
+            const successAlert = `
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Successfully!</strong> New course created.
+                <button type="button" class="close btn" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                `;
+            document.getElementById('alert-container').innerHTML = successAlert;
+            // Đóng alert sau một thời gian
+            $(".alert").alert();
+        })
+        .catch(error => {
+            console.error('Error adding course:', error);
+
+            const errorAlert = `
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> Failed to create new course.
+                <button type="button" class="close btn" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                `;
+            document.getElementById('alert-container').innerHTML = errorAlert;
+            // Đóng alert sau một thời gian
+            $(".alert").alert();
+        });
 });

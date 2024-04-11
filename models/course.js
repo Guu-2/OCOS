@@ -6,17 +6,14 @@ const Schema = mongoose.Schema;
 const courseSchema = new Schema({
     //khóa liên kết
     instructorID: { type: Schema.Types.ObjectId, ref: 'Customer' },
-    // Lưu nội dung course nhập được vào đây
-    // Chú ý những cái nào là đa thì lưu theo dạng mảng
-    //     thông tin mỗi khóa học
-    // + Tên khóa học ( đơn )
-    // +  mô tả Khóa học ( đơn )
-    // + Đối tượng của khóa học hướng đến ( khóa học dành cho ai ) ( dơn)
-    // + Bạn sẽ học được những gì (đa )
-    // +Yêu cầu về cần chuẩn bị hay ghi chép gì đó (đa)
-    // còn lại giữ như nãy tui nói
-
-    // lession: { type: [String]},
+    courseName: { type: String, required: true },
+    coursePrice: { type: Number, required: true, default: 0 },
+    courseCategory: { type: String, required: true },
+    coursePreview: { type: String, required: true },
+    courseDescription: { type: String, required: true },
+    courseAudience: { type: String, required: true },
+    courseResult: { type: [String], default: [] },
+    courseRequirement: { type: [String], default: [] },
 
     createdAt: { type: String, default: new Date().toUTCString() }
 });

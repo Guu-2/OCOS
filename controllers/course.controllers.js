@@ -1,4 +1,7 @@
 const Product = require('../models/products');
+const Course = require('../models/course');
+const Section = require('../models/section');
+const Lecture = require('../models/lecture');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const path = require('path');
@@ -272,6 +275,69 @@ class CourseController {
   }
 
 
+  // Thêm khóa học
+  async addNewCourse(req, res) {
+    console.log("ADD new course : ");
+    try {
+      const errors = validationResult(req);
+      console.log(errors.array());
+      if (!errors.isEmpty()) {
+        var err_msg = "";
+        var list_err = errors.array();
+        list_err.forEach(err => {
+          err_msg += err.msg + " , ";
+        });
+
+        console.log(err_msg);
+
+        var state = { status: 'warning', message: err_msg };
+        res.json({ added: false, status: state.status, message: state.message });
+      } else {
+        console.log(req.body);
+        const { courseName, coursePrice, courseCategory, coursePreview, courseDescription, courseAudience, courseResult, courseRequirement, sections } = req.body;
+        var instructorID = req.session.account;
+        const newCourse = new Course({
+          instructorID,
+          courseName,
+          coursePrice,
+          courseCategory,
+          coursePreview,
+          courseDescription,
+          courseAudience,
+          courseResult,
+          courseRequirement
+        });
+
+        const savedCourse = await newCourse.save();
+
+        for (const section of sections) {
+          const newSection = new Section({
+            courseID: savedCourse._id,
+            sectionNumber: section.sectionNumber,
+            sectionTitle: section.sectionTitle
+          });
+
+          const savedSection = await newSection.save();
+
+          for (const lecture of section.lectures) {
+            const newLecture = new Lecture({
+              sectionID: savedSection._id,
+              lectureTitle: lecture.lectureTitle,
+              lectureLink: lecture.lectureLink,
+              lectureDescription: lecture.lectureDescription
+            });
+
+            await newLecture.save();
+          }
+        }
+
+        res.status(201).json({ added: true, status: "success", message: "Course added successfully", course: savedCourse });
+      }
+    } catch (error) {
+      res.status(500).json(error);
+      console.error("Lỗi: " + error);
+    }
+  }
 
 
 

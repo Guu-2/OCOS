@@ -14,6 +14,20 @@ router.get('/', function (req, res) {
   res.redirect('/home/course');
 })
   .get('/course', async function (req, res, next) {
+    const partial = 'partials/course';
+    const layout = 'layouts/main';
+
+    delete req.session.customer;
+
+    req.partial_path = partial
+    req.layout_path = layout
+
+    req.page_data = {
+      listproduct: await courseController.get_list_course(),
+    }
+    await userController.getpage(req, res, next);
+  })
+  .get('/course/create', async function (req, res, next) {
     const partial = 'partials/course_create';
     const layout = 'layouts/main';
 
@@ -26,6 +40,16 @@ router.get('/', function (req, res) {
       listproduct: await courseController.get_list_course(),
     }
     await userController.getpage(req, res, next);
+  })
+  .post('/course/create', async (req, res) => {
+    try {
+        console.log(req.body);
+        const result = await courseController.addNewCourse(req, res);
+        res.json(result);
+    } catch (error) {
+        console.error('Lỗi khi thêm khóa học:', error);
+        res.status(500).json({ success: false, message: "Đã xảy ra lỗi khi thêm khóa học." });
+    }
   })
   .get('/course/:courseId', async function (req, res) {
     // const productId = req.params.productId; // Lấy productId từ đường dẫn URL
