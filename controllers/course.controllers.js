@@ -491,6 +491,7 @@ class CourseController {
           coursePrice,
           courseCategory,
           coursePreview,
+          courseImage: req.file ? '../../courses/' + req.file.filename : '../images/default_course.jpg',
           courseDescription,
           courseAudience,
           courseResult,

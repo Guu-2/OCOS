@@ -10,6 +10,7 @@ const courseSchema = new Schema({
     coursePrice: { type: Number, required: true, default: 0 },
     courseCategory: { type: String, required: true },
     coursePreview: { type: String, required: true },
+    courseImage: { type: String, required: true },
     courseDescription: { type: String, required: true },
     courseAudience: { type: String, required: true },
     courseResult: { type: [String], default: [] },

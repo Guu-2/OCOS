@@ -8,6 +8,22 @@ const customerController = require('../controllers/customer.controllers');
 const statisticControllers = require('../controllers/statistic.controllers')
 const { validate } = require('../controllers/validator');
 const { check } = require('express-validator');
+const multer = require('multer');
+const path = require('path');
+const uploadsFolderPath = path.join(__dirname, '../uploads');
+
+// multer lưu ảnh của khóa học
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, uploadsFolderPath + '/courses');
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage });
 
 //TODO: Tạo page mặc định cho role student
 router.get('/', function (req, res) {
@@ -44,15 +60,13 @@ router.get('/', function (req, res) {
     }
     await userController.getpage(req, res, next);
   })
-  .post('/course_create', async (req, res, next) => {
+  .post('/course/create', upload.single('courseImage'), async (req, res, next) => {
     try {
-      console.log(req.body);
-      const result = await courseController.addNewCourse(req, res, next);
-      res.json(result);
+        req.body = JSON.parse(req.body.courseData);
+        const result = await courseController.addNewCourse(req, res, next);
+        res.json(result);
     } catch (error) {
-      // console.error('Lỗi khi thêm khóa học:', error);
-      // res.status(500).json({ success: false, message: "Đã xảy ra lỗi khi thêm khóa học." });
-      next(error)
+        next(error);
     }
   })
   .get('/course/:courseId', async function (req, res, next) {

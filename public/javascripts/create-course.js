@@ -145,6 +145,8 @@ function deleteVideo(button) {
 
 // Thêm khóa học
 document.getElementById('addCourseBtn').addEventListener('click', function () {
+    var courseImageFile = document.getElementById('inputCourseImage').files[0];
+
     var courseName = document.getElementById('inputCourseTitle').value.trim();
     var coursePrice = document.getElementById('inputCoursePrice').value.trim();
     var courseCategory = document.getElementById('inputCategory').value;
@@ -211,16 +213,49 @@ document.getElementById('addCourseBtn').addEventListener('click', function () {
         course["sections"].push(chapterObj);
     });
 
+    // Phải có ít nhất 1 section và 1 lecture
+    if (course.sections.length === 0 || course.sections.some(section => section.lectures.length === 0)) {
+
+        const dangerAlert = `
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> You must add at least one section and one lecture per section.
+                <button type="button" class="close btn" data-bs-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+            `;
+        document.getElementById('alert-container').innerHTML = dangerAlert;
+        $(".alert").alert();
+
+        return;
+    }
+
+    if (parseInt(coursePrice) < 30000) {
+        const dangerAlert = `
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> Course's price must be higher than 30.000 VNĐ.
+                <button type="button" class="close btn" data-bs-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+            `;
+        document.getElementById('alert-container').innerHTML = dangerAlert;
+        $(".alert").alert();
+
+        return;
+    }
+
     // Tạm thời in ra tab console
     console.log(JSON.stringify(course));
+
+    var formData = new FormData();
+    formData.append("courseData", JSON.stringify(course));
+    formData.append("courseImage", courseImageFile);
 
     // Gửi dữ liệu lên server bằng phương thức POST
     fetch('/home/course/create', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(course)
+        body: formData
     })
         .then(response => {
             if (response.ok) {
@@ -234,7 +269,7 @@ document.getElementById('addCourseBtn').addEventListener('click', function () {
             const successAlert = `
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <strong>Successfully!</strong> New course created.
-                <button type="button" class="close btn" data-dismiss="alert" aria-label="Close">
+                <button type="button" class="close btn" data-bs-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>
@@ -249,7 +284,7 @@ document.getElementById('addCourseBtn').addEventListener('click', function () {
             const errorAlert = `
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <strong>Error!</strong> Failed to create new course.
-                <button type="button" class="close btn" data-dismiss="alert" aria-label="Close">
+                <button type="button" class="close btn" data-bs-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>
