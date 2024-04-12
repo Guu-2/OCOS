@@ -177,7 +177,7 @@ if (getmode && getmode === "dark") {
 }
 
 
-if(offcanvasElement){
+if (offcanvasElement) {
   const bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
 }
 
@@ -185,7 +185,7 @@ if(offcanvasElement){
 closeBtn.addEventListener("click", () => {
   sidebar.classList.toggle("open");
   homeSection.classList.toggle('sidebar-open');
-  if(offcanvasElement){
+  if (offcanvasElement) {
     bsOffcanvas.hide();
   }
   // offcanvasElement.classList.remove('show');
@@ -205,13 +205,13 @@ closeBtn.addEventListener("click", () => {
 
 
 
-if(offcanvasElement){
+if (offcanvasElement) {
   offcanvasElement.addEventListener('show.bs.offcanvas', event => {
     homeSection.classList.add('offcanvas-open');
     sidebar.classList.remove("open");
     homeSection.classList.remove('sidebar-open');
   });
-  
+
   offcanvasElement.addEventListener('hide.bs.offcanvas', event => {
     homeSection.classList.remove('offcanvas-open');
   });
@@ -279,9 +279,9 @@ if (body) {
   }
 
 
-  }
+}
 
- 
+
 
 
 
@@ -541,11 +541,73 @@ function getprofilebyId(id) {
   window.location.href = "/profile/" + id;
 }
 
-function getproductbyId(id) {
-  console.log(id)
-  window.location.href = "/admin/product/" + id;
+function gotocart() {
+  window.location.href = "/home/cart";
 }
 
+
+function getcoursebyId(id) {
+  console.log(id)
+  window.location.href = "/home/course/" + id;
+}
+
+function getlecturebyId(id) {
+  console.log(id)
+  window.location.href = "/home/lecture/" + id;
+}
+
+  function addtocart(id) {
+    console.log(id)
+
+    fetch("/home/cart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json" // Đặt kiểu dữ liệu là JSON
+      },
+      body: JSON.stringify({courseId : id}) // Chuyển đổi dữ liệu thành chuỗi JSON
+    })
+      .then(response => response.json())
+      .then(data => {
+        // showflashmessage(data.status, data.message)
+        if (data.status === "success") {
+          // window.location.reload();
+          showflashmessage(data.status, data.message);
+        }
+        else { showflashmessage(data.status, data.message); }
+      })
+      .catch(function (error) {
+        // Xử lý lỗi (nếu có)
+        console.error("Error:", error);
+      });
+
+  }
+  
+  function delcart(id) {
+    console.log(id)
+
+    fetch("/home/cart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json" // Đặt kiểu dữ liệu là JSON
+      },
+      body: JSON.stringify({del_courseId : id}) // Chuyển đổi dữ liệu thành chuỗi JSON
+    })
+      .then(response => response.json())
+      .then(data => {
+        // showflashmessage(data.status, data.message)
+        if (data.status === "success") {
+          window.location.reload();
+          showflashmessage(data.status, data.message);
+        }
+        else { showflashmessage(data.status, data.message); }
+      })
+      .catch(function (error) {
+        // Xử lý lỗi (nếu có)
+        console.error("Error:", error);
+      });
+
+  }
+  
 function callback(url) {
   window.location.href = url;
 }
@@ -699,20 +761,70 @@ function resetModal(id) {
 /**
  * Scroll top button
  */
-let scrollTop = document.querySelector('.scroll-top');
+// Tệp main.js - External JavaScript
 
-function toggleScrollTop() {
-  if (scrollTop) {
-    window.scrollY > 100 ? scrollTop.classList.add('active') : scrollTop.classList.remove('active');
-  }
-}
-scrollTop.addEventListener('click', (e) => {
-  e.preventDefault();
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
+document.addEventListener('DOMContentLoaded', function () {
+  let scrollableDiv = document.querySelector('.home-section');
+  let scrollTopButton = document.querySelector('.scroll-top');
+
+  // Lắng nghe sự kiện scroll của khối div
+  scrollableDiv.addEventListener('scroll', function () {
+    toggleScrollTopButton();
   });
+
+  // Lắng nghe sự kiện click của nút "scroll top"
+  scrollTopButton.addEventListener('click', function () {
+    scrollToTop();
+  });
+
+  // Kiểm tra và cập nhật trạng thái của nút "scroll top"
+  function toggleScrollTopButton() {
+    let scrollTop = scrollableDiv.scrollTop;
+    let scrollHeight = scrollableDiv.scrollHeight;
+    let clientHeight = scrollableDiv.clientHeight;
+
+    if (scrollTop > 0) {
+      scrollTopButton.classList.add('active');
+    } else {
+      scrollTopButton.classList.remove('active');
+    }
+
+    if (scrollTop + clientHeight >= scrollHeight) {
+      // Đã cuộn đến cuối khối div
+      // Có thể thực hiện các hành động khác tại đây (nếu cần)
+    }
+  }
+
+  // Cuộn khối div đến đầu trang
+  function scrollToTop() {
+    homeSection.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
 });
 
-window.addEventListener('load', toggleScrollTop);
-document.addEventListener('scroll', toggleScrollTop);
+
+let lecture_page = document.querySelector('.lecture_page');
+
+if (lecture_page) {
+  $('.toggle_show_lecture').click(function () {
+    $(this).toggleClass('fa-angle-down fa-angle-up');
+    $(this).parent().next('#all_lecture').toggleClass('open');
+  });
+
+  function change_lecture(lectureTitle, lectureLink, lectureDescription) {
+    console.log(lectureTitle)
+    console.log(lectureLink)
+    console.log(lectureDescription)
+    
+    $('#lecture_link').attr('src', lectureLink);
+    // Thay đổi nội dung của lecture title
+    $('.lecture_title').text(lectureTitle);
+
+    // Thay đổi nội dung của lecture description
+    $('.lecture_description').text(lectureDescription);
+  }
+}
+
+

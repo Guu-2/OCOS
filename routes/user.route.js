@@ -17,57 +17,108 @@ router.get('/', function (req, res) {
     const partial = 'partials/course';
     const layout = 'layouts/main';
 
-    delete req.session.customer;
+    // delete req.session.customer;
+    if (req.session.role == "instructor") {
+      res.redirect('/home/course_create');
+    } else {
+      req.partial_path = partial
+      req.layout_path = layout
 
-    req.partial_path = partial
-    req.layout_path = layout
-
-    req.page_data = {
-      listproduct: await courseController.get_list_course(),
+      req.page_data = {
+        listcourse: await courseController.get_list_course(),
+      }
+      await userController.getpage(req, res, next);
     }
-    await userController.getpage(req, res, next);
+
   })
-  .get('/course/create', async function (req, res, next) {
+  .get('/course_create', async function (req, res, next) {
     const partial = 'partials/course_create';
     const layout = 'layouts/main';
 
-    delete req.session.customer;
 
     req.partial_path = partial
     req.layout_path = layout
 
     req.page_data = {
-      listproduct: await courseController.get_list_course(),
+      list_my_course: await courseController.get_my_course(req, res, next),
     }
     await userController.getpage(req, res, next);
   })
-  .post('/course/create', async (req, res) => {
+  .post('/course_create', async (req, res, next) => {
     try {
-        console.log(req.body);
-        const result = await courseController.addNewCourse(req, res);
-        res.json(result);
+      console.log(req.body);
+      const result = await courseController.addNewCourse(req, res, next);
+      res.json(result);
     } catch (error) {
-        console.error('Lỗi khi thêm khóa học:', error);
-        res.status(500).json({ success: false, message: "Đã xảy ra lỗi khi thêm khóa học." });
+      // console.error('Lỗi khi thêm khóa học:', error);
+      // res.status(500).json({ success: false, message: "Đã xảy ra lỗi khi thêm khóa học." });
+      next(error)
     }
   })
-  .get('/course/:courseId', async function (req, res) {
-    // const productId = req.params.productId; // Lấy productId từ đường dẫn URL
+  .get('/course/:courseId', async function (req, res, next) {
 
-    // try {
-    //     const product = await courseController.getProduct(productId); // Sử dụng Mongoose hoặc phương thức tương tự
-    //     if (!product) {
-    //         return res.status(404).json({ error: 'Product not found' });
-    //     }
-    //     console.log("product add: ", product)
-    //     res.json(product);
-    // } catch (error) {
-    //     console.error('Error fetching product:', error);
-    //     res.status(500).json({ error: 'Server error' });
-    // }
+    console.log(req.params.courseId)
+    const partial = 'partials/course_detail';
+    const layout = 'layouts/main';
+    req.partial_path = partial
+    req.layout_path = layout
+    req.page_data = {
+      course_detail: await courseController.getCourse(req.params.courseId)
+    }
+    // console.log(req.page_data.account_details)
+    await userController.getpage(req, res, next);
+
   })
+  .get('/lecture/:courseId', async function (req, res, next) {
+    console.log(req.params.courseId)
+    const partial = 'partials/lecture';
+    const layout = 'layouts/main';
+    req.partial_path = partial
+    req.layout_path = layout
+    req.page_data = {
+      menu_bar: await courseController.getSectionsAndLectures(req.params.courseId),
+      first_lecture: await courseController.getFirstlecture(req.params.courseId),
+    }
+    // console.log(req.page_data.account_details)
+    await userController.getpage(req, res, next);
+  })
+  .get('/cart', async function (req, res, next) {
+    const partial = 'partials/shopping_cart';
+    const layout = 'layouts/main';
 
-    // Gửi yêu cầu POST đến /home/order khi có id
+    console.log(req.session.account)
+
+    req.partial_path = partial
+    req.layout_path = layout
+
+    req.page_data = {
+      list_cart: await courseController.get_list_cart(req, res , next),
+    }
+    await userController.getpage(req, res, next);
+
+
+  })
+  .post('/cart', async function (req, res, next) {
+    console.log(req.body);
+  
+    try {
+      // Xử lý logic liên quan đến thêm vào giỏ hàng ở đây
+      // Ví dụ:
+      // Tiếp tục xử lý các thao tác thêm vào giỏ hàng với courseId
+      const added = await courseController.add_to_cart(req, res , next);
+      
+      res.json(added);
+      // Gửi phản hồi thành công về client
+
+    } catch (error) {
+      // Xử lý lỗi (nếu có)
+      console.error("Error:", error);
+      next(error);
+      // Gửi phản hồi lỗi về client
+      // res.status(500).json({ status: "error", message: "Đã xảy ra lỗi khi thêm vào giỏ hàng" });
+    }
+  })
+  // Gửi yêu cầu POST đến /home/order khi có id
   // .post('/order', async function (req, res, next) {
   //   if (req.body.id) {
   //       const partial = 'partials/product';
@@ -109,7 +160,7 @@ router.get('/', function (req, res) {
   //   }
   // })
 
-  .get('/subscribed',async function (req, res, next) {
+  .get('/subscribed', async function (req, res, next) {
     const partial = 'partials/my_course';
     const layout = 'layouts/main';
 
@@ -119,7 +170,7 @@ router.get('/', function (req, res) {
     await userController.getpage(req, res, next);
   })
 
-  .get('/exercise',async function (req, res, next) {
+  .get('/exercise', async function (req, res, next) {
     const partial = 'partials/exercise';
     const layout = 'layouts/main';
 
@@ -168,7 +219,7 @@ router.get('/', function (req, res) {
   //   req.partial_path = partial
   //   req.layout_path = layout
   //   req.endpoint = endpoint
-    
+
   //   req.layout_path = layout;
   //   req.page_data = {
   //     start: startDayString,

@@ -544,7 +544,7 @@ body .background-container {
 /* TODO cart shopping */
 .home-section .fill_content .cart_shopping {
 
-    margin-left: 30px;
+    /* margin-left: 30px; */
     text-align: center;
     transform: scale(1.5);
     border: 2px solid blue;
@@ -976,6 +976,12 @@ section#product_page {
 
 }
 
+.course-item #course_pic{
+    border: 2px solid red;
+    object-fit: cover;
+    /* max-width: 250px;
+    max-height: 200px; */
+}
 
 
 .course-item .course-content .category {
@@ -1040,6 +1046,30 @@ section#product_page {
 #callback_btn {
     border: 2px solid red;
     margin: 10px
+}
+/* TODO CART PAGE */
+div#cart_page{
+    border: 2px solid red;
+}
+div#cart_page .course_cart{
+    border: 2px solid red;
+}
+
+div#cart_page .course_cart #course_pic{
+    border: 2px solid red;
+    max-width: 160px;
+    max-height: 120px;
+}
+div#cart_page #course_cart_empty{
+    display: flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items: center;
+    
+}
+
+div#cart_page .payment{
+    border: 2px solid red;
 }
 
 /* TODO COURSE CREATE PAGE */
@@ -1217,6 +1247,20 @@ div.lecture_page .menu_icon {
     width: 100%;
     min-width: 20px;
     max-width: 350px;
+}
+
+div.lecture_page .toggle_show_lecture {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+div.lecture_page #all_lecture {
+    display: none;
+    list-style-type: none;
+}
+
+div.lecture_page #all_lecture.open {
+    display: block;
 }
 
 /* TODO COURSE SLIDE */
@@ -1789,11 +1833,12 @@ body.dark .background-container {
   # Scroll Top Button
   --------------------------------------------------------------*/
 .scroll-top {
+    
     position: fixed;
     visibility: hidden;
     opacity: 0;
-    right: 15px;
-    bottom: -15px;
+    right: 30px;
+    bottom: -20px;
     z-index: 99999;
     background-color: var(--accent-color);
     width: 44px;

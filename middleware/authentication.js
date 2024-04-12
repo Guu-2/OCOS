@@ -31,9 +31,11 @@ function isAdmin(req, res, next) {
     next();
   }
   else {
-    res.redirect('/home/order');
+    return res.status(403).json({ error: 'Permission Denied' });
   }
 }
+
+
 
 passport.serializeUser((user, done) => {
   done(null, user.id);

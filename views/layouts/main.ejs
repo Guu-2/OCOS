@@ -22,6 +22,7 @@
     <main>
         <% global.access = access %>
         <% global.account = account %>
+
         <div class="container-fluid">
 
             <%- include('../partials/sidebar') %>
@@ -39,15 +40,16 @@
                     
                         
                 </div>
-                <!-- Scroll Top -->
-                <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+                
                 <% if(account.role != 'admin'){ %>
 
                     <%- include('../partials/footer') %>
                     
                 <% } %>
+                <!-- Scroll Top -->
+                <a href="#"  class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-        
+
             </section>
 
         </div>
@@ -62,10 +64,9 @@
     <%- include('../partials/flash-message') %>
 
     <script src="../../javascripts/main.js"></script>
-
+    
     <script src="../../javascripts/slide.js"></script>
 
-    <script src="../../javascripts/lecture.js"></script> 
 </body>
 
 </html>

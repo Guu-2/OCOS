@@ -22,7 +22,7 @@ var maxSize = 20 * 1024 * 1024;
 const storage = multer.diskStorage({
 
     destination: function (req, file, cb) {
-        const path_to_load = uploadsFolderPath;
+        const path_to_load = uploadsFolderPath +'/avatars';
         cb(null, path_to_load);
     },
     filename: function (req, file, cb) {
@@ -93,7 +93,7 @@ class FileController {
             const find = await User.findById(req.session.account);
             // console.log(find)
             if (find) {
-                find.profilePicture = "../../"+files[0].filename; 
+                find.profilePicture = "../../avatars/"+files[0].filename; 
                 await find.save(); // Lưu thay đổi
                 req.session.flash = {
                     type: 'success',

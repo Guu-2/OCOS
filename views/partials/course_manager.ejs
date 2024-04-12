@@ -1,7 +1,13 @@
-<!-- <h1>tương tự student_manager nhưng là danh sách khóa học và có thể xóa khóa học + xem bình luận học viên </h1> -->
+<h1>tương tự student_manager nhưng là danh sách khóa học và có thể xóa khóa học + xem bình luận học viên </h1>
 
-<h2 class="title_admin_page">LIST COURSE</h2>
-<% var listcourse=data.listcourse %>
+<!-- <h2 class="title_admin_page">LIST COURSE</h2>
+<% if (data.listcourse) { %>
+    <% var listcourse=data.listcourse %>
+<% }%>
+<% if (data.list_my_course) { %>
+    <% var listcourse = data.list_my_course %>
+<% }%>
+
 
 <ul class="list-group list-group-flush" id="list_course">
     <% if (listcourse.length> 0) { %>
@@ -37,4 +43,4 @@
     </h2>
 
 
-</ul>
+</ul> -->

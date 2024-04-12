@@ -3,6 +3,7 @@
 <% account = global.account %>
 <div class="sidebar">
     <div class="logo-details">
+        
         <img src="../../images/logo.png" alt="err">
         <!-- <i class="bx bxl-c-plus-plus icon"></i> -->
         <div class="logo_name">EduSphere</div>
@@ -42,13 +43,14 @@
         <% if (account) { %>
             <li class="profile" >
                 <div class="profile-details">
-                    <!-- <img src='../<%= account.profilePicture%>' alt="profileImg" /> -->
+                    <!-- <img src='../<%# account.profilePicture%>' alt="profileImg" /> -->
                     <img src='<%= account.profilePicture%>' alt="profileImg" />
                     <div class="name_job">
                         <div class="name"><%= account.fullName%></div>
                         <div class="job"><%= account.role%></div>
                     </div>
                 </div>
+                
                 <!-- <i class="bx bx-cog" id="log_out"> </i> -->
                 <i class="bx bx-log-out" id="log_out" data-bs-toggle="modal"
                 data-bs-target="#logoutModal"></i>

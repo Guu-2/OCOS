@@ -1,7 +1,8 @@
 const Product = require('../models/products');
-const Course = require('../models/course');
+const Course = require('../models/courses');
 const Section = require('../models/section');
 const Lecture = require('../models/lecture');
+const User = require('../models/users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const path = require('path');
@@ -18,11 +19,38 @@ const fs = require('fs');
 class CourseController {
   async get_list_course() {
     try {
-      const find = await Product.find({});
-      // console.log(find);
-      return find
+      const courses = await Course.find().populate('instructorID', 'profilePicture fullName');
+      for (const course of courses) {
+        const instructor = course.instructorID; // Người hướng dẫn tương ứng với khóa học
+        const profilePicture = instructor.profilePicture; // Ảnh đại diện của người hướng dẫn
+        const fullName = instructor.fullName; // Tên đầy đủ của người hướng dẫn
+
+        // console.log(profilePicture, fullName);
+      }
+      return courses;
     } catch (error) {
-      console.log(error);
+      next(error);
+    }
+  }
+
+  async get_my_course(req, res, next) {
+    try {
+      const instructorID = req.session.account; // Lấy instructorID từ session hoặc nguồn dữ liệu khác
+
+      console.log(instructorID); // Xử lý kết quả tìm kiếm
+      const courses = await Course.find({ instructorID }).populate('instructorID', 'profilePicture fullName');
+
+      for (const course of courses) {
+        const instructor = course.instructorID; // Người hướng dẫn tương ứng với khóa học
+        const profilePicture = instructor.profilePicture; // Ảnh đại diện của người hướng dẫn
+        const fullName = instructor.fullName; // Tên đầy đủ của người hướng dẫn
+
+        // console.log(profilePicture, fullName);
+      }
+
+      return courses;
+    } catch (error) {
+      next(error);
     }
   }
 
@@ -63,12 +91,12 @@ class CourseController {
   }
 
 
-  async  getproductbyTermRegex(req, res, next) {
+  async getproductbyTermRegex(req, res, next) {
     try {
       const term = req.params.term;
       const regex = new RegExp(term, 'i');
       console.log(regex);
-      
+
       let listProduct;
       if (term === "all") {
         listProduct = await Product.find();
@@ -80,32 +108,32 @@ class CourseController {
           ]
         });
       }
-  
+
       if (listProduct.length > 0) {
         res.json({ match: true, status: "success", message: 'Success', data: listProduct });
       } else {
         res.json({ match: false, status: "warning", message: 'Fail' });
       }
-  
+
     } catch (error) {
       console.error('Error getting product:', error);
       throw error;
     }
   }
-  
+
   async getlistOrder(arr) {
     const list = [];
-  
+
     for (const element of arr) {
       try {
         const product = await Product.findById(element.productId);
-  
+
         if (product) {
           const orderItem = {
             productName: product.productName,
             quantity: element.quantity
           };
-  
+
           list.push(orderItem);
         }
       } catch (error) {
@@ -116,23 +144,184 @@ class CourseController {
     return list;
   }
 
-  async getProduct(productID) {
-    console.log("curr Product : " + productID)
+  async getCourse(courseID) {
+    console.log("curr Course : " + courseID);
     try {
-      const find = await Product.findById(productID);
+      const find = await Course.findById(courseID).populate('instructorID', 'fullName');
       // console.log(find)
       if (find) {
         return find;
-      }
-      else {
+      } else {
         return "";
       }
     } catch (error) {
-
       console.log(error);
     }
   }
 
+  async getSectionsAndLectures(courseID) {
+    try {
+      const sections = await Section.find({ courseID });
+
+      const formattedSections = [];
+
+      for (const section of sections) {
+        const lectures = await Lecture.find({ sectionID: section._id });
+
+        const formattedLectures = lectures.map(lecture => ({
+          lectureTitle: lecture.lectureTitle,
+          lectureLink: lecture.lectureLink,
+          lectureDescription: lecture.lectureDescription
+        }));
+
+        formattedSections.push({
+          sectionNumber: section.sectionNumber,
+          sectionTitle: section.sectionTitle,
+          lectures: formattedLectures
+        });
+      }
+      return formattedSections;
+    } catch (error) {
+      console.log(error);
+      return null; // Hoặc giá trị mặc định khác tùy thuộc vào yêu cầu của bạn
+    }
+  }
+
+
+  async getFirstlecture(courseID) {
+    try {
+      const sections = await Section.find({ courseID });
+
+      if (sections.length === 0) {
+        return null; // Không có phần (section) nào được tìm thấy
+      }
+
+      const firstSection = sections[0];
+      const lectures = await Lecture.find({ sectionID: firstSection._id });
+
+      if (lectures.length === 0) {
+        return null; // Không có bài giảng (lecture) nào được tìm thấy trong phần đầu tiên
+      }
+
+      const firstLecture = lectures[0];
+
+      const formattedSection = {
+        sectionNumber: firstSection.sectionNumber,
+        sectionTitle: firstSection.sectionTitle,
+        lectureTitle: firstLecture.lectureTitle,
+        lectureLink: firstLecture.lectureLink,
+        lectureDescription: firstLecture.lectureDescription
+
+      };
+      console.log(formattedSection);
+
+      return formattedSection;
+    } catch (error) {
+      console.log(error);
+      return null; // Hoặc giá trị mặc định khác tùy thuộc vào yêu cầu của bạn
+    }
+  }
+
+  async add_to_cart(req, res, next) {
+    try {
+      const userID = req.session.account; // ID của người dùng từ req.session.account
+      const { courseId, del_courseId } = req.body;
+      console.log(courseId, del_courseId)
+      if (courseId) {
+        // Kiểm tra xem khóa học đã tồn tại trong giỏ hàng của người dùng hay chưa
+        const user = await User.findOne({
+          _id: userID,
+          cart: { $in: [courseId] }
+        });
+
+        if (user) {
+          // Khóa học đã tồn tại trong giỏ hàng
+          return res.json({ status: "success", message: "Khóa học đã tồn tại trong giỏ hàng" });
+        }
+
+        // Cập nhật cart của người dùng
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: userID }, // Tìm người dùng dựa trên ID
+          { $push: { cart: courseId } }, // Thêm courseId vào cart
+          { new: true } // Trả về người dùng đã được cập nhật
+        );
+
+        console.log(updatedUser); // In thông tin người dùng đã được cập nhật
+
+        // Thực hiện các xử lý khác sau khi thêm vào giỏ hàng thành công
+
+        // Gửi phản hồi thành công về client
+        return res.json({ status: "success", message: "Thêm vào giỏ hàng thành công" });
+      }
+
+      else if (del_courseId) {
+        // Xóa khóa học khỏi giỏ hàng
+        const user = await User.findOneAndUpdate(
+          { _id: userID }, // Tìm người dùng dựa trên ID
+          { $pull: { cart: del_courseId } }, // Xóa del_courseId khỏi cart
+          { new: true } // Trả về người dùng đã được cập nhật
+        );
+
+        console.log(user); // In thông tin người dùng đã được cập nhật
+
+        // Thực hiện các xử lý khác sau khi xóa khỏi giỏ hàng thành công
+        req.session.flash = {
+          type: 'success',
+          intro: 'del cart',
+          message: 'Delete successful',
+        };
+        // Gửi phản hồi thành công về client
+        return res.json({ status: "success", message: "Xóa khỏi giỏ hàng thành công" });
+      } else {
+        // Nếu không có courseId hoặc del_courseId được cung cấp
+        return res.json({ status: "error", message: "Không có khóa học hoặc ID khóa học để xử lý" });
+      }
+    } catch (error) {
+      // Xử lý lỗi (nếu có)
+      console.error("Error:", error);
+      // Gửi phản hồi lỗi về client
+      res.status(500).json({ status: "error", message: "Đã xảy ra lỗi khi xử lý giỏ hàng" });
+    }
+  }
+  async get_list_cart(req, res, next) {
+    try {
+      const userId = req.session.account; // Lấy userId từ session hoặc nguồn dữ liệu khác
+
+      // Lấy thông tin người dùng và populate mảng cart với các đối tượng course
+      const user = await User.findById(userId).populate('cart', 'courseName coursePrice courseCategory');
+
+      if (!user) {
+        // Người dùng không tồn tại
+        return res.json({ status: 'error', message: 'User does not exist' });
+      }
+
+      const cartItems = user.cart; // Mảng cart của người dùng
+      const cartCourses = []; // Mảng chứa thông tin course từ cart
+
+      // Lặp qua từng item trong cart và lấy thông tin course tương ứng
+      for (const cartItem of cartItems) {
+        const course = await Course.findById(cartItem._id).populate('instructorID', 'fullName');
+        if (course) {
+          const formattedCourse = {
+            courseId: course._id.toString(),
+            courseName: course.courseName,
+            coursePrice: course.coursePrice,
+            courseCategory: course.courseCategory,
+            instructorFullName: course.instructorID.fullName
+          };
+          cartCourses.push(formattedCourse);
+        }
+      }
+
+      // Gửi phản hồi với danh sách các course trong cart
+      return cartCourses;
+    } catch (error) {
+      // Xử lý lỗi (nếu có)
+      console.error('Error:', error);
+      // Gửi phản hồi lỗi về client
+      res.status(500).json({ status: 'error', message: 'Đã xảy ra lỗi khi lấy danh sách cart' });
+    }
+  }
   //TODO: thêm flash +  dark mode cho phần product
   async addnewproduct(req, res, next) {
     console.log("ADD new product : ")
@@ -168,7 +357,7 @@ class CourseController {
             inventory: inventory,
             category: category,
             productPicture: "../images/default_product.png",
-            barcode:"123"
+            barcode: "123"
           });
 
           // res.json({ added: true, status: "success", message: "Add staff successfully" });
@@ -276,7 +465,7 @@ class CourseController {
 
 
   // Thêm khóa học
-  async addNewCourse(req, res) {
+  async addNewCourse(req, res, next) {
     console.log("ADD new course : ");
     try {
       const errors = validationResult(req);
@@ -334,8 +523,9 @@ class CourseController {
         res.status(201).json({ added: true, status: "success", message: "Course added successfully", course: savedCourse });
       }
     } catch (error) {
-      res.status(500).json(error);
-      console.error("Lỗi: " + error);
+      // res.status(500).json(error);
+      // console.error("Lỗi: " + error);
+      next(error);
     }
   }
 

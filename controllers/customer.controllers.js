@@ -1,5 +1,5 @@
 const Customer = require('../models/customers');
-const Order = require('../models/course');
+const Order = require('../models/courses');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
