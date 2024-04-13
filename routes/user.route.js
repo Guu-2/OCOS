@@ -97,9 +97,26 @@ router.get('/', function (req, res) {
     req.page_data = {
       menu_bar: await courseController.getSectionsAndLectures(req.params.courseId),
       first_lecture: await courseController.getFirstlecture(req.params.courseId),
+      notes: await courseController.getNotesByUserAndCourseID(req)
     }
     // console.log(req.page_data.account_details)
     await userController.getpage(req, res, next);
+  })
+  .get('/notes', async (req, res) => {
+    const notes = await courseController.getNotesByUserAndCourseID(req);
+    res.json(notes);
+  })
+  .post('/take-note', async function (req, res, next) {
+    try {
+      const added = await courseController.addNewNote(req, res);
+      
+      res.json(added);
+
+    } catch (error) {
+      // Xử lý lỗi (nếu có)
+      console.error("Error:", error);
+      next(error);
+    }
   })
   .get('/cart', async function (req, res, next) {
     const partial = 'partials/shopping_cart';

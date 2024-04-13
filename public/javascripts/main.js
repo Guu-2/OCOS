@@ -806,25 +806,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 let lecture_page = document.querySelector('.lecture_page');
+var player;
 
 if (lecture_page) {
-  $('.toggle_show_lecture').click(function () {
-    $(this).toggleClass('fa-angle-down fa-angle-up');
-    $(this).parent().next('#all_lecture').toggleClass('open');
-  });
+    $('.toggle_show_lecture').click(function () {
+        $(this).toggleClass('fa-angle-down fa-angle-up');
+        $(this).parent().next('#all_lecture').toggleClass('open');
+    });
 
-  function change_lecture(lectureTitle, lectureLink, lectureDescription) {
-    console.log(lectureTitle)
-    console.log(lectureLink)
-    console.log(lectureDescription)
-    
-    $('#lecture_link').attr('src', lectureLink);
-    // Thay đổi nội dung của lecture title
-    $('.lecture_title').text(lectureTitle);
+    function change_lecture(lectureID, lectureTitle, lectureLink, lectureDescription) {
+      console.log(lectureID, lectureTitle, lectureLink, lectureDescription);
 
-    // Thay đổi nội dung của lecture description
-    $('.lecture_description').text(lectureDescription);
-  }
+      $('#lectureId').val(lectureID);
+      // $('#lecture_link').attr('src', lectureLink);
+      $('.lecture_title').text(lectureTitle);
+      $('.lecture_description').text(lectureDescription);
+
+      const videoId = getYouTubeVideoID(lectureLink);
+      if (player && videoId) {
+          player.loadVideoById(videoId);
+      }
+    }
 }
 
 function buyNow(courseId) {

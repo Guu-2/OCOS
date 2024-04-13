@@ -19,35 +19,16 @@
             </div>
             <div class="offcanvas-body">
                 <ul>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
-                    <li><p>Try scrolling the rest of the page to see this option in action.</p></li>
+                    <% if (data.notes && data.notes.length > 0) { %>
+                        <% data.notes.forEach(function(note) { %>
+                            <li onclick="jumpToLecture('<%= note.lectureID %>', '<%= note.noteTimeStamp %>', '<%= note.lectureTitle %>', '<%= note.lectureLink %>', '<%= note.lectureDescription %>')">
+                                <p><%= note.noteTimeStamp %> - <%= note.sectionTitle %> - <%= note.lectureTitle %>: <%= note.noteDescription %></p>
+                            </li>
+                        <% }); %>
+                    <% } else { %>
+                        <li>There are no notes yet.</li>
+                    <% } %>
                 </ul>
-
-
-
-
-
 
             </div>
         </div>
@@ -61,10 +42,12 @@
         <% if (first_lecture) { %>
             <div class="lecture_video">
                 <iframe width="100%" id="lecture_link" height="100%"
-                    src="<%=first_lecture.lectureLink %>" title="YouTube video player"
+                    src="<%=first_lecture.lectureLink %>&enablejsapi=1" title="YouTube video player"
                     frameborder="0"
+                    allowscriptaccess="always"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen
+                    ></iframe>
             </div>
             <!-- //TODO: sửa lại thành form -->
             <div class="d-flex justify-content-between align-items-center mb-3 lecture_modified">
@@ -73,10 +56,13 @@
                     <h4 class="lecture_title" ><%=first_lecture.lectureTitle %></h4>
                     <p class="lecture_description" ><%=first_lecture.lectureDescription %></p>
                 </div>
-                <div class="take_note">
-                    <i class="fa-solid fa-file-pen new_note"></i>
-                    take note 00:00
-                </div>
+                <form id="noteForm" onsubmit="takeNoteSubmit(event)">
+                    <input type="hidden" id="lectureId" value="<%= first_lecture.lectureID %>">
+                    <button type="submit" class="take_note">
+                        <i class="fa-solid fa-file-pen new_note"></i>
+                        <span id="noteTime">Take note 00:00</span>
+                    </button> 
+                </form>                              
             </div>
         <% }%>
 
@@ -102,7 +88,7 @@
                     
                             <ul id="all_lecture">
                                 <% section.lectures.forEach(function(lecture) { %>
-                                    <li onclick="change_lecture('<%=lecture.lectureTitle %>','<%=lecture.lectureLink %>' , '<%=lecture.lectureDescription %>')">
+                                    <li onclick="change_lecture('<%= lecture.lectureID %>', '<%=lecture.lectureTitle %>','<%=lecture.lectureLink %>' , '<%=lecture.lectureDescription %>')">
                                         <p><i class="fa-regular fa-circle-play" ></i> <%= lecture.lectureTitle %></p>
                                     </li>
                                 <% }); %>
@@ -114,4 +100,4 @@
         </div>
     </div>
 </div>
-
+<script src="../../javascripts/take-note.js"></script>

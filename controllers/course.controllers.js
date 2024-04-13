@@ -2,6 +2,7 @@ const Product = require('../models/products');
 const Course = require('../models/courses');
 const Section = require('../models/section');
 const Lecture = require('../models/lecture');
+const Note = require('../models/note');
 const User = require('../models/users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -169,6 +170,7 @@ class CourseController {
         const lectures = await Lecture.find({ sectionID: section._id });
 
         const formattedLectures = lectures.map(lecture => ({
+          lectureID: lecture._id,
           lectureTitle: lecture.lectureTitle,
           lectureLink: lecture.lectureLink,
           lectureDescription: lecture.lectureDescription
@@ -208,6 +210,7 @@ class CourseController {
       const formattedSection = {
         sectionNumber: firstSection.sectionNumber,
         sectionTitle: firstSection.sectionTitle,
+        lectureID: firstLecture._id,
         lectureTitle: firstLecture.lectureTitle,
         lectureLink: firstLecture.lectureLink,
         lectureDescription: firstLecture.lectureDescription
@@ -531,8 +534,71 @@ class CourseController {
     }
   }
 
+  // Take note
+  async addNewNote(req, res) {
+    try {
+      const userID = req.session.account;
+      const { lectureID, noteTimeStamp, noteDescription } = req.body;
+      
+      const newNote = new Note({
+          lectureID,
+          userID,
+          noteTimeStamp,
+          noteDescription
+      });
 
+      const savedNote = await newNote.save();
+      res.status(201).json({ success: true, message: "Note added successfully", note: savedNote });
+    } catch (error) {
+        console.error("Error adding note:", error);
+        res.status(500).json({ success: false, message: "Failed to add note" });
+    }
+  }
 
+  async getNotesByUserAndCourseID(req) {
+    try {
+      const userId = req.session.account; // Lấy userID từ session
+      const courseId = req.params.courseId;
+  
+      // Truy vấn tất cả notes dựa trên userId và courseId
+      const notes = await Note.find({ userID: userId })
+        .populate({
+          path: 'lectureID',
+          populate: {
+            path: 'sectionID',
+            select: 'sectionNumber sectionTitle'
+          },
+          select: 'lectureTitle lectureLink lectureDescription'
+        })
+        .exec();
+  
+      if (!notes) {
+        return null;
+      }
+  
+      // Tạo danh sách formatted notes để gửi về client
+      const formattedNotes = notes.map(note => {
+        const lectureTitle = note.lectureID ? note.lectureID.lectureTitle : 'Lecture Not Found';
+        const sectionTitle = note.lectureID && note.lectureID.sectionID ? note.lectureID.sectionID.sectionTitle : 'Section Not Found';
+  
+        return {
+          noteTimeStamp: note.noteTimeStamp,
+          noteDescription: note.noteDescription,
+          lectureTitle: lectureTitle,
+          lectureLink: note.lectureID.lectureLink, 
+          lectureDescription: note.lectureID.lectureDescription,
+          sectionTitle: sectionTitle,
+          lectureID: note.lectureID._id
+        };
+      });
+  
+      // Gửi phản hồi với danh sách các note
+      return formattedNotes;
+    } catch (error) {
+      console.error('Error:', error);
+      return null;
+    }
+  }
 
 
 }
