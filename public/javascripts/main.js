@@ -827,4 +827,11 @@ if (lecture_page) {
   }
 }
 
+function buyNow(courseId) {
+  window.location.href = '/payment/' + courseId;
+}
+
+function checkout() {
+  window.location.href = '/payment/';
+}
 

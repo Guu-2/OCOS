@@ -1,6 +1,6 @@
 var express = require('express');
 const router = express.Router();
-
+const User = require('../models/users');
 const userController = require('../controllers/user.controllers');
 const courseController = require('../controllers/course.controllers');
 const orderController = require('../controllers/order.controller')
@@ -70,6 +70,9 @@ router.get('/', function (req, res) {
     }
   })
   .get('/course/:courseId', async function (req, res, next) {
+    const user = await User.findById(req.session.account);
+    const hasBought = user.subscribed.includes(req.params.courseId);
+    const hasAddToCart = user.cart.includes(req.params.courseId);
 
     console.log(req.params.courseId)
     const partial = 'partials/course_detail';
@@ -77,7 +80,9 @@ router.get('/', function (req, res) {
     req.partial_path = partial
     req.layout_path = layout
     req.page_data = {
-      course_detail: await courseController.getCourse(req.params.courseId)
+      course_detail: await courseController.getCourse(req.params.courseId),
+      hasBought: hasBought,
+      hasAddToCart: hasAddToCart
     }
     // console.log(req.page_data.account_details)
     await userController.getpage(req, res, next);

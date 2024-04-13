@@ -307,7 +307,8 @@ class CourseController {
             courseName: course.courseName,
             coursePrice: course.coursePrice,
             courseCategory: course.courseCategory,
-            instructorFullName: course.instructorID.fullName
+            instructorFullName: course.instructorID.fullName,
+            courseImage: course.courseImage
           };
           cartCourses.push(formattedCourse);
         }

@@ -24,10 +24,16 @@
                     <p><%= course.coursePrice%> VND</p> 
                 </div>
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <button type="button" class="btn btn-primary" onclick="addtocart('<%=course._id.toString() %>')">Add to cart</button>
-                    <button type="button" class="btn btn-success">Buy Now</button>
+                    <% if (!data.hasBought) { %>
+                        <% if (!data.hasAddToCart) { %>
+                            <button type="button" class="btn btn-primary" onclick="addtocart('<%=course._id.toString() %>')">Add to cart</button>
+                        <% } %>
+                        <button type="button" class="btn btn-success" onclick="buyNow('<%= course._id %>')">Buy Now</button>
+                    <% } %>
                 </div>
-                <button type="button" class="btn btn-info" onclick="getlecturebyId('<%=course._id.toString() %>')">Start Course</button>
+                <% if (data.hasBought) { %>
+                    <button type="button" class="btn btn-info" onclick="getlecturebyId('<%=course._id.toString() %>')">Start Course</button>
+                <% } %>
             </div>
             <div class="col col-12 tab_section">
                 <!-- Tabs Section -->

@@ -4,7 +4,7 @@ const adminRoute = require("./admin.route"),
   authRoute = require("./auth.route"),
   profileRoute = require("./profile.route"),
   fileRoute = require("./file.route");
-
+  paymentRoute = require('./payment.route');
 const connect = require("../config/connection");
 var { authentication, isAdmin } = require('../middleware/authentication');
 const mailer = require('../utils/mailer')
@@ -26,7 +26,7 @@ const router = (app) => {
   // app.get('/verify', userControllers.verifyAccount);
   app.use('/' , authentication , profileRoute);
   app.use('/' , authentication , fileRoute);
-
+  app.use('/', authentication, paymentRoute);
 
 };
 
