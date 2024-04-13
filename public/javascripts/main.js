@@ -551,63 +551,95 @@ function getcoursebyId(id) {
   window.location.href = "/home/course/" + id;
 }
 
+function getcoursebyId_admin(id) {
+  console.log(id)
+  window.location.href = "/admin/course/" + id;
+}
+
+
+
 function getlecturebyId(id) {
   console.log(id)
   window.location.href = "/home/lecture/" + id;
 }
 
-  function addtocart(id) {
-    console.log(id)
+function addtocart(id) {
+  console.log(id)
 
-    fetch("/home/cart", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json" // Đặt kiểu dữ liệu là JSON
-      },
-      body: JSON.stringify({courseId : id}) // Chuyển đổi dữ liệu thành chuỗi JSON
+  fetch("/home/cart", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json" // Đặt kiểu dữ liệu là JSON
+    },
+    body: JSON.stringify({ courseId: id }) // Chuyển đổi dữ liệu thành chuỗi JSON
+  })
+    .then(response => response.json())
+    .then(data => {
+      // showflashmessage(data.status, data.message)
+      if (data.status === "success") {
+        // window.location.reload();
+        showflashmessage(data.status, data.message);
+      }
+      else { showflashmessage(data.status, data.message); }
     })
-      .then(response => response.json())
-      .then(data => {
-        // showflashmessage(data.status, data.message)
-        if (data.status === "success") {
-          // window.location.reload();
-          showflashmessage(data.status, data.message);
-        }
-        else { showflashmessage(data.status, data.message); }
-      })
-      .catch(function (error) {
-        // Xử lý lỗi (nếu có)
-        console.error("Error:", error);
-      });
+    .catch(function (error) {
+      // Xử lý lỗi (nếu có)
+      console.error("Error:", error);
+    });
 
-  }
-  
-  function delcart(id) {
-    console.log(id)
+}
 
-    fetch("/home/cart", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json" // Đặt kiểu dữ liệu là JSON
-      },
-      body: JSON.stringify({del_courseId : id}) // Chuyển đổi dữ liệu thành chuỗi JSON
+function delcart(id) {
+  console.log(id)
+
+  fetch("/home/cart", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json" // Đặt kiểu dữ liệu là JSON
+    },
+    body: JSON.stringify({ del_courseId: id }) // Chuyển đổi dữ liệu thành chuỗi JSON
+  })
+    .then(response => response.json())
+    .then(data => {
+      // showflashmessage(data.status, data.message)
+      if (data.status === "success") {
+        window.location.reload();
+        showflashmessage(data.status, data.message);
+      }
+      else { showflashmessage(data.status, data.message); }
     })
-      .then(response => response.json())
-      .then(data => {
-        // showflashmessage(data.status, data.message)
-        if (data.status === "success") {
-          window.location.reload();
-          showflashmessage(data.status, data.message);
-        }
-        else { showflashmessage(data.status, data.message); }
-      })
-      .catch(function (error) {
-        // Xử lý lỗi (nếu có)
-        console.error("Error:", error);
-      });
+    .catch(function (error) {
+      // Xử lý lỗi (nếu có)
+      console.error("Error:", error);
+    });
 
-  }
-  
+}
+
+
+// function del_course(id){
+//   console.log(id);
+//   fetch("/admin/course", {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json" // Đặt kiểu dữ liệu là JSON
+//     },
+//     body: JSON.stringify({ del_courseId: id }) // Chuyển đổi dữ liệu thành chuỗi JSON
+//   })
+//     .then(response => response.json())
+//     .then(data => {
+//       // showflashmessage(data.status, data.message)
+//       if (data.status === "success") {
+//         window.location.reload();
+//         showflashmessage(data.status, data.message);
+//       }
+//       else { showflashmessage(data.status, data.message); }
+//     })
+//     .catch(function (error) {
+//       // Xử lý lỗi (nếu có)
+//       console.error("Error:", error);
+//     });
+// }
+
 function callback(url) {
   window.location.href = url;
 }
@@ -628,27 +660,29 @@ const delete_modal = document.querySelector("#deleteModal");
 const delete_btn = document.querySelector("#confirm_delete")
 
 if (delete_btn) {
-  delete_btn.addEventListener("click", () => { deleteproductbyId(global_id) })
+  delete_btn.addEventListener("click", () => { deletecoursebyId(global_id) })
 
 }
 
 
-function deleteproduct(id) {
+function deletecourse(course_name , id) {
+  // Điền id vào trường có id là "id"
+  $(".id_course").text(course_name);
   $("#deleteModal").modal('show');
   global_id = id;
 }
 
-function deleteproductbyId(id) {
+function deletecoursebyId(id) {
   console.log(id)
 
 
-  fetch('/admin/product/' + id, {
+  fetch('/admin/course/' + id, {
     method: 'DELETE',
   })
     .then(response => response.json())
     .then(data => {
       if (data.delete) {
-        const product = data.product
+       
         console.log(data.product); // true
         window.location.href = data.redirect;
       }
@@ -817,7 +851,7 @@ if (lecture_page) {
     console.log(lectureTitle)
     console.log(lectureLink)
     console.log(lectureDescription)
-    
+
     $('#lecture_link').attr('src', lectureLink);
     // Thay đổi nội dung của lecture title
     $('.lecture_title').text(lectureTitle);

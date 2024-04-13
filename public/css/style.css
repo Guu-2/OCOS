@@ -964,7 +964,9 @@ section#product_page {
     border-radius: 0px 0px 7px 7px; */
 
 }
-
+#table_product .course-item{
+    border: 2px solid blue;
+}
 
 
 .course-item .course-content {
@@ -978,9 +980,7 @@ section#product_page {
 
 .course-item #course_pic{
     border: 2px solid red;
-    object-fit: cover;
-    /* max-width: 250px;
-    max-height: 200px; */
+    object-fit: contain;
 }
 
 
@@ -1006,14 +1006,19 @@ section#product_page {
     cursor: pointer;
     font-style: normal;
     font-weight: bold;
+    height: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
 }
 
 
 .course-item .course-content .description {
     border: 2px solid rgb(47, 0, 255);
-    /* overflow: hidden; */
 
+    height: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Hiển thị dấu chấm ba chấm khi văn bản bị cắt */
 }
 
 .course-item .course-content .trainer {
@@ -1051,15 +1056,16 @@ section#product_page {
 div#cart_page{
     border: 2px solid red;
 }
-div#cart_page .course_cart{
+
+
+div#cart_page  #course_pic{
     border: 2px solid red;
+    object-fit: contain;
+    object-position: center;
+    width: 160px;
+    height: 120px;
 }
 
-div#cart_page .course_cart #course_pic{
-    border: 2px solid red;
-    max-width: 160px;
-    max-height: 120px;
-}
 div#cart_page #course_cart_empty{
     display: flex;
     flex-direction: column;
@@ -1072,6 +1078,15 @@ div#cart_page .payment{
     border: 2px solid red;
 }
 
+
+/* TODO COURSE MANAGER PAGE */
+table#course_manager .course_pic img{
+    border: 2px solid red;
+    object-fit: contain;
+    object-position: center;
+    width: 160px;
+    height: 120px;
+}
 /* TODO COURSE CREATE PAGE */
 div.my_create_course {
     border: 2px solid yellow;

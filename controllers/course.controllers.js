@@ -55,36 +55,37 @@ class CourseController {
   }
 
 
+
   async delete_course(req, res, next) {
     console.log("Delete course : ")
     try {
-      // const product = await Product.findById(req.params.id);
-      // if (product) {
-      //   if(!product.inOrders){
-      //     await product.deleteOne();
-      //     const imagePath = path.join(__dirname, '../uploads', product.productPicture);
-      //     console.log(imagePath);
-      //     fs.unlink(imagePath, (err) => {
-      //       if (err) {
-      //         console.error('Có lỗi xảy ra khi xóa file:', err);
-      //         return;
-      //       }
-      //       console.log('File đã được xóa thành công.');
-      //     });
-      //     req.session.flash = {
-      //       type: "success",
-      //       intro: 'Delete product',
-      //       message: "Delete product successfully",
-      //     };
-      //     res.json({ delete: true, status: "success", message: 'Product has been deleted', redirect: "/admin/product" });
-      //   }
-      //   else{
-      //     res.json({ delete : false, status: "warning", message: 'Product is in order'});
-      //   }
+      const product = await Course.findById(req.params.courseId);
+      if (product) {
+        if(!product.inOrders){
+          await product.deleteOne();
+          const imagePath = path.join(__dirname, '../uploads', product.productPicture);
+          console.log(imagePath);
+          fs.unlink(imagePath, (err) => {
+            if (err) {
+              console.error('Có lỗi xảy ra khi xóa file:', err);
+              return;
+            }
+            console.log('File đã được xóa thành công.');
+          });
+          req.session.flash = {
+            type: "success",
+            intro: 'Delete product',
+            message: "Delete course successfully",
+          };
+          res.json({ delete: true, status: "success", message: 'Course has been deleted', redirect: "/admin/course" });
+        }
+        else{
+          res.json({ delete : false, status: "warning", message: 'Product is in order'});
+        }
 
-      // } else {
-      //   res.status(404)({ delete: false, status: "success", message: 'Product Not Foud' });
-      // }
+      } else {
+        res.status(404)({ delete: false, status: "success", message: 'Product Not Foud' });
+      }
     } catch (err) {
       next(err);
     }
@@ -307,6 +308,7 @@ class CourseController {
             courseName: course.courseName,
             coursePrice: course.coursePrice,
             courseCategory: course.courseCategory,
+            courseImage: course.courseImage,
             instructorFullName: course.instructorID.fullName,
             courseImage: course.courseImage
           };

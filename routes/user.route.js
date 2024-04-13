@@ -137,47 +137,6 @@ router.get('/', function (req, res) {
       // res.status(500).json({ status: "error", message: "Đã xảy ra lỗi khi thêm vào giỏ hàng" });
     }
   })
-  // Gửi yêu cầu POST đến /home/order khi có id
-  // .post('/order', async function (req, res, next) {
-  //   if (req.body.id) {
-  //       const partial = 'partials/product';
-  //       const layout = 'layouts/main';
-  //       const endpoint = '/home/intial';
-  //       const id = req.body.id;
-  //       req.partial_path = partial;
-  //       req.layout_path = layout;
-  //       req.endpoint = endpoint;
-
-  //       req.page_data = {
-  //           product_infor: await courseController.getProduct(id),
-  //       };
-  //       await userController.getpage(req, res, next);
-  //   } else {
-  //       const { customerInfo, orderItems, totalPrice, amountPaid, change} = req.body;
-  //       // console.log(req.body)
-  //       const checkout = await customerController.checkCustomerbyPhone(customerInfo.phone)
-  //       var cusId="";
-  //       if(checkout){
-  //         cusId= checkout
-  //       }
-  //       else{
-  //         cusId = await customerController.autoCreateCustomer(customerInfo);
-  //       }
-  //       console.log(cusId)
-  //       //TODO: check custom tạo mới hoặc lấy id để đưa vô
-  //       // const cusId = '6574c9e7add981e50025a91c';
-
-  //       req.customer_id = cusId;
-  //       req.order_items = orderItems;
-  //       req.total_price = totalPrice;
-  //       req.amount_paid = amountPaid;
-  //       req.change = change;
-
-
-
-  //       orderController.addNewOrder(req, res, next);
-  //   }
-  // })
 
   .get('/subscribed', async function (req, res, next) {
     const partial = 'partials/my_course';
@@ -185,7 +144,9 @@ router.get('/', function (req, res) {
 
     req.partial_path = partial
     req.layout_path = layout
-
+    req.page_data = {
+      list_my_course: await courseController.get_my_course(req, res, next),
+    }
     await userController.getpage(req, res, next);
   })
 

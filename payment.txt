@@ -1,0 +1,1 @@
+chỗ có tiền tệ : course_detail, shopping_cart

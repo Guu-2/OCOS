@@ -12,7 +12,7 @@
                 <div class="col-lg-8 col-md-7 col-12" data-aos="zoom-in" data-aos-delay="100">
                 <% list_cart.forEach((cart)=> { %>
                         <div class="course_cart d-flex justify-content-between align-items-center mb-3">
-                            <img id="course_pic" src="../../courses/661754c031e7f1f37258ccac.jpg" class="img-fluid" alt="err" onclick="getcoursebyId('<%=cart.courseId%>')">
+                            <img id="course_pic" src="<%=cart.courseImage%>" class="img-fluid" alt="err" onclick="getcoursebyId('<%=cart.courseId%>')">
                             <div class="course-content" onclick="getcoursebyId('<%=cart.courseId%>')">
                                 <%=cart.courseName%> <br>
                                 <%=cart.courseCategory%> <br>
