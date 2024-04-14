@@ -277,6 +277,10 @@ document.getElementById('addCourseBtn').addEventListener('click', function () {
             document.getElementById('alert-container').innerHTML = successAlert;
             // Đóng alert sau một thời gian
             $(".alert").alert();
+            // Đợi 2 giây trước khi tải lại trang
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
         })
         .catch(error => {
             console.error('Error adding course:', error);

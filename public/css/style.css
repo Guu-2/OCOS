@@ -540,6 +540,86 @@ body .background-container {
     max-width: 500px;
 }
 
+.home-section .fill_content .custom-collapse {
+    position: absolute;
+    z-index: 9999;
+    top: 43px;
+    left: 0;
+    right: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.home-section .fill_content .search_result {
+    padding: 10px;
+}
+
+.home-section .fill_content #search_result_row {
+    border: 2px solid red;
+    padding-left: 0px;
+
+}
+
+.home-section .fill_content #search_result_row li {
+    border: 2px solid rgb(234, 255, 0);
+
+
+}
+
+.home-section .fill_content #search_result_row .course_res_pic {
+    border: 2px solid black;
+}
+
+.home-section .fill_content #search_result_row .course_res_pic img {
+    border: 2px solid red;
+    object-fit: contain;
+
+    max-width: 40px;
+    max-height: 30px;
+    /* border-radius: 50%; */
+
+}
+
+
+.home-section .fill_content #search_result_row .find_icon {
+
+    /* margin-left: 30px; */
+
+    text-align: center;
+
+    transform: scale(1.2);
+    border: 2px solid blue;
+    width: 40px;
+}
+
+.home-section .fill_content #search_result_row .course_name {
+
+    /* margin-left: 30px; */
+    border: 2px solid blue;
+
+
+
+}
+
+.home-section .fill_content #clear_icon {
+    position: absolute;
+    /* z-index: 123; */
+    top: 5px;
+    right: 50px;
+    cursor: pointer;
+    border: 2px solid blue;
+
+}
+
+.home-section .fill_content #clear_icon i {
+    /* border-radius: 50%; */
+    transform: scale(1.2);
+}
+
+.home-section .fill_content #clear_icon:hover {
+    color: red;
+}
+
 
 /* TODO cart shopping */
 .home-section .fill_content .cart_shopping {
@@ -965,6 +1045,9 @@ section#product_page {
 
 }
 
+#table_product .course-item {
+    border: 2px solid blue;
+}
 
 
 .course-item .course-content {
@@ -976,11 +1059,9 @@ section#product_page {
 
 }
 
-.course-item #course_pic{
+.course-item #course_pic {
     border: 2px solid red;
-    object-fit: cover;
-    /* max-width: 250px;
-    max-height: 200px; */
+    object-fit: contain;
 }
 
 
@@ -1006,14 +1087,20 @@ section#product_page {
     cursor: pointer;
     font-style: normal;
     font-weight: bold;
+    height: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
 }
 
 
 .course-item .course-content .description {
     border: 2px solid rgb(47, 0, 255);
-    /* overflow: hidden; */
 
+    height: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Hiển thị dấu chấm ba chấm khi văn bản bị cắt */
 }
 
 .course-item .course-content .trainer {
@@ -1047,29 +1134,41 @@ section#product_page {
     border: 2px solid red;
     margin: 10px
 }
+
 /* TODO CART PAGE */
-div#cart_page{
-    border: 2px solid red;
-}
-div#cart_page .course_cart{
+div#cart_page {
     border: 2px solid red;
 }
 
-div#cart_page .course_cart #course_pic{
+
+div#cart_page #course_pic {
     border: 2px solid red;
-    max-width: 160px;
-    max-height: 120px;
+    object-fit: contain;
+    object-position: center;
+    width: 160px;
+    height: 120px;
 }
-div#cart_page #course_cart_empty{
+
+div#cart_page #course_cart_empty {
     display: flex;
     flex-direction: column;
-    justify-content:center;
+    justify-content: center;
     align-items: center;
-    
+
 }
 
-div#cart_page .payment{
+div#cart_page .payment {
     border: 2px solid red;
+}
+
+
+/* TODO COURSE MANAGER PAGE */
+table#course_manager .course_pic img {
+    border: 2px solid red;
+    object-fit: contain;
+    object-position: center;
+    width: 160px;
+    height: 120px;
 }
 
 /* TODO COURSE CREATE PAGE */
@@ -1521,7 +1620,7 @@ div#course_slide .swiper .swiper-pagination {
 # About Us Section
 --------------------------------------------------------------*/
 
-.about-us img{
+.about-us img {
     border-radius: 15px;
 }
 
@@ -1532,11 +1631,12 @@ div#course_slide .swiper .swiper-pagination {
     align-items: center;
 }
 
-.about-us .content .about_content{
+.about-us .content .about_content {
     border: 2px solid rgb(51, 255, 0);
     justify-content: center;
     align-items: center;
 }
+
 .about-us .content h3 {
     font-size: 2rem;
     font-weight: 700;
@@ -1833,7 +1933,7 @@ body.dark .background-container {
   # Scroll Top Button
   --------------------------------------------------------------*/
 .scroll-top {
-    
+
     position: fixed;
     visibility: hidden;
     opacity: 0;

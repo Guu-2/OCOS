@@ -35,26 +35,89 @@ const sidebar = document.querySelector(".sidebar"),
 
   icon_seach = document.getElementById("seach_icon");
 
+  const $collap = $('#collapseExample');
+
+  const $clearIcon = $('#clear_icon');
+const handleSearchResultsDebouce = useDebounce(handleSearchResults , 250);
+
+function handleSearchResults(searchValue) {
+  // if (event.key === 'Enter') {
+    const keyword = searchValue.trim();
+    // console.log(keyword)
+    if (keyword !== '') {
+      
+      $("#search_result_row").innerHTML = ''; // Xóa nội dung hiện tại của collapseExample
+      data = `
+                <li class="list-group-item d-flex justify-content-start align-items-center my-2">
+                  <div class="find_icon ">
+                      <i class="fa-solid fa-magnifying-glass"></i>
+
+                  </div>
+                 
+                  <div class="course_name mx-2  d-flex justify-content-start align-items-center">
+                      
+                      Seach result for '${keyword}'
+                  </div>
+                </li>
+            `
+      $("#search_result_row").html(data);
+
+      // const ul = document.createElement('ul');
+      // ul.classList.add('list-group');
+
+      // // Giả sử có một mảng kết quả tìm kiếm
+      // const searchResults = ['Result 1', 'Result 2', 'Result 3'];
+
+      // searchResults.forEach(result => {
+      //   const li = document.createElement('li');
+      //   li.classList.add('list-group-item');
+      //   li.textContent = result;
+      //   ul.appendChild(li);
+      // });
+    // sendData(keyword);
+      sendData(keyword);
+      $collap.show(); // Hiển thị collapseExample
+      $clearIcon.show();
+    } else {
+      $("#search_result_row").html("");
+      $collap.hide(); // Ẩn collapseExample
+      $clearIcon.hide();
+    }
 
 
+}
 if (searchInput) {
 
-  searchInput.addEventListener('keyup', function (event) {
-    // if (event.key === 'Enter') {
-    const keyword = searchInput.value.trim();
-    if (keyword !== '') {
-      sendData(keyword);
-    }
+
+  $clearIcon.hide();
+
+  $collap.hide(); // Ẩn collapseExample
+
+  searchInput.addEventListener('input', () => {
+    handleSearchResultsDebouce(searchInput.value);
+    // }
+  });
+  searchInput.addEventListener('click', () => {
+    handleSearchResultsDebouce(searchInput.value);
     // }
   });
   icon_seach.addEventListener('click', function () {
-    sendData(searchInput.value.trim());
+    handleSearchResultsDebouce(searchInput.value);
   });
 
+  $clearIcon.click(function() {
+    searchInput.value = '';
+    $("#search_result_row").html("");
+    $clearIcon.hide();
+
+    $collap.hide(); // Ẩn collapseExample
+  });
 }
 
+
+
 function sendData(term) {
-  // console.log(term)
+  console.log(term)
   fetch(`/home/search/${term}`, {
     method: 'GET',
     headers: {
@@ -63,50 +126,29 @@ function sendData(term) {
   })
     .then((response) => response.json())
     .then(list => {
-      if (list.data) {
+      if (list.data.length > 0) {
         // console.log(list);
-        list = list.data
+        list_course = list.data
         var data = ""
-        list.forEach((product) => {
-          data +=
-            `
-            <tr class="product_row">
-              <td>
-                  <div class="product_picture">
-                      <img src="../${product.productPicture}" alt="err">
-                  </div>
-              </td>
-              <td>
-                  <div >
-                    ${product.productName}
-                  </div>
-              </td>
-              <td>
-                  <div>
-                  ${product.retailPrice}
-                  </div>
-              </td>
-              <td>
-                  <div>
-                  ${product.category}
-                  </div>
-              </td>
-              <td>
-                  <div>
-                  ${product.inventory}
-                     
-                  </div>
-              </td>
-  
-              <td>
-                <button type="button" class="btn btn-success" data-product-id="${product.barcode}" onclick="add_to_ordercard(this, '${product.barcode}')">Add</button>
-              </td>
-    
-  
-            </tr>`
+        list_course.forEach((course) => {
+          data += `
+          <li class="list-group-item d-flex justify-content-start align-items-center my-2"
+          onclick="getcoursebyId('${course._id.toString()}')">
+            <div class="course_res_pic  d-flex justify-content-start align-items-center">
+              <img src="${course.courseImage}" alt="err">
+            </div>
+            
+            <div class="course_name mx-2  d-flex justify-content-start align-items-center">
+                ${course.courseName}
+            </div>
+          </li>
+          `
 
         });
-        $("#product_row").html(data);
+        $("#search_result_row").append(data);
+      }else{
+        $("#search_result_row").append("");
+        $(".course_name").html("No results found for '"+term+"'");
       }
     })
     .catch(error => {
@@ -114,7 +156,15 @@ function sendData(term) {
     });
 }
 
-
+function useDebounce(callback, delay) {
+  let timeoutId;
+  return (key) =>{
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      callback(key);
+    }, delay);
+  }
+}
 
 //TODO: tách ra từng js cho partials vì render chỉ read property , 
 // các element của partials hiện tại
@@ -551,63 +601,73 @@ function getcoursebyId(id) {
   window.location.href = "/home/course/" + id;
 }
 
+function getcoursebyId_admin(id) {
+  console.log(id)
+  window.location.href = "/admin/course/" + id;
+}
+
+
+
 function getlecturebyId(id) {
   console.log(id)
   window.location.href = "/home/lecture/" + id;
 }
 
-  function addtocart(id) {
-    console.log(id)
+function addtocart(id) {
+  console.log(id)
 
-    fetch("/home/cart", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json" // Đặt kiểu dữ liệu là JSON
-      },
-      body: JSON.stringify({courseId : id}) // Chuyển đổi dữ liệu thành chuỗi JSON
+  fetch("/home/cart", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json" // Đặt kiểu dữ liệu là JSON
+    },
+    body: JSON.stringify({ courseId: id }) // Chuyển đổi dữ liệu thành chuỗi JSON
+  })
+    .then(response => response.json())
+    .then(data => {
+      // showflashmessage(data.status, data.message)
+      if (data.status === "success") {
+        // window.location.reload();
+        showflashmessage(data.status, data.message);
+      }
+      else { showflashmessage(data.status, data.message); }
     })
-      .then(response => response.json())
-      .then(data => {
-        // showflashmessage(data.status, data.message)
-        if (data.status === "success") {
-          // window.location.reload();
-          showflashmessage(data.status, data.message);
-        }
-        else { showflashmessage(data.status, data.message); }
-      })
-      .catch(function (error) {
-        // Xử lý lỗi (nếu có)
-        console.error("Error:", error);
-      });
+    .catch(function (error) {
+      // Xử lý lỗi (nếu có)
+      console.error("Error:", error);
+    });
 
-  }
-  
-  function delcart(id) {
-    console.log(id)
+}
 
-    fetch("/home/cart", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json" // Đặt kiểu dữ liệu là JSON
-      },
-      body: JSON.stringify({del_courseId : id}) // Chuyển đổi dữ liệu thành chuỗi JSON
+function delcart(id) {
+  console.log(id)
+
+  fetch("/home/cart", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json" // Đặt kiểu dữ liệu là JSON
+    },
+    body: JSON.stringify({ del_courseId: id }) // Chuyển đổi dữ liệu thành chuỗi JSON
+  })
+    .then(response => response.json())
+    .then(data => {
+      // showflashmessage(data.status, data.message)
+      if (data.status === "success") {
+        window.location.reload();
+        showflashmessage(data.status, data.message);
+      }
+      else { showflashmessage(data.status, data.message); }
     })
-      .then(response => response.json())
-      .then(data => {
-        // showflashmessage(data.status, data.message)
-        if (data.status === "success") {
-          window.location.reload();
-          showflashmessage(data.status, data.message);
-        }
-        else { showflashmessage(data.status, data.message); }
-      })
-      .catch(function (error) {
-        // Xử lý lỗi (nếu có)
-        console.error("Error:", error);
-      });
+    .catch(function (error) {
+      // Xử lý lỗi (nếu có)
+      console.error("Error:", error);
+    });
 
-  }
-  
+}
+
+
+
+
 function callback(url) {
   window.location.href = url;
 }
@@ -628,28 +688,41 @@ const delete_modal = document.querySelector("#deleteModal");
 const delete_btn = document.querySelector("#confirm_delete")
 
 if (delete_btn) {
-  delete_btn.addEventListener("click", () => { deleteproductbyId(global_id) })
+  delete_btn.addEventListener("click", () => { deletecoursebyId(global_id) })
 
 }
 
 
-function deleteproduct(id) {
+function deletecourse(course_name, id) {
+  // Điền id vào trường có id là "id"
+  $(".id_course").text(course_name);
   $("#deleteModal").modal('show');
   global_id = id;
 }
 
-function deleteproductbyId(id) {
+
+function show_info_payment(card_owner, payment_id) {
+  // Điền id vào trường có id là "id"
+  $(".payment_owner").text(card_owner);
+  $(".payment_id").text(payment_id);
+  $("#show_info_payment").modal('show');
+  // global_id = id;
+  console.log(card_owner, payment_id)
+}
+
+
+
+function deletecoursebyId(id) {
   console.log(id)
 
 
-  fetch('/admin/product/' + id, {
+  fetch('/admin/course/' + id, {
     method: 'DELETE',
   })
     .then(response => response.json())
     .then(data => {
       if (data.delete) {
-        const product = data.product
-        console.log(data.product); // true
+
         window.location.href = data.redirect;
       }
       else {
@@ -809,25 +882,26 @@ let lecture_page = document.querySelector('.lecture_page');
 var player;
 
 if (lecture_page) {
-    $('.toggle_show_lecture').click(function () {
-        $(this).toggleClass('fa-angle-down fa-angle-up');
-        $(this).parent().next('#all_lecture').toggleClass('open');
-    });
+  $('.toggle_show_lecture').click(function () {
+    $(this).toggleClass('fa-angle-down fa-angle-up');
+    $(this).parent().next('#all_lecture').toggleClass('open');
+  });
 
-    function change_lecture(lectureID, lectureTitle, lectureLink, lectureDescription) {
-      console.log(lectureID, lectureTitle, lectureLink, lectureDescription);
+  function change_lecture(lectureID, lectureTitle, lectureLink, lectureDescription) {
+    console.log(lectureID, lectureTitle, lectureLink, lectureDescription);
 
-      $('#lectureId').val(lectureID);
-      // $('#lecture_link').attr('src', lectureLink);
-      $('.lecture_title').text(lectureTitle);
-      $('.lecture_description').text(lectureDescription);
+    $('#lectureId').val(lectureID);
+    // $('#lecture_link').attr('src', lectureLink);
+    $('.lecture_title').text(lectureTitle);
+    $('.lecture_description').text(lectureDescription);
 
-      const videoId = getYouTubeVideoID(lectureLink);
-      if (player && videoId) {
-          player.loadVideoById(videoId);
-      }
+    const videoId = getYouTubeVideoID(lectureLink);
+    if (player && videoId) {
+      player.loadVideoById(videoId);
     }
+  }
 }
+
 
 function buyNow(courseId) {
   window.location.href = '/payment/' + courseId;

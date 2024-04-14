@@ -1,4 +1,4 @@
-const Product = require('../models/products');
+
 const Course = require('../models/courses');
 const Section = require('../models/section');
 const Lecture = require('../models/lecture');
@@ -30,7 +30,7 @@ class CourseController {
       }
       return courses;
     } catch (error) {
-      next(error);
+      return res.status(500).json({ error: 'Đã xảy ra lỗi khi lấy danh sách khóa học.' });
     }
   }
 
@@ -55,65 +55,105 @@ class CourseController {
     }
   }
 
+  async  get_subcribe_course(req, res, next) {
+    try {
+      const studentID = req.session.account; // Lấy studentID từ session hoặc nguồn dữ liệu khác
+    
+      const student = await User.findById(studentID); // Lấy thông tin người dùng từ bảng User
+      console.log(student)
+      const courses = await Course.find({ _id: { $in: student.subscribed } }).populate('instructorID', 'profilePicture fullName'); // Lấy thông tin các khóa học đã đăng ký từ bảng Course và liên kết với thông tin người dùng từ bảng User
+      console.log(courses)
+      // const subscribedCourses = courses.map(course => {
+      //   const { courseName, coursePrice, courseCategory, coursePreview, courseImage, courseDescription, courseAudience, courseResult, courseRequirement } = course;
+    
+      //   return {
+      //     instructorID: course.instructorID,
+      //     courseName,
+      //     coursePrice,
+      //     courseCategory,
+      //     coursePreview,
+      //     courseImage,
+      //     courseDescription,
+      //     courseAudience,
+      //     courseResult,
+      //     courseRequirement,
+      //     fullName: course.instructorID.fullName,
+      //     profilePicture: course.instructorID.profilePicture
+      //   };
+      // });
+    
+      // const result = {
+      //   student: {
+      //     fullName: student.fullName,
+      //     profilePicture: student.profilePicture
+      //   },
+      //   courses: subscribedCourses
+      // };
+    
+      return courses;
+    } catch (error) {
+      next(error);
+    }
+  }
+  
 
   async delete_course(req, res, next) {
     console.log("Delete course : ")
     try {
-      // const product = await Product.findById(req.params.id);
-      // if (product) {
-      //   if(!product.inOrders){
-      //     await product.deleteOne();
-      //     const imagePath = path.join(__dirname, '../uploads', product.productPicture);
-      //     console.log(imagePath);
-      //     fs.unlink(imagePath, (err) => {
-      //       if (err) {
-      //         console.error('Có lỗi xảy ra khi xóa file:', err);
-      //         return;
-      //       }
-      //       console.log('File đã được xóa thành công.');
-      //     });
-      //     req.session.flash = {
-      //       type: "success",
-      //       intro: 'Delete product',
-      //       message: "Delete product successfully",
-      //     };
-      //     res.json({ delete: true, status: "success", message: 'Product has been deleted', redirect: "/admin/product" });
-      //   }
-      //   else{
-      //     res.json({ delete : false, status: "warning", message: 'Product is in order'});
-      //   }
+      const product = await Course.findById(req.params.courseId);
+      if (product) {
+        if(!product.inOrders){
+          await product.deleteOne();
+          const imagePath = path.join(__dirname, '../uploads', product.courseImage);
+          console.log(imagePath);
+          fs.unlink(imagePath, (err) => {
+            if (err) {
+              console.error('Có lỗi xảy ra khi xóa file:', err);
+              return;
+            }
+            console.log('File đã được xóa thành công.');
+          });
+          req.session.flash = {
+            type: "success",
+            intro: 'Delete product',
+            message: "Delete course successfully",
+          };
+          res.json({ delete: true, status: "success", message: 'Course has been deleted', redirect: "/admin/course" });
+        }
+        else{
+          res.json({ delete : false, status: "warning", message: 'Product is in order'});
+        }
 
-      // } else {
-      //   res.status(404)({ delete: false, status: "success", message: 'Product Not Foud' });
-      // }
+      } else {
+        res.status(404)({ delete: false, status: "success", message: 'Product Not Foud' });
+      }
     } catch (err) {
       next(err);
     }
   }
 
 
-  async getproductbyTermRegex(req, res, next) {
+  async getcoursebyTermRegex(req, res, next) {
     try {
       const term = req.params.term;
       const regex = new RegExp(term, 'i');
       console.log(regex);
 
-      let listProduct;
+      let listCourse;
       if (term === "all") {
-        listProduct = await Product.find();
+        listCourse = await Course.find().populate('instructorID', 'profilePicture fullName')
       } else {
-        listProduct = await Product.find({
+        listCourse = await Course.find({
           $or: [
-            { productName: regex },
-            { barcode: regex }
+            { courseName: regex },
           ]
-        });
+        }).populate('instructorID', 'profilePicture fullName');
       }
 
-      if (listProduct.length > 0) {
-        res.json({ match: true, status: "success", message: 'Success', data: listProduct });
+      if (listCourse.length > 0) {
+        res.json({ match: true, status: "success", message: 'Success', data: listCourse });
       } else {
-        res.json({ match: false, status: "warning", message: 'Fail' });
+        res.json({ match: false, status: "warning", message: 'Fail', data: listCourse});
       }
 
     } catch (error) {
@@ -122,28 +162,7 @@ class CourseController {
     }
   }
 
-  async getlistOrder(arr) {
-    const list = [];
-
-    for (const element of arr) {
-      try {
-        const product = await Product.findById(element.productId);
-
-        if (product) {
-          const orderItem = {
-            productName: product.productName,
-            quantity: element.quantity
-          };
-
-          list.push(orderItem);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    console.log(list);
-    return list;
-  }
+  
 
   async getCourse(courseID) {
     console.log("curr Course : " + courseID);
@@ -310,6 +329,7 @@ class CourseController {
             courseName: course.courseName,
             coursePrice: course.coursePrice,
             courseCategory: course.courseCategory,
+            courseImage: course.courseImage,
             instructorFullName: course.instructorID.fullName,
             courseImage: course.courseImage
           };

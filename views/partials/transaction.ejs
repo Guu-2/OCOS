@@ -1,67 +1,66 @@
-<%
-// Định nghĩa hàm groupOrdersByCustomer
-function groupOrdersByCustomer(orders) {
-    const groupedOrders = {};
-
-    orders.forEach(order => {
-        const customerName = order.customerID.fullName;
-        
-        if (!groupedOrders[customerName]) {
-            groupedOrders[customerName] = {
-                customer: customerName,
-                totalOrders: 0,
-                totalProducts: 0,
-                totalPrice: 0,
-            };
-        }
-
-        groupedOrders[customerName].totalOrders++;
-
-        const products = order.products;
-        const totalPrice = order.totalPrice;
-
-        groupedOrders[customerName].totalProducts += products.length;
-        groupedOrders[customerName].totalPrice += totalPrice;
-    });
-
-    const result = Object.values(groupedOrders);
-    return result;
-}
-
-// Sử dụng hàm groupOrdersByCustomer để nhóm dữ liệu
-const orders = data.listOrder; // Thay data.listOrder bằng danh sách đơn hàng thực tế
-const groupedOrders = groupOrdersByCustomer(orders);
-%>
 
 <h2>Transaction Page</h2>
-
-<div class="container-transaction">
-    <div style="justify-content: flex-end;">
-        <table class="table " id="table_order">
-            <thead>
-                <tr>
-                    <th scope="col">Customer</th>
-                    <th scope="col">Total Products</th>
-                    <th scope="col">Total Orders</th>
-                    <th scope="col">Total Price</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% if(groupedOrders && groupedOrders.length > 0) { %>
-                    <% groupedOrders.forEach(order => { %>
-                        <tr>
-                            <td><%= order.customer %></td>
-                            <td><%= order.totalProducts %></td>
-                            <td><%= order.totalOrders %></td>
-                            <td><%= order.totalPrice %></td>
-                        </tr>
-                    <% }) %>
-                <% } else { %>
+<% if (data.list_transaction) { %>
+    <% var list_transaction=data.list_transaction %>
+    <table id="course_manager" class="table table table-striped table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Student name</th>
+    
+                <th scope="col">Purchased course</th>
+    
+                <th scope="col">Total Price</th>
+                
+                <th scope="col">Time</th>
+    
+                <th scope="col">Payment</th>
+             
+            </tr>
+        </thead>
+        <tbody>
+            <% if (list_transaction.length> 0) { %>
+                <% list_transaction.forEach((transaction)=> { %>
                     <tr>
-                        <td colspan="4">No orders available</td>
+                        <td>
+              
+                           
+                            <%=transaction.fullName%>
+                           
+                            
+                        </td>
+                        <td>
+                            <% transaction.courses.forEach((course) => { %>
+                                <p><%=course.courseName%> <strong>( <%=course.coursePrice%>  VND)</strong></p> <br>
+
+                            <% }); %>
+                            
+                        </td>
+                        <td>
+                            <%=transaction.amountPaid%>
+                        </td>
+                        <td>
+                            <%=transaction.transactionDate%>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-info" onclick="show_info_payment('<%=transaction.cardOwner%>' , '<%=transaction.paymentMethod%>')">Detail</button>
+                        </td>
                     </tr>
-                <% } %>
-            </tbody>
-        </table>
-    </div>
-</div>
+    
+                <% }); %>
+    
+            <% } %>
+            <% if(list_transaction.length==0) { %>
+                <tr>
+                    <td colspan="5"
+                        style="text-align:center;font-weight: bold;font-size: 20px;">
+                        No transaction exist
+                    </td>
+                </tr>
+            <% }; %>
+    
+    
+        </tbody>
+    </table>
+<% }%>
+
+

@@ -35,8 +35,17 @@ router.get('/', (req, res) => {
     const layout = 'layouts/main';
     req.partial_path = partial
     req.layout_path = layout
+    const curr_account = await userController.getAccount(req.params.id);
+    var callback_url='';
+    if(curr_account.role ==='student'){
+      callback_url = '/admin/student'
+    }
+    if(curr_account.role ==='instructor'){
+      callback_url = '/admin/instructor'
+    }
     req.page_data = {
-      account_details: await userController.getAccount(req.params.id)
+      account_details:  curr_account,
+      callback_url: callback_url,
     }
     // console.log(req.page_data.account_details)
     await userController.getpage(req, res, next);

@@ -214,7 +214,7 @@
                     if (data.success) {
                         //showflashmessage("success", "Thank you for your payment!");
                         alert(data.message);
-                        window.location.href = "/home/lecture/" + '<%= course._id %>';
+                        window.location.href = "/home/course/" + '<%= course._id %>';
                         
                     } else {
                         showflashmessage("warning", "Payment failed:" + error.message);

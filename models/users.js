@@ -16,7 +16,7 @@ const userSchema = new Schema({
         },
     ],
     cart: [{ type: Schema.Types.ObjectId, ref: 'Course' }], // Sửa lại thành mảng các ObjectId liên kết với mô hình "courseSchema"
-    subscribed: { type: [String]},
+    subscribed: [{ type: Schema.Types.ObjectId, ref: 'Course' }],
     exercise: { type: [String]},
     note: { type: [String]},
     

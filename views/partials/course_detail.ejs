@@ -1,5 +1,13 @@
 <% var course = data.course_detail %>
-<button type="button" id="callback_btn" class="btn btn-secondary" onclick="callback('/home/course')">
+<button type="button" id="callback_btn" class="btn btn-secondary" 
+    <% if(account.role == 'admin'){ %>
+
+        onclick="callback('/admin/course')"
+        
+    <% }else{%>
+        onclick="callback('/home/course')"
+    <% } %>
+    >
     BACK
 </button>
 
@@ -24,16 +32,21 @@
                     <p><%= course.coursePrice%> VND</p> 
                 </div>
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <% if (!data.hasBought) { %>
-                        <% if (!data.hasAddToCart) { %>
-                            <button type="button" class="btn btn-primary" onclick="addtocart('<%=course._id.toString() %>')">Add to cart</button>
+                    <% if(account.role != 'admin' && account.role != 'instructor'){ %>
+                        <% if (!data.hasBought) { %>
+                            <% if (!data.hasAddToCart) { %>
+                                <button type="button" class="btn btn-primary" onclick="addtocart('<%=course._id.toString() %>')">Add to cart</button>
+                            <% } %>
+                            <button type="button" class="btn btn-success" onclick="buyNow('<%= course._id %>')">Buy Now</button>
                         <% } %>
-                        <button type="button" class="btn btn-success" onclick="buyNow('<%= course._id %>')">Buy Now</button>
+                        <% if (data.hasBought) { %>
+                            <button type="button" class="btn btn-info" onclick="getlecturebyId('<%=course._id.toString() %>')">Start Course</button>
+                        <% } %>
+                    <% } else {%>
+                        <button type="button" class="btn btn-danger" onclick="deletecourse('<%= course.courseName%>','<%= course._id.toString()%>')">DELETE COURSE</button>
                     <% } %>
                 </div>
-                <% if (data.hasBought) { %>
-                    <button type="button" class="btn btn-info" onclick="getlecturebyId('<%=course._id.toString() %>')">Start Course</button>
-                <% } %>
+
             </div>
             <div class="col col-12 tab_section">
                 <!-- Tabs Section -->

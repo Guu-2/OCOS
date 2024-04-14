@@ -3,8 +3,9 @@ const router = express.Router();
 
 const userControllers = require('../controllers/user.controllers');
 const statisticControllers = require('../controllers/statistic.controllers');
-const courseControllers = require('../controllers/course.controllers');
+const courseController = require('../controllers/course.controllers');
 const orderController = require('../controllers/order.controller');
+const transactionController = require('../controllers/transaction.controllers');
 
 
 var { authentication, isAdmin } = require('../middleware/authentication');
@@ -30,26 +31,11 @@ router.get('/', function (req, res) {
     req.layout_path = layout
     req.page_data = {
       liststudent: await userControllers.getliststudent(),
-      feature: req.session.admin_feature,
+      // feature: req.session.admin_feature,
     }
     // console.log(req.page_data.liststaff)
     await userControllers.getpage(req , res, next);
   })
-  .get('/student/:id', async function (req, res, next) {
-    // const partial = 'partials/student_manager';
-    // const layout = 'layouts/main';
-    // req.partial_path = partial
-    // req.layout_path = layout
-    // req.page_data = {
-    //   liststaff: await userControllers.getliststudent(),
-    //   feature: req.session.admin_feature,
-    // }
-    // // console.log(req.page_data.liststaff)
-    // await userControllers.getpage(req , res, next);
-  })
-  //TODO: tạo endpoint cho add staff cho trường hợp bình thướng => nâng lên mail service 
-  // .post('/staff',validate.validateInfoStaff() ,userControllers.addnewstaff)
-  //FOR PRODUCT CONTROLLER
   .get('/instructor', async function (req, res, next) {
     delete req.session.product
     const partial = 'partials/instructor_manager';
@@ -63,56 +49,41 @@ router.get('/', function (req, res) {
     // console.log(req.page_data.listproduct)
     await userControllers.getpage(req , res, next);
   })
-  // .post('/product',validate.validateInfoProduct() ,productControllers.addnewproduct)
-  .get('/instructor/:id', async function (req, res, next) {
-    // // console.log(req.params.id)
-    // delete req.session.product
-    // req.session.product = req.params.id
-    // // console.log(req.session.product)
-    // const partial = 'partials/product_manager';
-    // const layout = 'layouts/main';
-    // req.partial_path = partial
-    // req.layout_path = layout
-    // req.page_data = {
-    //   product_details: await productControllers.getProduct(req.params.id)
-    // }
-    // console.log(req.page_data.product_details)
-    // await userControllers.getpage(req, res, next);
-
-  })
-  // .post('/product/:id',productControllers.addnewproduct)
-  // .put('/product/:id',authentication,validate.validateInfoProduct(), productControllers.updateproduct)
-  // .delete('/product/:id',authentication, productControllers.deleteproduct)
   .get('/course', async function (req, res, next) {
     const partial = 'partials/course_manager';
     const layout = 'layouts/main';
     req.partial_path = partial
     req.layout_path = layout
     req.page_data = {
-      listcourse: await courseControllers.get_list_course()
+      listcourse: await courseController.get_list_course(),
     }
     await userControllers.getpage(req , res, next);
   })
-  .get('/course/:id', async function (req, res, next) {
-    // const partial = 'partials/history_purchase';
-    // const layout = 'layouts/admin';
-    // req.partial_path = partial
-    // req.layout_path = layout
-    // req.page_data = {
-    //   customer_taget: await customerControllers.getCustomerbyId(req.params.id),
+  .get('/course/:courseId', async function (req, res, next) {
+    // const user = await User.findById(req.session.account);
+    // const hasBought = user.subscribed.includes(req.params.courseId);
+    // const hasAddToCart = user.cart.includes(req.params.courseId);
 
-    //   history_purchase: await customerControllers.getHistoryPurchasebyId(req.params.id)
-    // }
-    // await userControllers.getpage(req , res, next);
+    console.log(req.params.courseId)
+    const partial = 'partials/course_detail';
+    const layout = 'layouts/main';
+    req.partial_path = partial
+    req.layout_path = layout
+
+    req.page_data = {
+      course_detail: await courseController.getCourse(req.params.courseId),
+    }
+    // console.log(req.page_data.account_details)
+    await userControllers.getpage(req, res, next);
   })
-  .delete('/course/:id', courseControllers.delete_course)
+  .delete('/course/:courseId', courseController.delete_course)
   .get('/transaction', async function (req, res, next) {
     const partial = 'partials/transaction';
     const layout = 'layouts/main';
     req.partial_path = partial
     req.layout_path = layout
     req.page_data = {
-      listOrder: await orderController.getlistorder()
+      list_transaction: await transactionController.get_list_transaction()
     }
     await userControllers.getpage(req , res, next);
   })
