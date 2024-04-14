@@ -1,11 +1,7 @@
-# OCOS
-The online course organization system allows students to search and study online courses
+cách chạy source code: 
+-yarn install
+-$env:DEBUG='OCOS:*'; npm start
 
-# payment
-card num: 
-4242 4242 4242 4242 (visa)
-4000 0000 0000 9995 (mastercard)
-
-orthers: 
-- expiration date > today
-- CVC: random
+Account admmin default:
+Username: admin
+Password: admin

@@ -9,7 +9,7 @@ const sidebar = document.querySelector(".sidebar"),
 
   homeSection = document.querySelector('.home-section'),
 
-  body = document.querySelector('.main_body'),
+  body = document.querySelector('body'),
 
   mode = document.querySelector('.toggle_switch'),
 
@@ -831,53 +831,6 @@ function resetModal(id) {
 }
 
 
-/**
- * Scroll top button
- */
-// Tệp main.js - External JavaScript
-
-document.addEventListener('DOMContentLoaded', function () {
-  let scrollableDiv = document.querySelector('.home-section');
-  let scrollTopButton = document.querySelector('.scroll-top');
-
-  // Lắng nghe sự kiện scroll của khối div
-  scrollableDiv.addEventListener('scroll', function () {
-    toggleScrollTopButton();
-  });
-
-  // Lắng nghe sự kiện click của nút "scroll top"
-  scrollTopButton.addEventListener('click', function () {
-    scrollToTop();
-  });
-
-  // Kiểm tra và cập nhật trạng thái của nút "scroll top"
-  function toggleScrollTopButton() {
-    let scrollTop = scrollableDiv.scrollTop;
-    let scrollHeight = scrollableDiv.scrollHeight;
-    let clientHeight = scrollableDiv.clientHeight;
-
-    if (scrollTop > 0) {
-      scrollTopButton.classList.add('active');
-    } else {
-      scrollTopButton.classList.remove('active');
-    }
-
-    if (scrollTop + clientHeight >= scrollHeight) {
-      // Đã cuộn đến cuối khối div
-      // Có thể thực hiện các hành động khác tại đây (nếu cần)
-    }
-  }
-
-  // Cuộn khối div đến đầu trang
-  function scrollToTop() {
-    homeSection.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  }
-});
-
-
 let lecture_page = document.querySelector('.lecture_page');
 var player;
 
@@ -930,35 +883,41 @@ function change(id) {
   // console.log(rating);
 } 
 
+const rating = document.getElementById('rating-form');
+
 // add rating
-document.getElementById('rating-form').addEventListener('submit', function(e) {
-  e.preventDefault();
+if(rating){
 
-  const rating = document.getElementById('starrating').value;
-  const comment = document.getElementById('comment').value;
-  const courseId = document.getElementById('courseId').value;
-
-  if (!rating || !comment) {
-      showflashmessage('error', 'Please provide both rating and comment.');
-      return;
-  }
-
-  fetch(`/home/rating`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ rating, comment, courseId })
-  })
-  .then(response => response.json())
-  .then(data => {
-      showflashmessage("success", "Rating submitted successfully.");
-      document.getElementById('comment').value = '';
-  })
-  .catch(error => {
-      showflashmessage('error', error.message || 'An error occurred while submitting your rating.');
+  rating.addEventListener('submit', function(e) {
+    e.preventDefault();
+  
+    const rating = document.getElementById('starrating').value;
+    const comment = document.getElementById('comment').value;
+    const courseId = document.getElementById('courseId').value;
+  
+    if (!rating || !comment) {
+        showflashmessage('error', 'Please provide both rating and comment.');
+        return;
+    }
+  
+    fetch(`/home/rating`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ rating, comment, courseId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        showflashmessage("success", "Rating submitted successfully.");
+        document.getElementById('comment').value = '';
+    })
+    .catch(error => {
+        showflashmessage('error', error.message || 'An error occurred while submitting your rating.');
+    });
   });
-});
+  
+}
 
 //delete review
 function rmComment(id) {
@@ -983,4 +942,56 @@ function rmComment(id) {
     .catch(function (error) {
       console.error("Error:", error);
     });
+}
+
+
+/**
+ * Scroll top button
+ */
+// Tệp main.js - External JavaScript
+const scrollTopButton = document.querySelector('.scroll-top');
+
+if(scrollTopButton){
+  document.addEventListener('DOMContentLoaded', function () {
+    let scrollableDiv = document.querySelector('.home-section');
+  
+  
+    // Lắng nghe sự kiện scroll của khối div
+    scrollableDiv.addEventListener('scroll', function () {
+      toggleScrollTopButton();
+    });
+  
+    // Lắng nghe sự kiện click của nút "scroll top"
+    scrollTopButton.addEventListener('click', function () {
+      scrollToTop();
+    });
+  
+    // Kiểm tra và cập nhật trạng thái của nút "scroll top"
+    function toggleScrollTopButton() {
+      let scrollTop = scrollableDiv.scrollTop;
+      let scrollHeight = scrollableDiv.scrollHeight;
+      let clientHeight = scrollableDiv.clientHeight;
+  
+      if (scrollTop > 0) {
+        scrollTopButton.classList.add('active');
+      } else {
+        scrollTopButton.classList.remove('active');
+      }
+  
+      if (scrollTop + clientHeight >= scrollHeight) {
+        // Đã cuộn đến cuối khối div
+        // Có thể thực hiện các hành động khác tại đây (nếu cần)
+      }
+    }
+  
+    // Cuộn khối div đến đầu trang
+    function scrollToTop() {
+      homeSection.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  });
+  
+  
 }

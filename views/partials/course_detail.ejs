@@ -25,7 +25,7 @@
             <div class="col col-lg-5 col-12  course_info">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5>Instructor</h5>
-                    <p><a style="text-decoration: none;" href="#"><%= course.instructorID.fullName%></a></p>
+                    <p><%= course.instructorID.fullName%></p>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5>Course Fee</h5>
@@ -49,131 +49,131 @@
 
             </div>
             <div class="col col-12 tab_section">
-                <!-- Tabs Section -->
-                <section id="tabs" class="tabs section">
+            <!-- Tabs Section -->
+            <section id="tabs" class="tabs section">
 
-                    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                <div class="container" data-aos="fade-up" data-aos-delay="100">
 
-                        <div class="row">
-                            <div class="col-lg-3">
-                                <ul class="nav nav-tabs flex-column">
-                                    <li class="nav-item">
-                                        <a class="nav-link active show" data-bs-toggle="tab" href="#tab-1">
-                                            Name
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#tab-2">
-                                            Description
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#tab-3">
-                                            Target object
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#tab-4">
-                                            Content
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#tab-5">
-                                            Requirements
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col-lg-9 mt-4 mt-lg-0">
-                                <div class="tab-content">
-                                    <div class="tab-pane active show" id="tab-1">
-                                        <div class="row">
-                                            <div class="col-lg-8 details order-2 order-lg-1">
-                                                <h3>
-                                                    <%= course.courseName%>
-                                                </h3>
-                                                <p class="fst-italic">
-                                                    Category : <strong><%= course.courseCategory%></strong> <br>
-                                                    Instructor : <strong><%= course.instructorID.fullName%></strong>
-                                                </p>
-                                            </div>
-                                            <div class="col-lg-4 text-center order-1 order-lg-2">
-                                                <img src="../../images/tabs/tab-1.png" alt="" class="img-fluid">
-                                            </div>
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <ul class="nav nav-tabs flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link active show" data-bs-toggle="tab" href="#tab-1">
+                                        Name
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#tab-2">
+                                        Description
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#tab-3">
+                                        Target object
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#tab-4">
+                                        Content
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#tab-5">
+                                        Requirements
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-9 mt-4 mt-lg-0">
+                            <div class="tab-content">
+                                <div class="tab-pane active show" id="tab-1">
+                                    <div class="row">
+                                        <div class="col-lg-8 details order-2 order-lg-1">
+                                            <h3>
+                                                <%= course.courseName%>
+                                            </h3>
+                                            <p class="fst-italic">
+                                                Category : <strong><%= course.courseCategory%></strong> <br>
+                                                Instructor : <strong><%= course.instructorID.fullName%></strong>
+                                            </p>
+                                        </div>
+                                        <div class="col-lg-4 text-center order-1 order-lg-2">
+                                            <img src="../../images/tabs/tab-1.png" alt="" class="img-fluid">
                                         </div>
                                     </div>
-                                    
-                                    <div class="tab-pane" id="tab-2">
-                                        <div class="row">
-                                            <div class="col-lg-8 details order-2 order-lg-1">
-                                                <h3>
-                                                    About course 
-                                                </h3>
-                                                <p class="fst-italic">
-                                                    <%= course.courseDescription%>
-                                                </p>
-                                            </div>
-                                            <div class="col-lg-4 text-center order-1 order-lg-2">
-                                                <img src="../../images/tabs/tab-2.png" alt="" class="img-fluid">
-                                            </div>
+                                </div>
+                                
+                                <div class="tab-pane" id="tab-2">
+                                    <div class="row">
+                                        <div class="col-lg-8 details order-2 order-lg-1">
+                                            <h3>
+                                                About course 
+                                            </h3>
+                                            <p class="fst-italic">
+                                                <%= course.courseDescription%>
+                                            </p>
+                                        </div>
+                                        <div class="col-lg-4 text-center order-1 order-lg-2">
+                                            <img src="../../images/tabs/tab-2.png" alt="" class="img-fluid">
                                         </div>
                                     </div>
-                                    <div class="tab-pane" id="tab-3">
-                                        <div class="row">
-                                            <div class="col-lg-8 details order-2 order-lg-1">
-                                                <h3>
-                                                    Who need the course ?
-                                                </h3>
-                                                <p class="fst-italic">
-                                                    <%= course.courseAudience%>
-                                                </p>
-                                            </div>
-                                            <div class="col-lg-4 text-center order-1 order-lg-2">
-                                                <img src="../../images/tabs/tab-3.png" alt="" class="img-fluid">
-                                            </div>
+                                </div>
+                                <div class="tab-pane" id="tab-3">
+                                    <div class="row">
+                                        <div class="col-lg-8 details order-2 order-lg-1">
+                                            <h3>
+                                                Who need the course ?
+                                            </h3>
+                                            <p class="fst-italic">
+                                                <%= course.courseAudience%>
+                                            </p>
+                                        </div>
+                                        <div class="col-lg-4 text-center order-1 order-lg-2">
+                                            <img src="../../images/tabs/tab-3.png" alt="" class="img-fluid">
                                         </div>
                                     </div>
-                                    <div class="tab-pane" id="tab-4">
-                                        <div class="row">
-                                            <div class="col-lg-8 details order-2 order-lg-1">
-                                                <h3>
-                                                    What you'll learn
-                                                </h3>
-                                                <p class="fst-italic">
-                                                    <% course.courseResult.forEach((result) => { %>
-                                                        <p><i class="fa-solid fa-check"></i> <%= result %></p>
-                                                    <% }); %>
-                                                </p>
-                                            </div>
-                                            <div class="col-lg-4 text-center order-1 order-lg-2">
-                                                <img src="../../images/tabs/tab-4.png" alt="" class="img-fluid">
-                                            </div>
+                                </div>
+                                <div class="tab-pane" id="tab-4">
+                                    <div class="row">
+                                        <div class="col-lg-8 details order-2 order-lg-1">
+                                            <h3>
+                                                What you'll learn
+                                            </h3>
+                                            <p class="fst-italic">
+                                                <% course.courseResult.forEach((result) => { %>
+                                                    <p><i class="fa-solid fa-check"></i> <%= result %></p>
+                                                <% }); %>
+                                            </p>
+                                        </div>
+                                        <div class="col-lg-4 text-center order-1 order-lg-2">
+                                            <img src="../../images/tabs/tab-4.png" alt="" class="img-fluid">
                                         </div>
                                     </div>
-                                    <div class="tab-pane" id="tab-5">
-                                        <div class="row">
-                                            <div class="col-lg-8 details order-2 order-lg-1">
-                                                <h3>
-                                                    What do you need to prepare?
-                                                </h3>
-                                                <p class="fst-italic">
-                                                    <% course.courseRequirement.forEach((require) => { %>
-                                                        <p><i class="fa-solid fa-seedling"></i> <%= require %></p>
-                                                    <% }); %>
-                                                </p>
-                                            </div>
-                                            <div class="col-lg-4 text-center order-1 order-lg-2">
-                                                <img src="../../images/tabs/tab-5.png" alt="" class="img-fluid">
-                                            </div>
+                                </div>
+                                <div class="tab-pane" id="tab-5">
+                                    <div class="row">
+                                        <div class="col-lg-8 details order-2 order-lg-1">
+                                            <h3>
+                                                What do you need to prepare?
+                                            </h3>
+                                            <p class="fst-italic">
+                                                <% course.courseRequirement.forEach((require) => { %>
+                                                    <p><i class="fa-solid fa-seedling"></i> <%= require %></p>
+                                                <% }); %>
+                                            </p>
+                                        </div>
+                                        <div class="col-lg-4 text-center order-1 order-lg-2">
+                                            <img src="../../images/tabs/tab-5.png" alt="" class="img-fluid">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
-                </section><!-- /Tabs Section -->
+                </div>
+
+            </section><!-- /Tabs Section -->
  <!-- comment down there -->
  <input type="hidden" name="courseId" value="<%= course._id %>" id="courseId">
  <% if (data.hasBought) { %>
@@ -202,21 +202,21 @@
          </form>
      </div>
  <% } %>   
- <% if (data.hasReviewsOfACourse) { %>
+ <% if (data.hasReviewsOfACourse || account.role == 'admin'){ %>
      <div class="comment-section">
          <% if (data.hasReviewed) { %>
              <button type="submit" id="rmComment" class="btn btn-success" onclick="rmComment('<%=data.hasReviewed._id%>')" style="margin-bottom: 20px;">Remove my comment</button>
          <% }; %>
-         <h4 style="color:chartreuse;">Comments</h4>
+         <h4 style="color:lightcoral;">Comments</h4>
          <div id="comment-list">
              <% data.hasReviewsOfACourse.forEach((comment) => { %>
-                 <div class="comment" style="margin-bottom: 20px;">          
-                     <div class="rating" style="background-color: #fff; padding-left: 20px; border-radius: 20px; width: 800px;">
+                 <div class="comment" >          
+                     <div class="rating" >
                          <h5><%= comment.userId.fullName %></h5>      
                          <% for (let i = 0; i < comment.rating; i++) { %>
-                             <i class="fa-solid fa-star" style="width: 15px; height: 15px;"></i>
+                             <i class="fa-solid fa-star"></i>
                          <% } %>
-                         <p style="color: #000; font-size: large;"><%= comment.comment %></p>
+                         <p><%= comment.comment %></p>
                      </div>                            
                      
                  </div>
@@ -225,24 +225,3 @@
      </div>
  <% } %>   
 <% }%>
-<style>
-    .star {
-        width: 50px;
-        height: 50px;
-        cursor: pointer;
-    }
-    .star:hover {
-        opacity: 0.6;
-    }
-    
-    .rating {
-        color: #ffbf00;
-        font-size: 30px;
-        margin-top: 10px;
-    }
-    .star-rating, .fa-solid fa-star {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-</style>

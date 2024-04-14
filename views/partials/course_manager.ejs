@@ -1,8 +1,9 @@
-<!-- <h1>tương tự student_manager nhưng là danh sách khóa học và có thể xóa khóa học + xem bình luận học viên </h1> -->
+
+<h2 class="title_admin_page">LIST COURSE</h2>
 
 <% if (data.listcourse) { %>
     <% var listcourse=data.listcourse %>
-    <table id="course_manager" class="table table table-striped table-hover">
+    <table id="course_manager" class="table">
         <thead>
             <tr>
                 <th scope="col">Image</th>
@@ -20,7 +21,7 @@
         <tbody>
             <% if (listcourse.length> 0) { %>
                 <% listcourse.forEach((course)=> { %>
-                    <tr onclick="getcoursebyId_admin('<%=course._id.toString() %>')">
+                    <tr class="course_manager_row" onclick="getcoursebyId_admin('<%=course._id.toString() %>')">
                         <td>
                             <div class="course_pic">
                                 <img src="<%=course.courseImage%>" alt="err">
@@ -53,6 +54,7 @@
     
                 <% }); %>
     
+
             <% } %>
             <% if(listcourse.length==0) { %>
                 <tr>

@@ -75,9 +75,10 @@ router.get('/', function (req, res) {
     const hasBought = user.subscribed.includes(req.params.courseId);
     const hasAddToCart = user.cart.includes(req.params.courseId);
     const hasReviewsOfACourse = await Review.find({ courseId: req.params.courseId })
-    .populate('userId', 'fullName'); 
+    .populate('userId', 'fullName profilePicture'); 
     const hasReviewed = await Review.findOne({ courseId: req.params.courseId, userId: req.session.account })
-    .populate('userId', 'fullName');
+    .populate('userId', 'fullName profilePicture');
+
 
     console.log(req.params.courseId)
     const partial = 'partials/course_detail';

@@ -1,6 +1,7 @@
 var express = require('express');
 const router = express.Router();
-
+const User = require('../models/users');
+const Review = require('../models/reviews');
 const userControllers = require('../controllers/user.controllers');
 const statisticControllers = require('../controllers/statistic.controllers');
 const courseController = require('../controllers/course.controllers');
@@ -60,9 +61,13 @@ router.get('/', function (req, res) {
     await userControllers.getpage(req , res, next);
   })
   .get('/course/:courseId', async function (req, res, next) {
-    // const user = await User.findById(req.session.account);
-    // const hasBought = user.subscribed.includes(req.params.courseId);
-    // const hasAddToCart = user.cart.includes(req.params.courseId);
+    const user = await User.findById(req.session.account);
+    const hasBought = user.subscribed.includes(req.params.courseId);
+    const hasAddToCart = user.cart.includes(req.params.courseId);
+    const hasReviewsOfACourse = await Review.find({ courseId: req.params.courseId })
+    .populate('userId', 'fullName'); 
+    const hasReviewed = await Review.findOne({ courseId: req.params.courseId, userId: req.session.account })
+    .populate('userId', 'fullName');
 
     console.log(req.params.courseId)
     const partial = 'partials/course_detail';
@@ -72,6 +77,10 @@ router.get('/', function (req, res) {
 
     req.page_data = {
       course_detail: await courseController.getCourse(req.params.courseId),
+      hasBought: hasBought,
+      hasAddToCart: hasAddToCart,
+      hasReviewed: hasReviewed,
+      hasReviewsOfACourse: hasReviewsOfACourse
     }
     // console.log(req.page_data.account_details)
     await userControllers.getpage(req, res, next);
@@ -93,7 +102,7 @@ router.get('/', function (req, res) {
     req.partial_path = partial
     req.layout_path = layout
     req.page_data = {
-      transactions: await statisticControllers.getlistOrder()
+      // transactions: await statisticControllers.getlistOrder()
     }
     await userControllers.getpage(req , res, next);
   })
@@ -109,7 +118,7 @@ router.get('/', function (req, res) {
           break;
         case 'yesterday':
             startDay.setDate(endDay.getDate() - 1);
-            // endDay.setDate(endDay.getDate() + 1);
+            endDay.setDate(endDay.getDate() - 1);
             break;
         case '7days':
             startDay.setDate(endDay.getDate() - 7);
