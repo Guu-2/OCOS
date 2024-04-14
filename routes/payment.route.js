@@ -21,7 +21,7 @@ router.get('/', (req, res) => {
         req.layout_path = layout
 
         const list_cart = await courseController.get_list_cart(req, res , next);
-        console.log("hellooo",list_cart)
+
         req.page_data = {
             list_cart: list_cart,
         }

@@ -911,3 +911,76 @@ function checkout() {
   window.location.href = '/payment/';
 }
 
+// 5 star rating
+function change(id) {
+  var cname = document.getElementById(id).className;
+  var ab = document.getElementById(id+"_hidden").value;
+  document.getElementById("starrating").value = ab;
+  document.getElementById(cname+"rating").innerHTML = ab;
+
+  for(var i=ab; i>=1; i--)
+  {
+      document.getElementById(cname+i).src="../../images/star.png";
+  }
+  var id=parseInt(ab)+1;
+  for(var j=id; j<=5; j++)
+  {
+      document.getElementById(cname+j).src="../../images/whitestar.png";
+  }
+  // console.log(rating);
+} 
+
+// add rating
+document.getElementById('rating-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const rating = document.getElementById('starrating').value;
+  const comment = document.getElementById('comment').value;
+  const courseId = document.getElementById('courseId').value;
+
+  if (!rating || !comment) {
+      showflashmessage('error', 'Please provide both rating and comment.');
+      return;
+  }
+
+  fetch(`/home/rating`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ rating, comment, courseId })
+  })
+  .then(response => response.json())
+  .then(data => {
+      showflashmessage("success", "Rating submitted successfully.");
+      document.getElementById('comment').value = '';
+  })
+  .catch(error => {
+      showflashmessage('error', error.message || 'An error occurred while submitting your rating.');
+  });
+});
+
+//delete review
+function rmComment(id) {
+  console.log("comment id: ", id)
+
+  fetch("/home/rating", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({rmComment : id})
+  })
+    .then(response => response.json())
+    .then(data => {
+      // showflashmessage(data.status, data.message)
+      if (data.status === "success") {
+        window.location.reload();
+        showflashmessage(data.status, "Delete comment successfully");
+      }
+      else { showflashmessage(data.status, data.message); }
+    })
+    .catch(function (error) {
+      console.error("Error:", error);
+    });
+}

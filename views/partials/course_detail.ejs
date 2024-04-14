@@ -10,7 +10,7 @@
     >
     BACK
 </button>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <% if (course) { %>
 <div class="container-fluid light-style flex-grow-1 container-p-y course_detail_page">
     <div class="course_detail_card">
@@ -174,10 +174,75 @@
                     </div>
 
                 </section><!-- /Tabs Section -->
-
-            </div>
-        </div>
-    </div>
-
-</div>
+ <!-- comment down there -->
+ <input type="hidden" name="courseId" value="<%= course._id %>" id="courseId">
+ <% if (data.hasBought) { %>
+     <div class="course-rating">
+         <h4 style="color:chartreuse;">We glad to hear your feedback! &hearts;</h4>
+         <form id="rating-form">
+             <div class="star-rating">
+                 <input type="hidden" id="star1_hidden" value="1" class="hidden">
+                 <img src="../../images/star.png" onmouseover="change(this.id);" id="star1" class="star">
+                 <input type="hidden" id="star2_hidden" value="2" class="hidden">
+                 <img src="../../images/star.png" onmouseover="change(this.id);" id="star2" class="star">
+                 <input type="hidden" id="star3_hidden" value="3" class="hidden">
+                 <img src="../../images/star.png" onmouseover="change(this.id);" id="star3" class="star">
+                 <input type="hidden" id="star4_hidden" value="4" class="hidden">
+                 <img src="../../images/star.png" onmouseover="change(this.id);" id="star4" class="star">
+                 <input type="hidden" id="star5_hidden" value="5" class="hidden">
+                 <img src="../../images/star.png" onmouseover="change(this.id);" id="star5" class="star">
+             </div>
+             <input type="hidden" name="starrating" id="starrating" value="">
+             <div class="form-group">
+                 <textarea id="comment" name="comment" class="form-control" rows="3" style="margin-top: 20px;" required></textarea>
+             </div>
+             <div style="text-align: end;">
+                 <button type="submit" id="sendComment" class="btn btn-primary" style="margin-top: 20px;">Send</button>
+             </div>
+         </form>
+     </div>
+ <% } %>   
+ <% if (data.hasReviewsOfACourse) { %>
+     <div class="comment-section">
+         <% if (data.hasReviewed) { %>
+             <button type="submit" id="rmComment" class="btn btn-success" onclick="rmComment('<%=data.hasReviewed._id%>')" style="margin-bottom: 20px;">Remove my comment</button>
+         <% }; %>
+         <h4 style="color:chartreuse;">Comments</h4>
+         <div id="comment-list">
+             <% data.hasReviewsOfACourse.forEach((comment) => { %>
+                 <div class="comment" style="margin-bottom: 20px;">          
+                     <div class="rating" style="background-color: #fff; padding-left: 20px; border-radius: 20px; width: 800px;">
+                         <h5><%= comment.userId.fullName %></h5>      
+                         <% for (let i = 0; i < comment.rating; i++) { %>
+                             <i class="fa-solid fa-star" style="width: 15px; height: 15px;"></i>
+                         <% } %>
+                         <p style="color: #000; font-size: large;"><%= comment.comment %></p>
+                     </div>                            
+                     
+                 </div>
+             <% }); %>
+         </div>
+     </div>
+ <% } %>   
 <% }%>
+<style>
+    .star {
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+    }
+    .star:hover {
+        opacity: 0.6;
+    }
+    
+    .rating {
+        color: #ffbf00;
+        font-size: 30px;
+        margin-top: 10px;
+    }
+    .star-rating, .fa-solid fa-star {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>

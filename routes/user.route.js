@@ -1,6 +1,7 @@
 var express = require('express');
 const router = express.Router();
 const User = require('../models/users');
+const Review = require('../models/reviews');
 const userController = require('../controllers/user.controllers');
 const courseController = require('../controllers/course.controllers');
 const orderController = require('../controllers/order.controller')
@@ -73,6 +74,10 @@ router.get('/', function (req, res) {
     const user = await User.findById(req.session.account);
     const hasBought = user.subscribed.includes(req.params.courseId);
     const hasAddToCart = user.cart.includes(req.params.courseId);
+    const hasReviewsOfACourse = await Review.find({ courseId: req.params.courseId })
+    .populate('userId', 'fullName'); 
+    const hasReviewed = await Review.findOne({ courseId: req.params.courseId, userId: req.session.account })
+    .populate('userId', 'fullName');
 
     console.log(req.params.courseId)
     const partial = 'partials/course_detail';
@@ -82,11 +87,45 @@ router.get('/', function (req, res) {
     req.page_data = {
       course_detail: await courseController.getCourse(req.params.courseId),
       hasBought: hasBought,
-      hasAddToCart: hasAddToCart
+      hasAddToCart: hasAddToCart,
+      hasReviewed: hasReviewed,
+      hasReviewsOfACourse: hasReviewsOfACourse
     }
     // console.log(req.page_data.account_details)
     await userController.getpage(req, res, next);
 
+  })
+  .get('/rating', async function (req, res, next) {
+    const user = await User.findById(req.session.account);
+    const hasBought = user.subscribed.includes(req.params.courseId);
+    const hasAddToCart = user.cart.includes(req.params.courseId);
+
+    const hasReviewsOfACourse = await Review.find({ courseId: req.params.courseId })
+    .populate('userId', 'fullName'); 
+
+    const hasReviewed = await Review.findOne({ courseId: req.params.courseId, userId: req.session.account })
+    .populate('userId', 'fullName');
+
+    const partial = 'partials/course_detail';
+    const layout = 'layouts/main';
+    req.partial_path = partial
+    req.layout_path = layout
+    req.page_data = {
+      course_detail: await courseController.getCourse(req.params.courseId),
+      hasBought: hasBought,
+      hasAddToCart: hasAddToCart,
+      hasReviewed: hasReviewed,
+      hasReviewsOfACourse: hasReviewsOfACourse
+    }
+    await userController.getpage(req, res, next);
+  })
+  .post('/rating', async function(req, res) {
+      const courseId = req.body.courseId;
+      try {
+        await courseController.addRatingAndComment(req, res, courseId);
+      } catch (error) {
+          res.status(500).json({ message: 'Error while adding rating and comment!!' });
+      }
   })
   .get('/lecture/:courseId', async function (req, res, next) {
     console.log(req.params.courseId)

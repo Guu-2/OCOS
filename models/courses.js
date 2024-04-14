@@ -15,6 +15,7 @@ const courseSchema = new Schema({
     courseAudience: { type: String, required: true },
     courseResult: { type: [String], default: [] },
     courseRequirement: { type: [String], default: [] },
+    reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
 
     createdAt: { type: String, default: new Date().toUTCString() }
 });

@@ -2,6 +2,7 @@
 const Course = require('../models/courses');
 const Section = require('../models/section');
 const Lecture = require('../models/lecture');
+const Review = require('../models/reviews');
 const Note = require('../models/note');
 const User = require('../models/users');
 const bcrypt = require('bcrypt');
@@ -654,6 +655,90 @@ class CourseController {
       console.error('Error:', error);
       return null;
     }
+  }
+
+  async addRatingAndComment(req, res, courseID) {
+    const { rmComment } = req.body;
+    const userID = req.session.account;
+    const { rating, comment } = req.body;
+    let review = await Review.findOne({ courseId: courseID, userId: userID });
+    try {
+      if (courseID) {
+        if (review) {
+          console.log("existingReview")
+          // Người dùng đã đánh giá, cập nhật bình luận và đánh giá hiện tại
+          review.rating = rating;
+          review.comment = comment;
+          await review.save();
+        } else {
+        console.log("newReview")
+          // tạo mới đánh giá và bình luận
+            let review = new Review({ 
+                userId: userID,
+                courseId: courseID,
+                rating: req.body.rating,
+                comment: req.body.comment
+            })
+            review.save()
+          }
+
+        req.session.flash = {
+          type: 'success',
+          message: 'Rating and comment added successfully',
+        };
+
+        await Course.findByIdAndUpdate(courseID, {
+          $push: { reviews: review._id }
+        }, { new: true });
+
+        res.json({ status: "success", message: "Rating and comment added successfully" })
+
+      } else if (rmComment) {
+        try {
+          console.log("delcom")
+          const userID = req.session.account;
+          const existingReview = await Review.findOneAndDelete({ userId: userID, _id: rmComment });
+          console.log("exist", existingReview)
+          if (existingReview) {
+
+            // rm trong course
+            const user = await Course.findOneAndUpdate(
+              { _id: userID },
+              { $pull: { reviews: rmComment } }, 
+              { new: true }
+            );
+    
+            req.session.flash = {
+              type: 'success',
+              intro: 'del comment',
+              message: 'Delete successful',
+            };
+            // Gửi phản hồi thành công về client
+            return res.json({ status: "success", message: "Rating and comment removed successfully" });
+          } else {
+            res.json({ status: "warning", message: "Rating and comment not found" });
+          }
+        } catch(err) {
+          req.session.flash = {
+            type: 'error',
+            intro: 'comment failed',
+            message: err.message,
+          };
+            res.json({ success: false, message: err.message })
+        }
+        
+      } else {
+        // Nếu không có courseId hoặc del_courseId được cung cấp
+        return res.json({ status: "error", message: "Không có khóa học hoặc ID khóa học để xử lý" });
+      }
+      } catch(err) {
+        req.session.flash = {
+          type: 'error',
+          intro: 'comment failed',
+          message: err.message,
+        };
+          res.json({ status: "warning", message: err.message })
+      }
   }
 
 
