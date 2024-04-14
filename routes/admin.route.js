@@ -121,48 +121,51 @@ router.get('/', function (req, res) {
     const layout = 'layouts/main';
     req.partial_path = partial
     req.layout_path = layout
+    req.page_data = {
+      transactions: await statisticControllers.getlistOrder()
+    }
     await userControllers.getpage(req , res, next);
   })
-  // .post('/statistical', authentication, async function (req, res, next) {
-  //   const timeFixed = req.body.timeFixed;
-  //   const fromDay = req.body.fromDay;
-  //   const toDay = req.body.toDay;
-  //   let endDay = new Date(); // Lấy ngày hiện tại
-  //   let startDay = new Date(); // Khởi tạo ngày bắt đầu
-  //   if (timeFixed != undefined) {
-  //     switch(timeFixed) {
-  //       case "today":
-  //         break;
-  //       case 'yesterday':
-  //           startDay.setDate(endDay.getDate() - 1);
-  //           endDay.setDate(endDay.getDate() - 1);
-  //           break;
-  //       case '7days':
-  //           startDay.setDate(endDay.getDate() - 7);
-  //           break;
-  //       case 'thisMonth':
-  //           startDay = new Date(endDay.getFullYear(), endDay.getMonth(), 1);
-  //           break;
-  //       default:
-  //     }
-  //   }
-  //   if(fromDay != undefined && toDay != undefined) {
-  //     startDay = new Date(fromDay);
-  //     endDay = new Date(toDay);
-  //   }
-  //   // Chuyển đổi startDay và endDay thành chuỗi ngày tháng năm
-  //   const startDayString = `${startDay.getDate().toString().padStart(2, '0')}-${(startDay.getMonth() + 1).toString().padStart(2, '0')}-${startDay.getFullYear()}`;
-  //   const endDayString = `${endDay.getDate().toString().padStart(2, '0')}-${(endDay.getMonth() + 1).toString().padStart(2, '0')}-${endDay.getFullYear()}`;
-  //   const partial = 'partials/statistical';
-  //   const layout = 'layouts/admin';
-  //   req.partial_path = partial;
-  //   req.layout_path = layout;
-  //   req.page_data = {
-  //     start: startDayString,
-  //     end: endDayString,
-  //     listOrder: await statisticControllers.getByTime(startDay, endDay)
-  // };
-  //   await userControllers.getpage(req, res, next);
-  // })
+  .post('/statistical', authentication, async function (req, res, next) {
+    const timeFixed = req.body.timeFixed;
+    const fromDay = req.body.fromDay;
+    const toDay = req.body.toDay;
+    let endDay = new Date(); // Lấy ngày hiện tại
+    let startDay = new Date(); // Khởi tạo ngày bắt đầu
+    if (timeFixed != undefined) {
+      switch(timeFixed) {
+        case "today":
+          break;
+        case 'yesterday':
+            startDay.setDate(endDay.getDate() - 1);
+            // endDay.setDate(endDay.getDate() + 1);
+            break;
+        case '7days':
+            startDay.setDate(endDay.getDate() - 7);
+            break;
+        case 'thisMonth':
+            startDay = new Date(endDay.getFullYear(), endDay.getMonth(), 1);
+            break;
+        default:
+      }
+    }
+    if(fromDay != undefined && toDay != undefined) {
+      startDay = new Date(fromDay);
+      endDay = new Date(toDay);
+    }
+    // Chuyển đổi startDay và endDay thành chuỗi ngày tháng năm
+    const startDayString = `${startDay.getDate().toString().padStart(2, '0')}-${(startDay.getMonth() + 1).toString().padStart(2, '0')}-${startDay.getFullYear()}`;
+    const endDayString = `${endDay.getDate().toString().padStart(2, '0')}-${(endDay.getMonth() + 1).toString().padStart(2, '0')}-${endDay.getFullYear()}`;
+    const partial = 'partials/statistical';
+    const layout = 'layouts/admin';
+    req.partial_path = partial;
+    req.layout_path = layout;
+    req.page_data = {
+      start: startDayString,
+      end: endDayString,
+      transactions: await statisticControllers.getByTime(startDay, endDay)
+  };
+    await userControllers.getpage(req, res, next);
+  })
 
 module.exports = router;

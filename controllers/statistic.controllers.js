@@ -1,6 +1,7 @@
 const Customer = require('../models/customers');
 const Order = require('../models/courses');
 const Product = require('../models/products');
+const Transaction = require('../models/transactions');
 
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
@@ -11,44 +12,42 @@ class StatisticalController {
     async getlistOrder() {
         try {
             // Xử lý lấy dữ liệu từ cơ sở dữ liệu
-            const orders = await Order.find();
-            res.render('/statistical', { orders: orders });
+            const orders = await Transaction.find()
+            .populate({
+                path: 'userId',
+                select: 'fullName'
+            }).populate({
+                path: 'courseIds',
+                select: 'courseName coursePrice'
+            });;
+            return orders;
         } catch (error) {
             // next(error);
+            throw error;
         }
     }
 
     
     async getByTime(startDay, endDay) {
         try {
-            // Lấy tất cả các đơn hàng từ cơ sở dữ liệu
-            const allOrders = await Order.find({})
-                .populate({
-                    path: 'customerID',
-                    select: 'fullName',
-                })
-                .populate({
-                    path: 'products',
-                    select: 'productName',
-                });
-    
-            // Chuyển đổi startDay và endDay thành đối tượng Date nếu chúng là chuỗi
-            const startDate = typeof startDay === 'string' ? new Date(startDay) : startDay;
-            const endDate = typeof endDay === 'string' ? new Date(endDay) : endDay;
-    
-            // Lọc đơn hàng theo ngày từ startDay đến endDay (không quan trọng đến giờ, phút, giây)
-            const filteredOrders = allOrders.filter(order => {
-                const createdAtDate = new Date(order.createdAt);
-                const orderDate = new Date(createdAtDate.getFullYear(), createdAtDate.getMonth(), createdAtDate.getDate());
-                const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-                const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-    
-                return orderDate >= start && orderDate <= end;
+            const startDate = moment(startDay).startOf('day').toDate();
+            const endDate = moment(endDay).endOf('day').toDate();
+
+            console.log(startDate + " - " + endDate)
+
+            const orders = await Transaction.find({
+                transactionDate: { $gte: startDate, $lte: endDate }
+            }).populate({
+                path: 'userId',
+                select: 'fullName'
+            }).populate({
+                path: 'courseIds',
+                select: 'courseName coursePrice'
             });
-    
-            return filteredOrders;
+
+            return orders;
         } catch (error) {
-            // Xử lý lỗi nếu có
+            throw error;
         }
     }
     
