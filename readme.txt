@@ -1,12 +1,9 @@
-link video demo:
-
+cách chạy source code: 
+-yarn install
+-$env:DEBUG='OCOS:*'; npm start
 
 Account admmin default:
 Username: admin
 Password: admin
 
-Account staff and manage default
-Example email: nguyenhan@gmail.com
--> username: nguyenhan
--> password: nguyenhan
 
