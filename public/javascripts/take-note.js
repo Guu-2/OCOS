@@ -92,7 +92,15 @@ function saveNote(time) {
         success: function(response) {
             console.log('Note saved:', response);
             $('#noteModal').modal('hide');
-            updateNotesList();
+            
+            if (response.success) {
+                const note = response.note;
+                const newNoteHtml = `
+                    <li onclick="jumpToLecture('${note.lectureID}', '${note.noteTimeStamp}', '${note.lectureDetails.lectureTitle}', '${note.lectureDetails.lectureLink}', '${note.lectureDetails.lectureDescription}')">
+                        <p>${note.noteTimeStamp} - ${note.sectionDetails.sectionTitle} - ${note.lectureDetails.lectureTitle}: ${note.noteDescription}</p>
+                    </li>`;
+                $('.notes-list ul').append(newNoteHtml);
+            }
         },
         error: function(xhr, status, error) {
             console.error('Error saving note:', error);

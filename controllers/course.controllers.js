@@ -548,7 +548,43 @@ class CourseController {
       });
 
       const savedNote = await newNote.save();
-      res.status(201).json({ success: true, message: "Note added successfully", note: savedNote });
+
+      const noteWithDetails = await Note.findById(savedNote._id)
+          .populate({
+              path: 'lectureID',
+              select: 'lectureTitle lectureLink lectureDescription sectionID',
+              populate: {
+                  path: 'sectionID',
+                  select: 'sectionNumber sectionTitle'
+              }
+          });
+
+        // Check if the note and its details were fetched successfully
+        if (!noteWithDetails) {
+            throw new Error("Note saved but related details could not be fetched.");
+        }
+          
+        const response = {
+          success: true,
+          message: "Note added successfully",
+          note: {
+              id: noteWithDetails.id,
+              noteTimeStamp: noteWithDetails.noteTimeStamp,
+              noteDescription: noteWithDetails.noteDescription,
+              lectureDetails: {
+                  lectureTitle: noteWithDetails.lectureID.lectureTitle,
+                  lectureLink: noteWithDetails.lectureID.lectureLink,
+                  lectureDescription: noteWithDetails.lectureID.lectureDescription
+              },
+              sectionDetails: {
+                  sectionNumber: noteWithDetails.lectureID.sectionID.sectionNumber,
+                  sectionTitle: noteWithDetails.lectureID.sectionID.sectionTitle
+              }
+          }
+      };
+
+      // Send the detailed response
+      res.status(201).json(response);
     } catch (error) {
         console.error("Error adding note:", error);
         res.status(500).json({ success: false, message: "Failed to add note" });
