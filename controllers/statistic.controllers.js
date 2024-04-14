@@ -30,20 +30,22 @@ class StatisticalController {
     
     async getByTime(startDay, endDay) {
         try {
-            const startDate = moment(startDay).startOf('day').toDate();
-            const endDate = moment(endDay).endOf('day').toDate();
+            const startDate = new Date(startDay);
+            startDate.setUTCHours(0, 0, 0, 0);
 
-            console.log(startDate + " - " + endDate)
+            const endDate = new Date(endDay);
+            endDate.setUTCHours(23, 59, 59, 999);
+
+            console.log(startDate.toUTCString() + " - " + endDate.toUTCString())
 
             const orders = await Transaction.find({
-                transactionDate: { $gte: startDate, $lte: endDate }
-            }).populate({
-                path: 'userId',
-                select: 'fullName'
+                transactionDate: { $gte: startDate.toUTCString(), $lte: endDate.toUTCString() }
             }).populate({
                 path: 'courseIds',
                 select: 'courseName coursePrice'
             });
+
+            console.log(orders);
 
             return orders;
         } catch (error) {
