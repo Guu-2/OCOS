@@ -1,6 +1,8 @@
 var express = require('express');
 const router = express.Router();
 const User = require('../models/users');
+const Course = require('../models/courses');
+const Exercise = require('../models/exercises');
 const Review = require('../models/reviews');
 const userController = require('../controllers/user.controllers');
 const courseController = require('../controllers/course.controllers');
@@ -102,7 +104,7 @@ router.get('/', function (req, res) {
     .populate('userId', 'fullName profilePicture'); 
     const hasReviewed = await Review.findOne({ courseId: req.params.courseId, userId: req.session.account })
     .populate('userId', 'fullName profilePicture');
-
+    const hasExercises = await Exercise.find({ courseId: req.params.courseId });
 
     console.log(req.params.courseId)
     const partial = 'partials/course_detail';
@@ -114,11 +116,31 @@ router.get('/', function (req, res) {
       hasBought: hasBought,
       hasAddToCart: hasAddToCart,
       hasReviewed: hasReviewed,
-      hasReviewsOfACourse: hasReviewsOfACourse
+      hasReviewsOfACourse: hasReviewsOfACourse,
+      hasExercises: hasExercises
     }
     // console.log(req.page_data.account_details)
     await userController.getpage(req, res, next);
 
+  })
+  .get('/exercise', async function (req, res, next) {
+    const partial = 'partials/exercise';
+    const layout = 'layouts/main';
+  
+    const coursesWithExercises = await courseController.getCoursesWithExercises(req, res, next);
+    console.log("Courses with exercises: ", coursesWithExercises);
+  
+    req.partial_path = partial;
+    req.layout_path = layout;
+  
+    req.page_data = {
+      list_my_course: coursesWithExercises,
+      list_all_course_of_anInstructor: await courseController.get_my_course(req, res, next)
+    }
+    await userController.getpage(req, res, next);
+  })
+  .post('/course/exercise', async (req, res, next) => {
+    await courseController.manageExercise(req, res, next);
   })
   .get('/rating', async function (req, res, next) {
     const user = await User.findById(req.session.account);
