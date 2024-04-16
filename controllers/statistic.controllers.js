@@ -1,6 +1,4 @@
-const Customer = require('../models/customers');
-const Order = require('../models/courses');
-const Product = require('../models/products');
+
 const Transaction = require('../models/transactions');
 
 const jwt = require('jsonwebtoken');

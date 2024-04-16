@@ -5,15 +5,13 @@ const Review = require('../models/reviews');
 const userControllers = require('../controllers/user.controllers');
 const statisticControllers = require('../controllers/statistic.controllers');
 const courseController = require('../controllers/course.controllers');
-const orderController = require('../controllers/order.controller');
 const transactionController = require('../controllers/transaction.controllers');
 
 
 var { authentication, isAdmin } = require('../middleware/authentication');
-const orderControllers = require('../controllers/order.controller')
 
 const { validate } = require('../controllers/validator');
-const customerControllers = require('../controllers/customer.controllers');
+
 /* GET admin page. */
 
 //TODO: quay lại tối ưu layout khi hoàn thành
