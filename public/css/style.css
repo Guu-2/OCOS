@@ -613,15 +613,7 @@ body .background-container {
 
 }
 
-.home-section .fill_content #search_result_row li {
-    /* border: 2px solid rgb(234, 255, 0); */
 
-
-}
-
-.home-section .fill_content #search_result_row .course_res_pic {
-    /* border: 2px solid black; */
-}
 
 .home-section .fill_content #search_result_row .course_res_pic img {
     /* border: 2px solid red; */
@@ -645,14 +637,7 @@ body .background-container {
     width: 40px;
 }
 
-.home-section .fill_content #search_result_row .course_name {
 
-    /* margin-left: 30px; */
-    /* border: 2px solid blue; */
-
-
-
-}
 
 .home-section .fill_content #clear_icon {
     position: absolute;
@@ -680,7 +665,7 @@ body .background-container {
     /* margin-left: 30px; */
     text-align: center;
     transform: scale(1.5);
-    /* border: 2px solid blue; */
+
 
 
 }
@@ -1082,10 +1067,7 @@ section#product_page {
 
 /* TODO USER ( student , trainer) */
 /* #TODO COURSE PAGE*/
-#table_product {
-    /* border: 2px solid red; */
 
-}
 
 #table_product .course-type {
     /* border: 2px solid red; */
@@ -1099,13 +1081,11 @@ section#product_page {
 
 }
 
-#table_product .course-item {
-    /* border: 2px solid blue; */
-}
+
 
 
 .course-item .course-content {
-    /* border: 2px solid red; */
+
     padding: 8px;
 
     background-color: #CCD3CA;
@@ -1114,7 +1094,8 @@ section#product_page {
 }
 
 .course-item #course_pic {
-    /* border: 2px solid red; */
+    background-color:lightblue;
+    /* background-color: bisque; */
     object-fit: contain;
     width: 600px;
     height: 250px;
@@ -1163,10 +1144,7 @@ section#product_page {
     /* Hiển thị dấu chấm ba chấm khi văn bản bị cắt */
 }
 
-.course-item .course-content .trainer {
-    /* border: 2px solid rgb(47, 0, 255); */
 
-}
 
 .course-item .course-content .trainer .trainer-profile img {
     /* border: 2px solid red; */
@@ -1196,9 +1174,6 @@ section#product_page {
 }
 
 /* TODO CART PAGE */
-div#cart_page {
-    /* border: 2px solid red; */
-}
 
 
 div#cart_page #course_pic {
@@ -1217,9 +1192,7 @@ div#cart_page #course_cart_empty {
 
 }
 
-div#cart_page .payment {
-    /* border: 2px solid red; */
-}
+
 
 
 /* TODO COURSE MANAGER PAGE */
@@ -1240,18 +1213,10 @@ div.create_course{
 
 }
 
-/* TODO COURSE CREATE PAGE */
-div.my_create_course {
-    /* border: 2px solid yellow; */
-}
 
 
 /* TODO COURSE DETAIL PAGE */
 
-div.course_detail_page {
-    /* border: 2px solid red; */
-    /* margin-top: 15px; */
-}
 
 div.course_detail_page .video_trailer #trailer_link {
     /* border: 2px solid rgb(0, 0, 2); */
@@ -1343,9 +1308,7 @@ div.lecture_page {
 
 }
 
-div.lecture_page .lecture_card {
-    /* border: 2px solid red; */
-}
+
 
 div.lecture_page .lecture_video {
     /* border: 2px solid blue; */
@@ -1355,9 +1318,6 @@ div.lecture_page .lecture_video {
     max-height: 100%;
 }
 
-div.lecture_page .lecture_des {
-    /* border: 2px solid blue; */
-}
 
 div.lecture_page #note_bar{
     color: var(--text-dark-color)
@@ -1368,9 +1328,7 @@ div.lecture_page #section_bar{
 }
 
 
-div.lecture_page .panel_content {
-    /* border: 2px solid blue; */
-}
+
 
 div.nav_lecture .note_content,
 div.lecture_page .take_note {
@@ -1391,7 +1349,7 @@ div.lecture_page .menu_bar {
 div.lecture_page .menu_icon {
 
     position: fixed;
-    bottom: 20px;
+    bottom: 80px;
     /* Khoảng cách từ dưới lên */
     right: 20px;
     /* Khoảng cách từ phải sang */
@@ -1399,6 +1357,7 @@ div.lecture_page .menu_icon {
     background-color: #4CAF50;
     /* Màu nền nút */
     color: white;
+    z-index: 99999;
     /* Màu chữ nút */
     /* border: none; */
     /* border-radius: 4px; */
@@ -2021,7 +1980,7 @@ body.dark .background-container {
     position: fixed;
     visibility: hidden;
     opacity: 0;
-    right: 30px;
+    right: 20px;
     bottom: -20px;
     z-index: 99999;
     background-color: var(--accent-color);
@@ -2481,7 +2440,19 @@ body.dark {
     #section_bar{
         color: var(--text-light-color)
     }
+    .course-item #course_pic {
+        background-color: bisque;
 
+    }
+    .home-section .fill_content .cart_shopping {
+        color: var(--icon-light-color);
+    
+    
+    }
+    .home-section .fill_content #searchInput,
+    .home-section .fill_content #seach_icon{
+        color: var(--icon-light-color);
+    }
     
 }
 

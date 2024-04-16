@@ -105,7 +105,7 @@ class CourseController {
       if (product) {
         if(!product.inOrders){
           await product.deleteOne();
-          const imagePath = path.join(__dirname, '../uploads', product.courseImage);
+          const imagePath = path.join(__dirname, '../uploads/courses', path.basename(product.courseImage));
           console.log(imagePath);
           fs.unlink(imagePath, (err) => {
             if (err) {
@@ -809,6 +809,16 @@ class CourseController {
       }
   }
 
-
+  async getAboutUS() {
+    const students = await User.find({ role: 'student' });
+    const courses = await Course.find({});
+    const instructors = await User.find({ role: 'instructor' });
+  
+    return {
+      students: students,
+      courses: courses,
+      instructors: instructors,
+    };
+  }
 }
 module.exports = new CourseController();

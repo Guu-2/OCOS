@@ -52,7 +52,7 @@ class UserController {
             fullName: 'Admin',
             role: 'admin',
             access: admin_feature_list,
-            profilePicture: '../images/dejault_avatar.png',
+            profilePicture: '../../images/dejault_avatar.png',
             lastLogin: currentTime,
           });
           await defaultAdmin.save();
@@ -206,7 +206,7 @@ class UserController {
             fullName: email.split("@")[0],
             role: accountType,
             access: access,
-            profilePicture: '../images/dejault_avatar.png',
+            profilePicture: '../../images/dejault_avatar.png',
             lastLogin: currentTime,
           });
 
@@ -269,96 +269,6 @@ class UserController {
     }
   }
 
-
-  async addnewstaff(req, res, next) {
-    try {
-
-
-      // Lấy các giá trị từ Form Data
-      // const fullname = req.body.fullname;
-      // const email = req.body.email;
-      // const role = req.body.role;
-
-      const errors = validationResult(req);
-      // console.log(errors);
-
-      if (!errors.isEmpty()) {
-        var err_msg = "";
-        var list_err = errors.array();
-        list_err.forEach(err => {
-          err_msg += err.msg + " , ";
-        });
-
-        console.log(err_msg);
-
-        //CƠ CHẾ CỦA VALIDATOR KHÔNG CHO ĐI TIẾP
-        var state = { status: 'warning', message: err_msg };
-        res.json({ added: false, status: state.status, message: state.message });
-      } else {
-        const { fullname, email, role } = req.body;
-        const currentTime = moment().format("HH:mm | DD/MM/YYYY");
-        if (role === "manager") {
-          var access = req.body.access;
-          const filteredFeatures = admin_feature_list.filter(feature => access.includes(feature.access));
-          var access = filteredFeatures;
-          var status = "active";
-        }
-        else {
-          var access = staff_feature_list;
-          var status = "inactive";
-        }
-        console.log(fullname, email, access, role);
-        const find = await User.findOne({ email: email });
-        if (!find) {
-          const defaultpassword = await bcrypt.hash(email.split("@")[0], parseInt(process.env.BCRYPT_SALT_ROUND));
-          // console.log(defaultpassword);
-          const newAccount = new User({
-            username: email.split("@")[0],
-            // Trong thực tế, hãy sử dụng mã hóa mật khẩu bằng bcrypt hoặc một thư viện tương tự
-            password: defaultpassword,
-            email: email,
-            fullName: fullname,
-            role: role,
-            access: access,
-            profilePicture: '../images/dejault_avatar.png',
-            status: status,
-            lastLogin: currentTime,
-          });
-
-          // res.json({ added: true, status: "success", message: "Add staff successfully" });
-          await newAccount.save()
-            .then((savedAccount) => {
-              // Lưu thành công
-              if (status === "inactive") {
-                //SAI NGỮ CẢNH NÊN KHÔNG DÙNG ĐƯỢC sendMail
-                // this.resendEmail(email , savedAccount._id.toString())
-                sendEmail.sendConfirmationEmail(email, savedAccount._id.toString());
-              }
-              console.log('Account saved successfully:');
-              // Thực hiện các hành động tiếp theo ở đây
-              res.json({ added: true, status: "success", message: "Add staff successfully", account: savedAccount });
-            }).catch((error) => {
-              // Xử lý lỗi nếu quá trình lưu không thành công
-              console.error('Error saving account:', error);
-              res.json({ added: false, status: "error", message: "Failed to add staff" });
-            })
-        }
-        else {
-          // res.json({ added: true, status: "success", message: "Add staff successfully" });
-          res.json({ added: false, status: "warning", message: "Account already exists" });
-        }
-      }
-
-
-
-
-    } catch (error) {
-
-      next(error);
-    }
-  }
-  //Kiểm tra trạng thái có được phép truy cập hay không
-  //Tạm thời chỉ check trạng thái có hợp lệ => phát triển xác thực quyền hạn (lưu quyền hạn từng account vào dtb)
 
 
   async getpage(req, res, next) {
@@ -447,22 +357,6 @@ class UserController {
     }
   }
 
-  // async verifyAccess(accountID) {
-  //   console.log("Verify access of account: ")
-  //   try {
-  //     const find = await User.findById(accountID);
-  //     // console.log(find)
-  //     if (find) {
-  //       if (find.status === "intial") {
-  //         return false;
-  //       } else {
-  //         return true;
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
 
   async togglelockAccount(req, res, next) {
     console.log("Lock and Unlock account: ")
@@ -554,68 +448,7 @@ class UserController {
     }
   }
 
-  // async changeDefaultPassword(req, res, next) {
-  //   try {
-  //     const errors = validationResult(req);
 
-  //     if (!errors.isEmpty()) {
-  //       var err_msg = "";
-  //       var list_err = errors.array();
-  //       list_err.forEach(err => {
-  //         err_msg += err.msg + " , ";
-  //       });
-
-  //       console.log(err_msg);
-
-  //       //CƠ CHẾ CỦA VALIDATOR KHÔNG CHO ĐI TIẾP
-  //       var state = { status: 'warning', message: err_msg };
-  //       res.json({ changed: false, status: state.status, message: state.message });
-  //     }
-  //     else {
-  //       const { newpass, renewpass } = req.body;
-  //       console.log(newpass, renewpass);
-
-  //       const find = await User.findById(req.session.account);
-  //       if (!find) {
-  //         var state = { status: 'warning', message: 'Account not found' }
-  //       }
-  //       else {
-  //         const newpassword = await bcrypt.hash(newpass, parseInt(process.env.BCRYPT_SALT_ROUND));
-  //         find.password = newpassword;
-  //         find.status = 'active'
-  //         await find.save(); // Lưu thay đổi
-  //         var state = { status: 'success', message: 'Change password successful' }
-  //       }
-  //       if (state.status == "success") {
-  //         // req.session.loggedIn = true;
-  //         if (req.session.role == "admin" || req.session.role == "manager") {
-  //           // req.session.isAdmin = true;
-  //           //TODO: xử lý cả cho manager không có staff acceess , hint tạo page mặc định cho từng layout
-  //           var goto = '/admin/staff'
-  //         }
-  //         else {
-
-  //           var goto = '/home/order'
-
-  //         }
-  //       }
-  //       var state = { status: state.status, message: state.message, redirect: goto }
-
-  //       // Các xử lý khác sau khi đăng nhập thành công
-  //       // Đăng nhập thành công, tạo flash message
-  //       req.session.flash = {
-  //         type: state.status,
-  //         intro: 'login feature',
-  //         message: state.message,
-  //       };
-  //       res.json(state)
-  //       //TODO: sửa lại thay vì redirect dùng fetch api hiển thị flash
-  //     }
-  //   } catch (error) {
-
-  //     next(error);
-  //   }
-  // }
   async changePassword(req, res, next) {
     try {
       const errors = validationResult(req);
@@ -717,7 +550,7 @@ class UserController {
     try {
       if (req.session.loggedIn) {
         req.session.loggedIn = false;
-        var state = { status: 'success', message: 'Đã đăng xuất' };
+        var state = { status: 'success', message: 'Logout successful' };
       }
       else {
         var state = { status: 'warning', message: 'Có lỗi xảy ra hãy đăng nhập lại' };

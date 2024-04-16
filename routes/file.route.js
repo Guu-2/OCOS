@@ -11,7 +11,7 @@ const fileController = require('../controllers/file.controllers');
 
 
 router.post('/upload/avatar',fileController.changeAvatar);
-router.post('/upload/product',fileController.productPicture);
+// router.post('/upload/product',fileController.productPicture);
 
 module.exports = router;
 
