@@ -27,7 +27,8 @@ const student_feature_list = [
 
 
 const instructor_feature_list = [
-  { access: "Course", icon: "<i class='fa-solid fa-graduation-cap'></i>" }
+  { access: "Course", icon: "<i class='fa-solid fa-graduation-cap'></i>" },
+  { access: "Exercise", icon: "<i class='fa-solid fa-pen-to-square'></i>" }
 ]
 
 

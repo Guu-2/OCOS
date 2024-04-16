@@ -929,6 +929,9 @@ if(rating){
     .then(data => {
         showflashmessage("success", "Rating submitted successfully.");
         document.getElementById('comment').value = '';
+        setTimeout(() => {
+          location.reload();
+        }, 500);
     })
     .catch(error => {
         showflashmessage('error', error.message || 'An error occurred while submitting your rating.');

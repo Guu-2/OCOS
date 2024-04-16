@@ -2474,3 +2474,9 @@ body.dark {
     }
 
 }
+
+/* TODO exercise page */
+#selectCourse, #googleFormLink {
+    color: var(--text-dark-color);
+    margin-bottom: 20px;
+}

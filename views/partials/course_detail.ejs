@@ -175,6 +175,17 @@
                 </div>
 
             </section><!-- /Tabs Section -->
+            <!-- google forms -->
+<% if (data.hasExercises && data.hasBought) { %> 
+    <div class="google-forms">
+        <h4 style="color:chartreuse;">Your exercises:</h4>
+        <% data.hasExercises.forEach((exercise, index) => { %>
+            <div class="exercise-container">
+                <a href="<%= exercise.googleFormLink %>" style="color: black;">Link to Exercise <%= index +1 %></a>
+            </div>
+        <% }); %>
+    </div>
+<% } %> 
  <!-- comment down there -->
  <input type="hidden" name="courseId" value="<%= course._id %>" id="courseId">
  <% if (data.hasBought) { %>
