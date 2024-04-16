@@ -601,6 +601,11 @@ function getcoursebyId(id) {
   window.location.href = "/home/course/" + id;
 }
 
+function editcoursebyId(id) {
+  console.log(id)
+  window.location.href = "/home/courseedit/" + id;
+}
+
 function getcoursebyId_admin(id) {
   console.log(id)
   window.location.href = "/admin/course/" + id;

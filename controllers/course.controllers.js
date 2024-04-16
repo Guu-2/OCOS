@@ -197,8 +197,10 @@ class CourseController {
         }));
 
         formattedSections.push({
+          sectionID: section._id,
           sectionNumber: section.sectionNumber,
           sectionTitle: section.sectionTitle,
+          sectionSlugID: 'videos-' + (section.sectionNumber.toLowerCase().replace(/ /g, '')).replace(/\s+/g, '-') ,
           lectures: formattedLectures
         });
       }
@@ -551,6 +553,72 @@ class CourseController {
     } catch (error) {
       // res.status(500).json(error);
       // console.error("Lỗi: " + error);
+      next(error);
+    }
+  }
+
+  // Edit Course
+  async editCourse(req, res, next) {
+    console.log("Edit course : ");
+    const courseId = req.params.courseId;
+
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+      
+      console.log("TEST:");
+      console.log(req.body);
+      console.log(req.body.sections);
+      console.log(Array.isArray(req.body.sections));
+      console.log(typeof req.body.sections);
+      const { courseName, coursePrice, courseImage, courseCategory, coursePreview, courseDescription, courseAudience, courseResult, courseRequirement, sections } = req.body;
+
+      // Update course details
+      const updatedCourse = await Course.findByIdAndUpdate(courseId, {
+        courseName,
+        coursePrice,
+        courseCategory,
+        coursePreview,
+        courseImage: req.file ? '../../courses/' + req.file.filename : courseImage,
+        courseDescription,
+        courseAudience,
+        courseResult,
+        courseRequirement
+      }, { new: true });
+
+      // Remove all existing sections and lectures, and add new ones
+      await Section.deleteMany({ courseID: courseId });
+      await Lecture.deleteMany({ courseID: courseId });
+
+      console.log(sections);
+
+      for (const section of sections) {
+        const newSection = new Section({
+          courseID: courseId,
+          sectionNumber: section.sectionNumber,
+          sectionTitle: section.sectionTitle
+        });
+
+        const savedSection = await newSection.save();
+
+        for (const lecture of section.lectures) {
+          const newLecture = new Lecture({
+            sectionID: savedSection._id,
+            lectureTitle: lecture.lectureTitle,
+            lectureLink: lecture.lectureLink,
+            lectureDescription: lecture.lectureDescription
+          });
+
+          await newLecture.save();
+        }
+      }
+
+      res.json({ status: "success", message: "Course updated successfully", course: updatedCourse });
+
+    } catch (error) {
+      console.error("Error: " + error);
       next(error);
     }
   }

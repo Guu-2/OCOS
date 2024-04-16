@@ -129,7 +129,7 @@ function addVideo(chapterName, title, link, desc) {
                         <h6 class="video-title card-title" contenteditable="true">${title}</h6>
                         <p class="video-desc card-text">${desc}</p>
                         <div class="w-100 mb-3">
-                            <button class="btn btn-danger ms-2 float-end" onclick="deleteVideo(this)"">Remove</button>
+                            <button class="btn btn-danger ms-2 float-end" onclick="deleteVideo(this)">Remove</button>
                         </div>
                     </div>
                 </div>
@@ -298,3 +298,130 @@ document.getElementById('addCourseBtn').addEventListener('click', function () {
             $(".alert").alert();
         });
 });
+
+// Edit course
+function editCourse() {
+    var courseId = document.getElementById('courseId').value;
+    var courseImageFile = document.getElementById('inputCourseImage').files[0];
+    var existImage = document.getElementById('existImageUrl').src;
+
+    var courseName = document.getElementById('inputCourseTitle').value.trim();
+    var coursePrice = document.getElementById('inputCoursePrice').value.trim();
+    var courseCategory = document.getElementById('inputCategory').value;
+    var coursePreview = document.getElementById('inputCoursePreview').value.trim();
+    var courseDescription = document.getElementById('inputCourseDescription').value.trim();
+    var courseAudience = document.getElementById('inputCourseAudience').value.trim();
+
+    var courseResultList = document.querySelectorAll('#inputCourseResultList li');
+    var courseResult = [];
+    courseResultList.forEach(function (item) {
+        var textNodes = Array.from(item.childNodes).filter(node => node.nodeType === Node.TEXT_NODE);
+        var result = textNodes.map(node => node.textContent.trim()).join('');
+        courseResult.push(result);
+    });
+
+    var courseReqList = document.querySelectorAll('#inputCourseReqList li');
+    var courseReq = [];
+    courseReqList.forEach(function (item) {
+        var textNodes = Array.from(item.childNodes).filter(node => node.nodeType === Node.TEXT_NODE);
+        var req = textNodes.map(node => node.textContent.trim()).join('');
+        courseReq.push(req);
+    });
+
+    var course = {
+        "courseId": courseId,
+        "courseName": courseName,
+        "coursePrice": parseInt(coursePrice),
+        "courseImage": courseImageFile ? null : existImage,
+        "courseCategory": courseCategory,
+        "coursePreview": coursePreview,
+        "courseDescription": courseDescription,
+        "courseAudience": courseAudience,
+        "courseResult": courseResult,
+        "courseRequirement": courseReq,
+        "sections": []
+    };
+
+    var chapters = document.querySelectorAll('#chapters .chapter-card');
+
+    chapters.forEach(function (chapter) {
+        var chapterName = chapter.querySelector('.chapter-name').textContent;
+        var chapterTitle = chapter.querySelector('.chapter-title').textContent;
+
+        var videos = chapter.querySelectorAll('.video-card');
+
+        var chapterObj = {
+            "sectionNumber": chapterName,
+            "sectionTitle": chapterTitle,
+            "lectures": []
+        };
+
+        videos.forEach(function (video) {
+            var videoTitle = video.querySelector('.video-title').textContent;
+            var videoLink = video.querySelector('iframe').src;
+            var videoDesc = video.querySelector('.video-desc').textContent;
+
+            var videoObj = {
+                "lectureTitle": videoTitle,
+                "lectureLink": videoLink,
+                "lectureDescription": videoDesc
+            };
+
+            chapterObj["lectures"].push(videoObj);
+        });
+
+        course["sections"].push(chapterObj);
+    });
+
+    var formData = new FormData();
+    formData.append("courseData", JSON.stringify(course));
+    if (courseImageFile) formData.append("courseImage", courseImageFile);
+
+    console.log(JSON.stringify(course));
+
+    // Gửi dữ liệu lên server bằng phương thức PUT
+    fetch('/home/courseedit/' + courseId, {
+        method: 'PUT',
+        body: formData
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Network response was not ok.');
+        })
+        .then(data => {
+            console.log('Course added successfully:', data);
+
+            const successAlert = `
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Successfully!</strong> Edit course successfully.
+                <button type="button" class="close btn" data-bs-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                `;
+            document.getElementById('alert-container').innerHTML = successAlert;
+            // Đóng alert sau một thời gian
+            $(".alert").alert();
+            // Đợi 2 giây trước khi tải lại trang
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        })
+        .catch(error => {
+            console.error('Error adding course:', error);
+
+            const errorAlert = `
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> Failed to update course.
+                <button type="button" class="close btn" data-bs-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                `;
+            document.getElementById('alert-container').innerHTML = errorAlert;
+            // Đóng alert sau một thời gian
+            $(".alert").alert();
+        });
+};

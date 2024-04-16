@@ -70,6 +70,30 @@ router.get('/', function (req, res) {
         next(error);
     }
   })
+  .get('/courseedit/:courseId', async function (req, res, next) {
+    console.log(req.params.courseId)
+    const partial = 'partials/edit_course';
+    const layout = 'layouts/main';
+    req.partial_path = partial
+    req.layout_path = layout
+    req.page_data = {
+      courseId: req.params.courseId,
+      course_detail: await courseController.getCourse(req.params.courseId),
+      section_detail: await courseController.getSectionsAndLectures(req.params.courseId)
+    }
+    // console.log(req.page_data.account_details)
+    await userController.getpage(req, res, next);
+
+  })
+  .put('/courseedit/:courseId', upload.single('courseImage'), async (req, res, next) => {
+    try {
+        req.body = JSON.parse(req.body.courseData);
+        const result = await courseController.editCourse(req, res, next);
+        res.json(result);
+    } catch (error) {
+        next(error);
+    }
+  })
   .get('/course/:courseId', async function (req, res, next) {
     const user = await User.findById(req.session.account);
     const hasBought = user.subscribed.includes(req.params.courseId);
