@@ -107,7 +107,7 @@ class CourseController {
       if (product) {
         if(!product.inOrders){
           await product.deleteOne();
-          const imagePath = path.join(__dirname, '../uploads/courses', path.basename(product.courseImage));
+          const imagePath = path.join(__dirname, '../uploads', product.courseImage);
           console.log(imagePath);
           fs.unlink(imagePath, (err) => {
             if (err) {
@@ -808,6 +808,130 @@ class CourseController {
           res.json({ status: "warning", message: err.message })
       }
   }
+
+  async getCoursesWithExercises(req, res, next) {
+    try {
+      const instructorId = req.session.account; 
+      const courses = await Course.find({
+        instructorID: instructorId,
+        exercises: { $exists: true, $ne: [] }  // Ensure there are exercises associated with the course
+      })
+      .populate({
+        path: 'exercises',
+        select: 'googleFormLink'  // Assuming the relationship and fields are correctly set up
+      })
+      .exec();
+  
+      return courses;
+    } catch (error) {
+      console.error("Error fetching courses with exercises:", error);
+      next(error);
+    }
+  }
+
+  async manageExercise(req, res, next) {
+    try {
+      const { courseId, exerciseIndex, googleFormLink, selectCourse } = req.body;
+      const instructorID = req.session.account;
+      console.log("rm exercise: ", courseId, instructorID, exerciseIndex)
+  
+      // thêm mới or cập nhật bài tập
+      if (googleFormLink) {
+        // Kiểm tra nếu exerciseIndex được cung cấp, thì thực hiện cập nhật
+        if (exerciseIndex !== undefined) {
+          const existingEx = await Exercise.find({ InstructorId: instructorID, courseId: courseId });
+          if (!existingEx) {
+            req.session.flash = {
+              type: 'warning',
+              message: 'Exercise not found',
+            };
+            return res.status(404).json({ success: false, message: 'Exercise not found' });
+          }
+          try {
+            existingEx[exerciseIndex].googleFormLink = googleFormLink;
+            await existingEx[exerciseIndex].save();
+            req.session.flash = {
+              type: 'success',
+              message: 'Link updated successful'
+            };
+            return res.json({ status: "success", message: "Link updated successfully" });
+          } catch (error) {
+            console.error('Error saving exercise:', error);
+            return res.json({ status: "error", message: "Error saving exercise" });
+          }
+        } else {
+          // Tạo mới bài tập
+          if (!googleFormLink || !selectCourse) {
+            return res.status(400).json({ message: "Missing required fields" });
+          }
+          const newExercise = new Exercise({
+            courseId: selectCourse,
+            InstructorId: instructorID,
+            googleFormLink: googleFormLink
+          });
+  
+          const savedEx = await newExercise.save();
+  
+          await Course.findByIdAndUpdate(selectCourse, {
+            $push: { exercises: newExercise._id }
+          }, { new: true });
+  
+          req.session.flash = {
+            type: 'success',
+            message: 'Exercise added successfully!'
+          };
+          res.status(200).json({ added: true, status: "success", message: "Exercise added successfully", exercise: savedEx });
+        }
+      }
+      
+      // Nếu không cung cấp googleFormLink, ta xem như đang thực hiện xóa bài tập
+      else if (exerciseIndex !== undefined) {
+        // Xóa bài tập tại vị trí index
+        try {
+          const existingEx = await Exercise.find({ InstructorId: instructorID, courseId: courseId });
+          if (!existingEx) {
+            req.session.flash = {
+              type: 'warning',
+              message: 'Exercise not found',
+            };
+            return res.status(404).json({ success: false, message: 'Exercise not found' });
+          }
+
+          try {
+            // rm trong course
+            console.log("del ex1: ", existingEx[exerciseIndex]._id)
+            await Course.findOneAndUpdate(
+              { _id: courseId },
+              { $pull: { exercises: existingEx[exerciseIndex]._id } }, 
+              { new: true }
+            );
+            await existingEx[exerciseIndex].deleteOne();
+            req.session.flash = {
+              type: 'success',
+              message: 'Link removed successful'
+            };
+            return res.json({ status: "success", message: "Link removed successfully" });
+          } catch (error) {
+            console.error('Error saving exercise:', error);
+            return res.json({ status: "error", message: "Error removing exercise" });
+          }
+        } catch(err) {
+          req.session.flash = {
+            type: 'error',
+            intro: 'rm exercise failed',
+            message: err.message,
+          };
+           return res.json({ success: false, message: err.message })
+        }
+      } else {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+    } catch (error) {
+      console.error('Error managing exercise:', error);
+      return res.status(500).json({ success: false, message: 'Internal server error', error: error.toString() });
+    }
+  }
+
 
   async getCoursesWithExercises(req, res, next) {
     try {
