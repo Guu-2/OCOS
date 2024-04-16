@@ -15,7 +15,7 @@ const student_feature_list = [
 // middleware/authentication.js
 function authentication(req, res, next) {
   if (req.session.loggedIn) {
-    console.log("LOGGED IN")
+    // console.log("LOGGED IN")
     next();
   }
   else {

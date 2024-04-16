@@ -688,21 +688,29 @@ function gotodetailsorder(id) {
 }
 
 var global_id = "";
+var end_point = "";
 const delete_modal = document.querySelector("#deleteModal");
 
 const delete_btn = document.querySelector("#confirm_delete")
 
 if (delete_btn) {
-  delete_btn.addEventListener("click", () => { deletecoursebyId(global_id) })
+  delete_btn.addEventListener("click", () => { deletecoursebyId( end_point, global_id) })
 
 }
 
 
-function deletecourse(course_name, id) {
+function deletecourse(role, course_name, id) {
   // Điền id vào trường có id là "id"
   $(".id_course").text(course_name);
   $("#deleteModal").modal('show');
   global_id = id;
+  if(role == "admin"){
+    end_point = "/admin/course/";
+  }
+  if(role =="instructor"){
+    end_point = "/home/course/";
+  }
+
 }
 
 
@@ -717,18 +725,21 @@ function show_info_payment(card_owner, payment_id) {
 
 
 
-function deletecoursebyId(id) {
+function deletecoursebyId(target , id) {
   console.log(id)
 
 
-  fetch('/admin/course/' + id, {
+  fetch(target + id, {
     method: 'DELETE',
   })
     .then(response => response.json())
     .then(data => {
       if (data.delete) {
-
-        window.location.href = data.redirect;
+        if(target == '/admin/course/'){
+          window.location.href = data.redirect;
+        }else{
+          window.location.href = '/home/course';
+        }
       }
       else {
         showflashmessage(data.status, data.message)
@@ -740,6 +751,8 @@ function deletecoursebyId(id) {
     });
 
 }
+
+
 
 function resendVerifyEmail(email, accountid) {
   console.log(email)

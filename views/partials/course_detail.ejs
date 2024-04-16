@@ -43,7 +43,7 @@
                             <button type="button" class="btn btn-info" onclick="getlecturebyId('<%=course._id.toString() %>')">Start Course</button>
                         <% } %>
                     <% } else {%>
-                        <button type="button" class="btn btn-danger" onclick="deletecourse('<%= course.courseName%>','<%= course._id.toString()%>')">DELETE COURSE</button>
+                        <button type="button" class="btn btn-danger" onclick="deletecourse('<%= account.role%>','<%= course.courseName%>','<%= course._id.toString()%>')">DELETE COURSE</button>
                         <button type="button" class="btn btn-primary" onclick="editcoursebyId('<%= course._id.toString()%>')">EDIT COURSE</button>
                     <% } %>
                 </div>

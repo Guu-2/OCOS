@@ -20,9 +20,9 @@ const courseSchema = new Schema({
     createdAt: { type: String, default: new Date().toUTCString() }
 });
 
-// courseSchema.add({
-//     exercises: [{ type: Schema.Types.ObjectId, ref: 'Exercise' }]
-// });
+courseSchema.add({
+    exercises: [{ type: Schema.Types.ObjectId, ref: 'Exercise' }]
+});
 
 const Course = mongoose.model('Course', courseSchema);
 

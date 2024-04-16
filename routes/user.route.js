@@ -6,9 +6,6 @@ const Exercise = require('../models/exercises');
 const Review = require('../models/reviews');
 const userController = require('../controllers/user.controllers');
 const courseController = require('../controllers/course.controllers');
-const orderController = require('../controllers/order.controller')
-const customerController = require('../controllers/customer.controllers');
-const statisticControllers = require('../controllers/statistic.controllers')
 const { validate } = require('../controllers/validator');
 const { check } = require('express-validator');
 const multer = require('multer');
@@ -163,44 +160,6 @@ router.get('/', function (req, res) {
     await courseController.manageExercise(req, res, next);
   })
   .delete('/course/:courseId', courseController.delete_course)
-  .get('/exercise', async function (req, res, next) {
-    const partial = 'partials/exercise';
-    const layout = 'layouts/main';
-  
-    const coursesWithExercises = await courseController.getCoursesWithExercises(req, res, next);
-    console.log("Courses with exercises: ", coursesWithExercises);
-  
-    req.partial_path = partial;
-    req.layout_path = layout;
-  
-    req.page_data = {
-      list_my_course: coursesWithExercises,
-      list_all_course_of_anInstructor: await courseController.get_my_course(req, res, next)
-    }
-    await userController.getpage(req, res, next);
-  })
-  .post('/course/exercise', async (req, res, next) => {
-    await courseController.manageExercise(req, res, next);
-  })
-  .get('/exercise', async function (req, res, next) {
-    const partial = 'partials/exercise';
-    const layout = 'layouts/main';
-  
-    const coursesWithExercises = await courseController.getCoursesWithExercises(req, res, next);
-    console.log("Courses with exercises: ", coursesWithExercises);
-  
-    req.partial_path = partial;
-    req.layout_path = layout;
-  
-    req.page_data = {
-      list_my_course: coursesWithExercises,
-      list_all_course_of_anInstructor: await courseController.get_my_course(req, res, next)
-    }
-    await userController.getpage(req, res, next);
-  })
-  .post('/course/exercise', async (req, res, next) => {
-    await courseController.manageExercise(req, res, next);
-  })
   .get('/rating', async function (req, res, next) {
     const user = await User.findById(req.session.account);
     const hasBought = user.subscribed.includes(req.params.courseId);
@@ -323,111 +282,6 @@ router.get('/', function (req, res) {
   })
   .get('/search/:term' , courseController.getcoursebyTermRegex)
 
-  // .post('/statistical', async function (req, res, next) {
-  //   const timeFixed = req.body.timeFixed;
-  //   const fromDay = req.body.fromDay;
-  //   const toDay = req.body.toDay;
-  //   let endDay = new Date(); // Lấy ngày hiện tại
-  //   let startDay = new Date(); // Khởi tạo ngày bắt đầu
-
-  //   if (timeFixed != undefined) {
-  //     switch(timeFixed) {
-  //       case "today":
-  //         break;
-  //       case 'yesterday':
-  //           startDay.setDate(endDay.getDate() - 1);
-  //           endDay.setDate(endDay.getDate() - 1);
-  //           break;
-  //       case '7days':
-  //           startDay.setDate(endDay.getDate() - 7);
-  //           break;
-  //       case 'thisMonth':
-  //           startDay = new Date(endDay.getFullYear(), endDay.getMonth(), 1);
-  //           break;
-  //       default:
-  //     }
-  //   }
-
-  //   if(fromDay != undefined && toDay != undefined) {
-  //     startDay = new Date(fromDay);
-  //     endDay = new Date(toDay);
-  //   }
-
-  //   // Chuyển đổi startDay và endDay thành chuỗi ngày tháng năm
-  //   const startDayString = `${startDay.getDate().toString().padStart(2, '0')}-${(startDay.getMonth() + 1).toString().padStart(2, '0')}-${startDay.getFullYear()}`;
-  //   const endDayString = `${endDay.getDate().toString().padStart(2, '0')}-${(endDay.getMonth() + 1).toString().padStart(2, '0')}-${endDay.getFullYear()}`;
-
-  //   const partial = 'partials/statistical';
-  //   const layout = 'layouts/main';
-  //   const endpoint = '/home/intial';
-  //   req.partial_path = partial
-  //   req.layout_path = layout
-  //   req.endpoint = endpoint
-
-  //   req.layout_path = layout;
-  //   req.page_data = {
-  //     start: startDayString,
-  //     end: endDayString,
-  //     listOrder: await statisticControllers.getByTime(startDay, endDay)
-  // };
-  //   await userController.getpage(req, res, next);
-  // })
-
-  // .post('/bill' , async function(req, res , next) {
-  //   const {customerInfo,  orderItems, totalPrice ,amountPaid , change } = req.body;
-  //   console.log(customerInfo , orderItems , totalPrice , amountPaid , change);
-
-
-  //   req.page_data = {
-  //     fullname: customerInfo.fullname,
-  //     date: new Date().toUTCString(),
-  //     product: orderItems,
-  //     totalPrice: totalPrice,
-  //     amountPaid: amountPaid,
-  //     change: change
-  //   };
-
-
-  //   res.json(req.page_data)
-
-  // })
-
-  // .get('/check_customer/:phone' , customerController.getCustomerbyPhone)
-  // .get('/intial', async function (req, res, next) {
-  //   const verifyaccess = await userController.verifyAccess(req.session.account);
-  //   if (!verifyaccess) {
-  //     const feature = req.session.staff_feature;
-  //     const sidebar = req.session.access;
-  //     const account = await userController.getAccount(req.session.account)
-  //     const data_render = req.page_data ? req.page_data : "";
-  //     // Lấy flash message từ session
-  //     var flashMessage = req.session.flash;
-  //     console.log(flashMessage);
-  //     // Xóa flash message khỏi session
-  //     delete req.session.flash;
-  //     // // console.log(feature)
-  //     // console.log(sidebar);
-  //     // // res.json(feature);
-  //     if(account.lock){
-  //       var state = { status: 'warning', message: 'Account has been locked' };
-  //       req.session.flash = {
-  //         type: state.status,
-  //         intro: 'lock feature',
-  //         message: state.message,
-  //       };
-  //       res.redirect("/login")
-  //     }else{
-  //       res.render("partials/intial", { layout: 'layouts/main', access: sidebar, account: account, flashMessage, data: data_render });
-
-  //     }
-  //   }
-  //   else{
-  //     next();
-  //   }
-
-
-  // })
-  // .post('/intial', validate.validateChangeDefaultPassword(),  userController.changeDefaultPassword);
   .get('/about_us', async function (req, res, next) {
     const partial = 'partials/about_us';
     const layout = 'layouts/main';
@@ -436,7 +290,13 @@ router.get('/', function (req, res) {
 
     req.partial_path = partial
     req.layout_path = layout
+    const aboutUsData = await courseController.getAboutUS();
 
+    req.page_data = {
+      num_student : aboutUsData.students.length,
+      num_course : aboutUsData.courses.length,
+      num_instructor : aboutUsData.instructors.length,
+    }
     await userController.getpage(req, res, next);
   })
   .get('/contact', async function (req, res, next) {
