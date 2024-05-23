@@ -1023,6 +1023,39 @@ class CourseController {
     }
   }
 
+  async getCompletedCourses(req) {
+    const userId = req.session.account;
+
+    try {
+        const enrolledCourses = await this.get_subcribe_course(req);
+        if (!enrolledCourses || enrolledCourses.length === 0) {
+          return { success: true, completedCourses: [] };
+        }
+
+        const completedCourses = [];
+
+        for (let course of enrolledCourses) {
+          const sections = await Section.find({ courseID: course._id }).select('_id');
+          if (!sections || sections.length === 0) continue;
+
+          const lectures = await Lecture.find({ sectionID: { $in: sections.map(section => section._id) } }).select('_id');
+          if (!lectures || lectures.length === 0) continue;
+
+          const lectureIds = lectures.map(lecture => lecture._id);
+          const completedLectures = await Progress.find({ userID: userId, lectureID: { $in: lectureIds }, completed: true }).select('lectureID');
+
+          if (completedLectures.length === lectureIds.length) {
+              completedCourses.push(course);
+          }
+        }
+
+        return { success: true, completedCourses: completedCourses };
+    } catch (error) {
+      console.error("Error fetching completed courses:", error.message);
+      return { success: false, error: error.message };
+    }
+  }
+
   async getAboutUS() {
     const students = await User.find({ role: 'student' });
     const courses = await Course.find({});

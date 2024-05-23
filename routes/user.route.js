@@ -320,5 +320,22 @@ router.get('/', function (req, res) {
     const result = await courseController.getCourseProgress(req);
     res.status(result.success ? 200 : 500).json(result);
   })
+  .get('/completed-courses', async (req, res) => {
+    const result = await courseController.getCompletedCourses(req);
+    res.status(result.success ? 200 : 500).json(result);
+  })
+  .get('/certificate/:courseId', async function (req, res) {
+    try {
+      const user = await User.findById(req.session.account);
+      const result = await courseController.getCourse(req.params.courseId);
+      if (result) {
+        res.json({ success: true, course: result, fullname: user.fullName });
+      } else {
+        res.json({ success: false, error: 'Course not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  })
 
 module.exports = router;

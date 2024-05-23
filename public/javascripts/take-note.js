@@ -212,6 +212,10 @@ function fetchCourseProgress(courseId) {
                 const progressText = `${data.completedLectureIds.length} of ${data.totalLectures} completed`;
                 document.getElementById('courseProgress').innerText = progressText;
                 markCompletedLectures(data.completedLectureIds);
+
+                if (data.completedLectureIds.length === data.totalLectures) {
+                    document.getElementById('courseProgress').innerText = 'Course completed';
+                }
             } else {
                 console.error('Failed to fetch course progress:', data.error);
             }

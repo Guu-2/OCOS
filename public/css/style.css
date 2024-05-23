@@ -2486,3 +2486,35 @@ body.dark {
     color: green;
     font-weight: bold;
 }
+
+/* CERTIFICATE CSS */
+.certificate-container {
+    border: 20px solid tan;
+    width: 750px;
+    height: 563px;
+    display: table-cell;
+    vertical-align: middle;
+    color: black;
+    text-align: center;
+}
+.certificate .logo {
+    color: tan;
+}
+.certificate .marquee {
+    color: tan;
+    font-size: 48px;
+    margin: 20px;
+}
+.certificate .assignment {
+    margin: 20px;
+}
+.certificate .person {
+    border-bottom: 2px solid black;
+    font-size: 32px;
+    font-style: italic;
+    margin: 20px auto;
+    width: 400px;
+}
+.certificate .reason {
+    margin: 20px;
+}
