@@ -207,6 +207,8 @@ router.get('/', function (req, res) {
     await userController.getpage(req, res, next);
   })
   .get('/notes', async (req, res) => {
+    const courseId = req.query.courseId;
+    req.params.courseId = courseId;
     const notes = await courseController.getNotesByUserAndCourseID(req);
     res.json(notes);
   })
@@ -310,9 +312,13 @@ router.get('/', function (req, res) {
 
     await userController.getpage(req, res, next);
   })
-
-
-
-
+  .post('/update-progress', async (req, res) => {
+    const result = await courseController.updateProgress(req);
+    res.status(result.success ? 200 : 500).json(result);
+  })
+  .get('/course-progress/:courseId', async (req, res) => {
+    const result = await courseController.getCourseProgress(req);
+    res.status(result.success ? 200 : 500).json(result);
+  })
 
 module.exports = router;

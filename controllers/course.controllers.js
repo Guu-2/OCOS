@@ -6,6 +6,7 @@ const Review = require('../models/reviews');
 const Exercise = require('../models/exercises');
 const Note = require('../models/note');
 const User = require('../models/users');
+const Progress = require('../models/progress');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const path = require('path');
@@ -684,42 +685,75 @@ class CourseController {
 
   async getNotesByUserAndCourseID(req) {
     try {
-      const userId = req.session.account; // Lấy userID từ session
+      const userId = req.session.account;
       const courseId = req.params.courseId;
-  
-      // Truy vấn tất cả notes dựa trên userId và courseId
-      const notes = await Note.find({ userID: userId })
+
+      console.log("USER:" + userId);
+      console.log("COURSE ID:" + courseId);
+
+      const getSectionsByCourseId = async (courseId) => {
+        const sections = await Section.find({ courseID: courseId }).select('_id').exec();
+        return sections.map(section => section._id);
+      };
+
+      const sectionIds = await getSectionsByCourseId(courseId);
+
+      console.log(sectionIds);
+
+      const getLectureIdsBySectionIds = async (sectionIds) => {
+        const lectures = await Lecture.find({ sectionID: { $in: sectionIds } }).select('_id').exec();
+        return lectures.map(lecture => lecture._id);
+      };
+
+      const lectureIds = await getLectureIdsBySectionIds(sectionIds);
+
+      console.log(lectureIds);
+
+      const notes = await Note.find({ userID: userId, lectureID: { $in: lectureIds } })
         .populate({
-          path: 'lectureID',
-          populate: {
-            path: 'sectionID',
-            select: 'sectionNumber sectionTitle'
-          },
-          select: 'lectureTitle lectureLink lectureDescription'
+            path: 'lectureID',
+            populate: {
+              path: 'sectionID',
+              select: 'sectionNumber sectionTitle'
+            },
+            select: 'lectureTitle lectureLink lectureDescription'
         })
         .exec();
-  
+
       if (!notes) {
+        console.log("There're no notes");
         return null;
       }
-  
-      // Tạo danh sách formatted notes để gửi về client
+
       const formattedNotes = notes.map(note => {
-        const lectureTitle = note.lectureID ? note.lectureID.lectureTitle : 'Lecture Not Found';
-        const sectionTitle = note.lectureID && note.lectureID.sectionID ? note.lectureID.sectionID.sectionTitle : 'Section Not Found';
-  
+        if (!note.lectureID) {
+          return {
+            noteTimeStamp: note.noteTimeStamp,
+            noteDescription: note.noteDescription,
+            lectureTitle: 'Lecture Not Found',
+            lectureLink: 'Lecture Not Found',
+            lectureDescription: 'Lecture Not Found',
+            sectionTitle: 'Section Not Found',
+            lectureID: null
+          };
+        }
+
+        const lectureTitle = note.lectureID.lectureTitle;
+        const lectureLink = note.lectureID.lectureLink;
+        const lectureDescription = note.lectureID.lectureDescription;
+        const sectionTitle = note.lectureID.sectionID ? note.lectureID.sectionID.sectionTitle : 'Section Not Found';
+
         return {
           noteTimeStamp: note.noteTimeStamp,
           noteDescription: note.noteDescription,
           lectureTitle: lectureTitle,
-          lectureLink: note.lectureID.lectureLink, 
-          lectureDescription: note.lectureID.lectureDescription,
+          lectureLink: lectureLink,
+          lectureDescription: lectureDescription,
           sectionTitle: sectionTitle,
           lectureID: note.lectureID._id
         };
       });
-  
-      // Gửi phản hồi với danh sách các note
+
       return formattedNotes;
     } catch (error) {
       console.error('Error:', error);
@@ -932,6 +966,62 @@ class CourseController {
     }
   }
 
+  async updateProgress(req) {
+    const { lectureID, courseID, progress } = req.body;
+    const userID = req.session.account;
+
+    console.log("CHECKING PROGRESS: -");
+    console.log("lectureID: ", lectureID);
+    console.log("courseID: ", courseID);
+    console.log("progress: ", progress);
+    console.log("userID: ", userID);
+
+    try {
+      let progressRecord = await Progress.findOne({ userID, lectureID });
+      if (progressRecord) {
+        progressRecord.progress = progress;
+        progressRecord.completed = progress >= 70;
+      } else {
+        progressRecord = new Progress({ userID, lectureID, courseID, progress, completed: progress >= 70 });
+      }
+      await progressRecord.save();
+      return { success: true, progress: progressRecord };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  async getCourseProgress(req) {
+    const courseId = req.params.courseId;
+    const userId = req.session.account;
+
+    try {
+      const sections = await Section.find({ courseID: courseId }).select('_id');
+      if (!sections || sections.length === 0) {
+        console.log("NO SECTIONS");
+        return { success: true, completedLectureIds: [], totalLectures: 0 };
+      }
+
+      const lectures = await Lecture.find({ sectionID: { $in: sections.map(section => section._id) } }).select('_id');
+      if (!lectures || lectures.length === 0) {
+        console.log("NO LECTURES");
+          return { success: true, completedLectureIds: [], totalLectures: 0 };
+      }
+
+      const lectureIds = lectures.map(lecture => lecture._id);
+      const completedLectures = await Progress.find({ userID: userId, lectureID: { $in: lectureIds }, completed: true }).select('lectureID');
+      const completedLectureIds = completedLectures.map(progress => progress.lectureID);
+      const totalLectures = lectureIds.length;
+
+      console.log("TOTAL LECTURES:", totalLectures);
+      console.log("COMPLETED LECTURES:", completedLectureIds.length);
+
+      return { success: true, completedLectureIds, totalLectures };
+    } catch (error) {
+      console.log(error.message);
+      return { success: false, error: error.message };
+    }
+  }
 
   async getAboutUS() {
     const students = await User.find({ role: 'student' });

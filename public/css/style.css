@@ -2480,3 +2480,9 @@ body.dark {
     color: var(--text-dark-color);
     margin-bottom: 20px;
 }
+
+/* Completed lecture display */
+.completed {
+    color: green;
+    font-weight: bold;
+}

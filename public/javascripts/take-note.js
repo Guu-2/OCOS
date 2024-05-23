@@ -41,7 +41,37 @@ function onPlayerStateChange(event) {
         console.log('Video is paused');
     } else if (event.data == YT.PlayerState.ENDED) {
         console.log('Video has ended');
+        updateLectureProgress();
     }
+}
+
+function updateLectureProgress() {
+    const lectureID = document.getElementById('lectureId').value;
+    const courseId = window.location.pathname.split('/').pop();
+
+    console.log("CHECK COURSE: " + courseId);
+
+    $.ajax({
+        url: '/home/update-progress',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            lectureID: lectureID,
+            courseID: courseId,
+            progress: 100 // Mark as complete
+        }),
+        success: function(response) {
+            if (response.success) {
+                console.log('Lecture progress updated successfully');
+                fetchCourseProgress(courseId);
+            } else {
+                console.error('Failed to update lecture progress:', response.error);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error updating lecture progress:', error);
+        }
+    });
 }
 
 function showNoteModal(time) {
@@ -89,20 +119,22 @@ function saveNote(time) {
             noteTimeStamp: time,
             noteDescription
         }),
-        success: function(response) {
+        success: function (response) {
             console.log('Note saved:', response);
             $('#noteModal').modal('hide');
-            
+
             if (response.success) {
-                const note = response.note;
-                const newNoteHtml = `
-                    <li onclick="jumpToLecture('${note.lectureID}', '${note.noteTimeStamp}', '${note.lectureDetails.lectureTitle}', '${note.lectureDetails.lectureLink}', '${note.lectureDetails.lectureDescription}')">
-                        <p>${note.noteTimeStamp} - ${note.sectionDetails.sectionTitle} - ${note.lectureDetails.lectureTitle}: ${note.noteDescription}</p>
-                    </li>`;
-                $('.notes-list ul').append(newNoteHtml);
+                // const note = response.note;
+                // const newNoteHtml = `
+                //     <li onclick="jumpToLecture('${note.lectureID}', '${note.noteTimeStamp}', '${note.lectureDetails.lectureTitle}', '${note.lectureDetails.lectureLink}', '${note.lectureDetails.lectureDescription}')">
+                //         <p>${note.noteTimeStamp} - ${note.sectionDetails.sectionTitle} - ${note.lectureDetails.lectureTitle}: ${note.noteDescription}</p>
+                //     </li>`;
+                // $('.notes-list ul').append(newNoteHtml);
+
+                fetchNotes();
             }
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             console.error('Error saving note:', error);
         }
     });
@@ -133,6 +165,75 @@ function jumpToLecture(lectureID, noteTimeStamp, lectureTitle, lectureLink, lect
 function hmsToSeconds(hms) {
     var a = hms.split(':');
     // Convert HH:MM:SS to seconds
-    var seconds = (+a[0]) * 3600 + (+a[1]) * 60 + (+a[2]); 
+    var seconds = (+a[0]) * 3600 + (+a[1]) * 60 + (+a[2]);
     return seconds;
 }
+
+async function fetchNotes() {
+    try {
+        const courseId = window.location.pathname.split('/').pop();
+        const response = await fetch(`/home/notes?courseId=${courseId}`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const notes = await response.json();
+        updateNotesList(notes);
+    } catch (error) {
+        console.error('Error fetching notes:', error);
+    }
+}
+
+function updateNotesList(notes) {
+    const notesList = document.querySelector('.notes-list ul');
+    notesList.innerHTML = '';
+
+    if (notes && notes.length > 0) {
+        notes.forEach(note => {
+            const li = document.createElement('li');
+            li.onclick = function () {
+                jumpToLecture(note.lectureID, note.noteTimeStamp, note.lectureTitle, note.lectureLink, note.lectureDescription);
+            };
+            li.innerHTML = `<p>${note.noteTimeStamp} - ${note.sectionTitle} - ${note.lectureTitle}: ${note.noteDescription}</p>`;
+            notesList.appendChild(li);
+        });
+    } else {
+        const li = document.createElement('li');
+        li.textContent = 'There are no notes yet.';
+        notesList.appendChild(li);
+    }
+}
+
+function fetchCourseProgress(courseId) {
+    $.ajax({
+        url: `/home/course-progress/${courseId}`,
+        method: 'GET',
+        success: function(data) {
+            if (data.success) {
+                const progressText = `${data.completedLectureIds.length} of ${data.totalLectures} completed`;
+                document.getElementById('courseProgress').innerText = progressText;
+                markCompletedLectures(data.completedLectureIds);
+            } else {
+                console.error('Failed to fetch course progress:', data.error);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching course progress:', error);
+        }
+    });
+}
+
+function markCompletedLectures(completedLectureIds) {
+    completedLectureIds.forEach(lectureId => {
+        const lectureElement = document.querySelector(`li[data-lecture-id="${lectureId}"]`);
+        if (lectureElement) {
+            lectureElement.classList.add('completed');
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', fetchNotes);
+
+document.addEventListener('DOMContentLoaded', () => {
+    const courseId = window.location.pathname.split('/').pop();
+    fetchCourseProgress(courseId);
+});
