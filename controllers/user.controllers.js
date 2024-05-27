@@ -31,8 +31,6 @@ const instructor_feature_list = [
   { access: "Exercise", icon: "<i class='fa-solid fa-pen-to-square'></i>" }
 ]
 
-
-
 class UserController {
   // account có quyền hạn cao nhất các account sau đó được phân chia quyền hạn dựa trên admin
   createDefaultAccount() {

@@ -241,3 +241,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const courseId = window.location.pathname.split('/').pop();
     fetchCourseProgress(courseId);
 });
+
+
+const comm = document.getElementById('comment-form');
+
+// add rating
+if(comm){
+    comm.addEventListener('submit', function(e) {
+    e.preventDefault();
+  
+    const comment = document.getElementById('comment').value;
+  
+    fetch(`/home/addcomment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ comment })
+    })
+    .then(response => response.json())
+    .then(data => {
+        showflashmessage("success", "You have successfully submitted your comment.");
+        document.getElementById('comment').value = '';
+        setTimeout(() => {
+          location.reload();
+        }, 500);
+    })
+    .catch(error => {
+        showflashmessage('error', error.message || 'An error occurred while submitting your comment.');
+    });
+  });
+  
+}

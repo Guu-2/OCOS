@@ -32,7 +32,7 @@
                     <p><%= course.coursePrice%> VND</p> 
                 </div>
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <% if(account.role != 'admin' && account.role != 'instructor'){ %>
+                    <% if (account.role !== 'admin' && account.role !== 'instructor') { %>
                         <% if (!data.hasBought) { %>
                             <% if (!data.hasAddToCart) { %>
                                 <button type="button" class="btn btn-primary" onclick="addtocart('<%=course._id.toString() %>')">Add to cart</button>
@@ -42,7 +42,10 @@
                         <% if (data.hasBought) { %>
                             <button type="button" class="btn btn-info" onclick="getlecturebyId('<%=course._id.toString() %>')">Start Course</button>
                         <% } %>
-                    <% } else {%>
+                    <% } else { %>
+                        <% if (account.role === 'instructor') { %>
+                            <button type="button" class="btn btn-info" onclick="getlecturebyId('<%=course._id.toString() %>')">Start Course</button>
+                        <% } %>
                         <button type="button" class="btn btn-danger" onclick="deletecourse('<%= account.role%>','<%= course.courseName%>','<%= course._id.toString()%>')">DELETE COURSE</button>
                         <button type="button" class="btn btn-primary" onclick="editcoursebyId('<%= course._id.toString()%>')">EDIT COURSE</button>
                     <% } %>

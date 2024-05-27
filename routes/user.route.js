@@ -4,6 +4,7 @@ const User = require('../models/users');
 const Course = require('../models/courses');
 const Exercise = require('../models/exercises');
 const Review = require('../models/reviews');
+const Comment = require('../models/lecturecomments');
 const userController = require('../controllers/user.controllers');
 const courseController = require('../controllers/course.controllers');
 const { validate } = require('../controllers/validator');
@@ -118,7 +119,6 @@ router.get('/', function (req, res) {
     }
     // console.log(req.page_data.account_details)
     await userController.getpage(req, res, next);
-
   })
   .delete('/course/:courseId', courseController.delete_course)
   .get('/exercise', async function (req, res, next) {
@@ -193,7 +193,20 @@ router.get('/', function (req, res) {
       }
   })
   .get('/lecture/:courseId', async function (req, res, next) {
-    console.log(req.params.courseId)
+    const firstLectureData = await courseController.getFirstlecture(req.params.courseId);
+    const lectureId = firstLectureData ? firstLectureData.lectureID : null;
+    req.session.courseId = req.params.courseId;
+    if (!lectureId) {
+      console.log('No lecture ID found');
+    } else {
+      console.log('Lecture ID found:', lectureId);
+    }
+
+    // Tìm các bình luận cho bài giảng đầu tiên
+    const hasCommentsOfALecture = await Comment.find({ lectureID: lectureId })
+      .populate('userId', 'fullName profilePicture');
+
+    console.log('Comments of a lecture:', hasCommentsOfALecture);
     const partial = 'partials/lecture';
     const layout = 'layouts/main';
     req.partial_path = partial
@@ -201,10 +214,21 @@ router.get('/', function (req, res) {
     req.page_data = {
       menu_bar: await courseController.getSectionsAndLectures(req.params.courseId),
       first_lecture: await courseController.getFirstlecture(req.params.courseId),
-      notes: await courseController.getNotesByUserAndCourseID(req)
+      notes: await courseController.getNotesByUserAndCourseID(req),
+      hasCommentsOfALecture: hasCommentsOfALecture
     }
     // console.log(req.page_data.account_details)
     await userController.getpage(req, res, next);
+  })
+  .post('/addcomment', async function(req, res) {
+    const firstLectureData = await courseController.getFirstlecture(req.session.courseId);
+    console.log('First lecture data:', firstLectureData.lectureID);
+    const lectureId = firstLectureData ? firstLectureData.lectureID : null;
+    try {
+      await courseController.addCommentsForALecture(req, res, firstLectureData.lectureID);
+    } catch (error) {
+        res.status(500).json({ message: 'Error while adding comment!!' });
+    }
   })
   .get('/notes', async (req, res) => {
     const courseId = req.query.courseId;

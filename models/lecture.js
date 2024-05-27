@@ -10,6 +10,7 @@ const lectureSchema = new Schema({
     lectureTitle: { type: String, required: true },
     lectureLink: { type: String, required: true },
     lectureDescription: { type: String, required: true },
+    comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
 
     createdAt: { type: String, default: new Date().toUTCString() }
 });

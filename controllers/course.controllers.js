@@ -3,6 +3,7 @@ const Course = require('../models/courses');
 const Section = require('../models/section');
 const Lecture = require('../models/lecture');
 const Review = require('../models/reviews');
+const Comment = require('../models/lecturecomments');
 const Exercise = require('../models/exercises');
 const Note = require('../models/note');
 const User = require('../models/users');
@@ -1066,6 +1067,39 @@ class CourseController {
       courses: courses,
       instructors: instructors,
     };
+  }
+
+  async addCommentsForALecture(req, res, lectureID) {
+    console.log("ADD new comment : ");
+    console.log(lectureID);
+    const userID = req.session.account;
+    try {
+          // tạo mới bình luận
+            let comm = new Comment({ 
+                userId: userID,
+                lectureID: lectureID,
+                comment: req.body.comment
+            })
+            comm.save()
+
+        req.session.flash = {
+          type: 'success',
+          message: 'You have successfully added a comment!',
+        };
+
+        await Lecture.findByIdAndUpdate(lectureID, {
+          $push: { comments: comm._id }
+        }, { new: true });
+
+        res.json({ status: "success", message: "You have successfully added a comment!" })
+      } catch(err) {
+        req.session.flash = {
+          type: 'error',
+          intro: 'comment failed',
+          message: err.message,
+        };
+          res.json({ status: "warning", message: err.message })
+      }
   }
 }
 module.exports = new CourseController();
